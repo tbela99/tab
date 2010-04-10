@@ -13,49 +13,6 @@ Script: Tabber.js
 
 */
 
-/**
- * @author thierry bela {@link bntfr@yahoo.fr}
- * @todo add/remove panels
- * 
- * @version 0.1.3
- *
- * complete rewrite. Tabs is no longer a global object but a class. all extra functionalities have been dropped and some method has been renamed.
- *
- * @version 0.1.2.1
- * 
- * dropped dynamic content load, this can be performed by user with the onChange event
- * added new plugins Reveal, Stack
- * fixed position of element with plugin Fade when the page is resized
- * createTabs accept only an object as arguments, the tab panel is no longer mandatory
- *
- * version 0.1.2
- *
- * tested with IE6+, FF2, Opera9, Chrome
- * que la force soit avec vous!
- *
- * upgrade to mootools 1.2
- * some code cleanup
- * small bug fixes
- * change _stopSlide in now stopSlide and is public
- * added startSlide
- *
- * version 0.1.2
- *
- * added:
- * tabs title are turned into tooltips
- * event listener
- * tabs and content may be in different containers
- * auto slide content
- * plugin animSlide
- * plugin animCards
- * show content when mouse is over a tab
- *
- * version 0.1.1
- * 
- * added:
- * plugins support
- */
-
 	(function ($) {
 	
 		this.Tab = new Class({ 
@@ -64,21 +21,19 @@ Script: Tabber.js
 				
 			/* 
 				onCreate: $empty,
-				onChange: $empty,	
-				
-				panel: elm,
+				onChange: $empty,					
 				selector: '',
 				tabs: [],
 				current: 0, //default selected
 				
-				//animation plugin parameters
 				params: {
 				
+							//animation plugin parameters
 				},
-				//Fx parameters
 			*/
 				fx: {
-				
+					
+					//Fx parameters
 					transition:	'pow:in:out'
 				},
 				inactiveClass: '', //unselected tab
@@ -134,25 +89,16 @@ Script: Tabber.js
 				return this
 			},
 			
-			/*
-				display next tabs
-			 */
 			next: function () {
 			
 				return this.setSelectedIndex((this.getSelectedIndex() + this.panels.length + 1) % this.panels.length);
 			},
 			
-			/*
-				display previous tab
-			 */
 			previous: function () {
 			
 				return this.setSelectedIndex((this.getSelectedIndex() + this.panels.length - 1) % this.panels.length);
 			},
 			
-			/**
-			 * @since  0.1.2 beta
-			 */
 			getSelectedIndex: function() { return this.current; },
 			
 			setSelectedIndex: function(index) {
@@ -172,7 +118,7 @@ Script: Tabber.js
 		
 	})(document.id);
 	
-	//default
+	//default plugin
 	Tab.prototype.plugins = {
 	
 		None: new Class({
