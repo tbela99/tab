@@ -1,7 +1,6 @@
 
 /*
-Script: Tabber.js
-	Tabs manager
+Script: Tab.js
 	
 	License: MIT-style license.
 	Copyright: Copyright (c) 2008 Thierry Bela
@@ -47,13 +46,10 @@ Script: Tabber.js
 
 				this.addEvents({
 				
-					onChange: function(newTab, oldTab, index, oldIndex) {
+					onChange: function(newTab, oldTab, index) {
 						
-						var currentTab = this.tabs[oldIndex],
-							tab = this.tabs[index];
-							
-						if(currentTab) currentTab.removeClass(this.options.activeClass).addClass(this.options.inactiveClass);
-						if(tab) tab.removeClass(this.options.inactiveClass).addClass(this.options.activeClass);
+						if(oldTab) oldTab.removeClass(this.options.activeClass).addClass(this.options.inactiveClass);
+						if(newTab) newTab.removeClass(this.options.inactiveClass).addClass(this.options.activeClass);
 						
 						this.selected = newTab;
 						this.current = index

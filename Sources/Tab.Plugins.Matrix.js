@@ -52,6 +52,7 @@ Script: Tabs.Plugins.Slice.js
 		initialize: function(panels, options, fx) {
 			
 			this.options = $merge(this.options, options);
+			this.options.transitions = $splat(this.options.transitions);
 			this.panels = panels;
 			this.fx = $merge(this.fx, fx);
 			
