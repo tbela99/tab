@@ -12,15 +12,14 @@ Script: Tab.js
 
 */
 
-	(function ($) {
-	
-		this.Tab = new Class({ 
+	var Tab = new Class({ 
 		
 			options: {
 				
 			/* 
 				onCreate: $empty,
-				onChange: $empty,					
+				onChange: $empty,	
+				container: null,
 				selector: '',
 				tabs: [],
 				current: 0, //default selected
@@ -46,12 +45,14 @@ Script: Tab.js
 
 				this.addEvents({
 				
-					onChange: function(newTab, oldTab, index) {
+					onChange: function(newPanel, oldPanel, index, oldIndex) {
 						
-						if(oldTab) oldTab.removeClass(this.options.activeClass).addClass(this.options.inactiveClass);
-						if(newTab) newTab.removeClass(this.options.inactiveClass).addClass(this.options.activeClass);
+						var _new = this.tabs[index], _old = this.tabs[oldIndex, options = this.options
 						
-						this.selected = newTab;
+						if(_old) _old.removeClass(options.activeClass).addClass(options.inactiveClass);
+						if(_new) _new.removeClass(options.inactiveClass).addClass(options.activeClass);
+						
+						this.selected = newPanel;
 						this.current = index
 					}.bind(this)
 						
@@ -59,9 +60,9 @@ Script: Tab.js
 				
 				options = this.options;
 				
-				this.container = $(options.container);
+				this.container = document.id(options.container);
 				this.tabs = $$(options.tabs) ;
-				this.panels = $(options.panel).getChildren(options.selector || '');
+				this.panels = $(options.panel).getChildren(options.selector);
 				
 				this.tabs.each(function (el, index) {
 				
@@ -100,19 +101,17 @@ Script: Tab.js
 			setSelectedIndex: function(index) {
 
 				var current = this.current,
-					curTab = this.panels[current],
-					newTab = this.panels[index],
-					params = [newTab, curTab, index, current];
+					curPanel = this.panels[current],
+					newPanel = this.panels[index],
+					params = [newPanel, curPanel, index, current];
 							
-				if(this.current == index || this.selected == newTab || index < 0 || index >= this.panels.length) return this;
+				if(this.current == index || this.selected == newPanel || index < 0 || index >= this.panels.length) return this;
 							
 				this.anim.move.apply(this.anim, params);
 				
 				return this.fireEvent('onChange', params)
 			}
-		})
-		
-	})(document.id);
+		});
 	
 	//default plugin
 	Tab.prototype.plugins = {
@@ -126,10 +125,10 @@ Script: Tab.js
 					el.setStyle('display', index == 0 ? 'block' : 'none')
 				})
 			},
-			move: function (newTab, oldTab) {
+			move: function (newPanel, oldPanel) {
 			
-				newTab.setStyle('display', 'block');
-				if(oldTab) oldTab.setStyle('display', 'none')
+				newPanel.setStyle('display', 'block');
+				if(oldPanel) oldPanel.setStyle('display', 'none')
 			}
 		})
 	};

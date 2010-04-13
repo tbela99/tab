@@ -32,6 +32,7 @@ Script: Tabs.Plugins.Random.js
 			fx = $merge(this.fx, fx);
 					
 			options = this.options = $merge(this.options, options);
+			options.transitions = $splat(this.options.transitions);
 			
 			['move', 'slideIn', 'slideOut'].each(function (v) {
 			
@@ -61,7 +62,9 @@ Script: Tabs.Plugins.Random.js
 					})
 			});
 			
-			this.container = panels[0].setStyle('display', 'block').getParent().setStyles({position: 'relative', overflow: 'hidden', height: panel.offsetHeight, width: panel.offsetWidth});
+			var panel = panels[0];
+			
+			this.container = panel.setStyle('display', 'block').getParent().setStyles({position: 'relative', overflow: 'hidden', height: panel.offsetHeight, width: panel.offsetWidth});
 			
 			this.current = 0
 		},
@@ -73,19 +76,11 @@ Script: Tabs.Plugins.Random.js
 			
 			//reset first!
 			if(curTab) curTab.setStyles({left: 0, top: 0});
-			
-			switch(transition) {
-			
-				case 'fade' :
-						this[transition](curTab, newTab);
-						break;
-				default:
-						
-						var parts = transition.split('-');
-						
-						this[parts[0]](curTab, newTab, parts[1]);
-						break;
-			}
+
+			var parts = transition.split('-');
+
+			this[parts[0]](curTab, newTab, parts[1]);
+                        
 			this.current = (this.current + 1) % this.options.transitions.length
 		},
 		
@@ -219,6 +214,8 @@ Script: Tabs.Plugins.Random.js
 						obj[index] = {opacity: [.7, 1], left: [p.offsetLeft, p.offsetLeft - offset]}
 					});
 				
+				if(!options.useOpacity) $each(obj, function (k) { delete k.opacity });
+			
 				l.each(function (p, index) {
 				
 					p.morph(obj[index]);

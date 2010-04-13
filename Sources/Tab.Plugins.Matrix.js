@@ -1,6 +1,6 @@
 
 /*
-Script: Tabs.Plugins.Slice.js
+Script: Tabs.Plugins.Matrix.js
 
 	inspired by Floom by Oskar Krawczyk (http://nouincolor.com/)
 	
@@ -36,18 +36,17 @@ Script: Tabs.Plugins.Slice.js
 	
 	Tab.prototype.plugins.Matrix = new Class({
 		options: {
-			/*
-				random: false,
-			*/
+		
+				random: true,
 				transitions: ['grow', 'floom',  'wave'],
-				axis: 'horizontal',
+				mode: 'horizontal',
 				//The matrix
-				amount: 24, //slices
+				amount: 8, //slices
 				fragments: 3 //slices fragments
 			},
 		fx: {
 		
-			duration: 250
+			duration: 75
 		},
 		initialize: function(panels, options, fx) {
 			
@@ -98,7 +97,7 @@ Script: Tabs.Plugins.Slice.js
 							
 							for(var i = 0; i < this.options.amount; i++) this.slices.els[i] = [];
 							
-							this.setMode(this.options.axis).panels.each(function (el) { el.dispose() });
+							this.setMode(this.options.mode).panels.each(function (el) { el.dispose() });
 							this.preloaded = true;
 							this.move('', '', this.current, '')
 							
@@ -140,7 +139,7 @@ Script: Tabs.Plugins.Slice.js
 					if(method) matrix[method]()
 				}
 				
-				vertical = options.axis == 'vertical';
+				vertical = options.mode == 'vertical';
 				bg = {'background-image': 'url(' + this.slides[newIndex].image + ')'};
 				
 				matrix.each(function (item, index) {
@@ -165,7 +164,7 @@ Script: Tabs.Plugins.Slice.js
 											
 										}).delay(Math.max(time, this.fx.duration * 4) + 1000, this);
 										
-						}).delay(20 + time, this, [item, vertical, $merge(this[options.axis](item), bg), transition, index == options.amount - 1]);
+						}).delay(20 + time, this, [item, vertical, $merge(this[options.mode](item), bg), transition, index == options.amount - 1]);
 					time += 50 
 				}, this);
 				
@@ -182,7 +181,7 @@ Script: Tabs.Plugins.Slice.js
 					height: mode == 'vertical' ? this.size.y / slices.fragments : this.size.y / this.options.amount
 				});
 			
-			this.options.axis = mode;
+			this.options.mode = mode;
 			
 			return this
 		},
