@@ -172,6 +172,8 @@ Script: Tabs.Plugins.Random.js
 			if(curTab) {
 			
 				var obj = [],
+					options = this.options,
+					opacity = options.opacity || .7,
 					property = ['top', 'bottom'].indexOf(f) != -1 ? 'offsetHeight' : 'offsetWidth',
 					offset = curTab[property],
 					l = [curTab, newTab],
@@ -206,12 +208,12 @@ Script: Tabs.Plugins.Random.js
 				
 				if(property == 'offsetHeight') l.each(function (p, index) {
 					
-						obj[index] = {opacity: [.7, 1], top: [p.offsetTop, p.offsetTop - offset]}
+						obj[index] = {opacity: [opacity, 1], top: [p.offsetTop, p.offsetTop - offset]}
 					});
 					
 				else l.each(function (p, index) {
 					
-						obj[index] = {opacity: [.7, 1], left: [p.offsetLeft, p.offsetLeft - offset]}
+						obj[index] = {opacity: [opacity, 1], left: [p.offsetLeft, p.offsetLeft - offset]}
 					});
 				
 				if(!options.useOpacity) $each(obj, function (k) { delete k.opacity });
