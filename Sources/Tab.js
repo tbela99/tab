@@ -60,9 +60,8 @@ Script: Tab.js
 				
 				options = this.options;
 				
-				this.container = document.id(options.container);
 				this.tabs = $$(options.tabs) ;
-				this.panels = $(options.panel).getChildren(options.selector);
+				this.panels = $(options.container).getChildren(options.selector);
 				
 				this.tabs.each(function (el, index) {
 				
