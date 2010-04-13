@@ -47,7 +47,7 @@ Script: Tab.js
 				
 					onChange: function(newPanel, oldPanel, index, oldIndex) {
 						
-						var _new = this.tabs[index], _old = this.tabs[oldIndex, options = this.options
+						var _new = this.tabs[index], _old = this.tabs[oldIndex], options = this.options
 						
 						if(_old) _old.removeClass(options.activeClass).addClass(options.inactiveClass);
 						if(_new) _new.removeClass(options.inactiveClass).addClass(options.activeClass);
