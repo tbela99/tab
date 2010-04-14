@@ -1,10 +1,10 @@
 /*
 ---
-Script: Tabs.Plugins.Move.js
-License: MIT-style license.
-Description: Random - Provide random multiple effetcs like the barack slideshow.
-Copyright: Copyright (c) 2008 Thierry Bela
-Authors: [Thierry Bela]
+script: Tabs.Plugins.Move.js
+license: MIT-style license.
+description: Random - Provide random multiple effetcs like the barack slideshow.
+copyright: Copyright (c) 2008 Thierry Bela
+authors: [Thierry Bela]
 
 requires: 
   tab:0.1: 

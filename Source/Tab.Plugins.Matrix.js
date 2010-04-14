@@ -1,10 +1,10 @@
 /*
 ---
-Script: Tabs.Plugins.Matrix.js
-License: MIT-style license.
-Description: Matrix - provide many effects like floom and jQuery nivoSlider.
-Copyright: Copyright (c) 2008 Thierry Bela
-Authors: [Thierry Bela]
+script: Tabs.Plugins.Matrix.js
+license: MIT-style license.
+description: Matrix - provide many effects like floom and jQuery nivoSlider.
+copyright: Copyright (c) 2008 Thierry Bela
+authors: [Thierry Bela]
 
 requires: 
   tab:0.1: 

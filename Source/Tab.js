@@ -1,10 +1,10 @@
 /*
 ---
-Script: Tab.js
-License: MIT-style license.
-Description: Tab - Minimalistic but extensible tab swapper.
-Copyright: Copyright (c) 2008 Thierry Bela
-Authors: [Thierry Bela]
+script: Tab.js
+license: MIT-style license.
+description: Tab - Minimalistic but extensible tab swapper.
+copyright: Copyright (c) 2008 Thierry Bela
+authors: [Thierry Bela]
 
 requires: 
   core:1.2.3: 
