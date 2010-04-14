@@ -1,8 +1,10 @@
 Matrix {#Tabsplugins:Matrix}
 ============
 
-apply various effects to the transition, this plugin is designed to work with images. caption display is not [yet] handled. 
+Apply various effects to the transition, this plugin is designed to work with images. caption display is not [yet] handled. 
 you can easily do it with the onChange event :)
+
+It should work in every browser **but IE6.**
 
 ### Options:
 

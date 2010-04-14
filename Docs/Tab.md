@@ -17,22 +17,21 @@ Tab Method: constructor {#Class:constructor}
 
 ### Options: {#Tab:options}
 
-* current  - (*int*, optional) index of the panel that is displayed first.
 * container  - (*mixed*) the element that contains the panels.
 * selector  - (*string*, optional) only container children that match the selector will be grabbed.
-* tabs  - (*mixed*, optional) the tabs. this is anything you can pass to $$. when a tab is clicked, the corresponding panel is shown.
-* activeClass  - (*string*, optional) style applied to the selected tab.
-* inactiveClass  - (*string*, optional) style applied to evry unselected tab.
 * animation  - (*string*, optional) the transition plugin to use for swapping. default to *None*
-* params - (*object*, optional) parameters for the transition plugin.
+* params - (*object*, optional) parameters specific to the transition plugin.
 * fx - (*object*, optional) parameters for the animation. this can be any of the Fx parameters.
-
+* current  - (*int*, optional) index of the panel that is displayed first. default to 0
+* tabs  - (*mixed*, optional) when a tab is clicked, the corresponding panel is shown. anything you can pass to $$ is accepted. 
+* activeClass  - (*string*, optional) style applied to the selected tab.
+* inactiveClass  - (*string*, optional) style applied to every unselected tab.
 
 ### Events:
 
 #### create
 
-Fired right after the tabs has been created.
+Fired right after the tabs has been setup.
 
 ##### Signature:
 
