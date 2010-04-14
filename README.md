@@ -2,9 +2,9 @@ Tab
 ============
 
 Minimalistic but extensible tab swapper. It can be used to create a tab swapper as well as a galerie slideshow. 
-you can have effects like the ![barack slideshow](http://devthought.com/wp-content/moogets/BarackSlideshow/demo.html) or ![jQuery nivoslider](http://nivo.dev7studios.com/) or whatever you want by providing an animation plugin. 
+you can have effects like the [barack slideshow](http://devthought.com/wp-content/moogets/BarackSlideshow/demo.html) or [jQuery nivoslider](http://nivo.dev7studios.com/) or whatever you want by providing an animation plugin. 
 
-![Demo](http://dl.dropbox.com/u/1731360/tabs/demo.html)
+[Demo](http://dl.dropbox.com/u/1731360/tabs/demo.html)
 
 How to use
 ---------------------
