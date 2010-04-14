@@ -1,16 +1,16 @@
-
 /*
+---
 Script: Tabs.Plugins.Move.js
-	Move tabs horizontally or vertically.
-	
-	License: MIT-style license.
-	Copyright: Copyright (c) 2009 Thierry Bela
-	License:
-		MIT-style license.
+License: MIT-style license.
+Description: Move - swap tab horizontally or vertically.
+Copyright: Copyright (c) 2008 Thierry Bela
+Authors: [Thierry Bela]
 
-	Authors:
-		Thierry Bela
-
+requires: 
+  tab:0.1: 
+  - Tab
+provides: [Tab.plugins.Move]
+...
 */
 
 	Tab.prototype.plugins.Move = new Class({

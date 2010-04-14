@@ -1,17 +1,16 @@
-
 /*
+---
 Script: Tabs.Plugins.Matrix.js
+License: MIT-style license.
+Description: Matrix - provide many effects like floom and jQuery nivoSlider.
+Copyright: Copyright (c) 2008 Thierry Bela
+Authors: [Thierry Bela]
 
-	inspired by Floom by Oskar Krawczyk (http://nouincolor.com/)
-	
-	License: MIT-style license.
-	Copyright: Copyright (c) 2009 Thierry Bela
-	License:
-		MIT-style license.
-
-	Authors:
-		Thierry Bela
-	
+requires: 
+  tab:0.1: 
+  - Tab
+provides: [Tab.plugins.Matrix]
+...
 */
 	Array.implement({
 	

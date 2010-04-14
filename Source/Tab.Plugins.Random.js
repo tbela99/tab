@@ -1,16 +1,16 @@
-
 /*
-Script: Tabs.Plugins.Random.js
-	Apply various effects to tab swapping
-	
-	License: MIT-style license.
-	Copyright: Copyright (c) 2009 Thierry Bela
-	License:
-		MIT-style license.
+---
+Script: Tabs.Plugins.Move.js
+License: MIT-style license.
+Description: Random - Provide random multiple effetcs like the barack slideshow.
+Copyright: Copyright (c) 2008 Thierry Bela
+Authors: [Thierry Bela]
 
-	Authors:
-		Thierry Bela
-
+requires: 
+  tab:0.1: 
+  - Tab
+provides: [Tab.plugins.Random]
+...
 */
 
 	Tab.prototype.plugins.Random = new Class({

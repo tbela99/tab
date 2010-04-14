@@ -1,15 +1,21 @@
-
 /*
+---
 Script: Tab.js
-	
-	License: MIT-style license.
-	Copyright: Copyright (c) 2008 Thierry Bela
-	License:
-		MIT-style license.
+License: MIT-style license.
+Description: Tab - Minimalistic but extensible tab swapper.
+Copyright: Copyright (c) 2008 Thierry Bela
+Authors: [Thierry Bela]
 
-	Authors:
-		Thierry Bela
-
+requires: 
+  core:1.2.3: 
+  - Class.Extras
+  - Element.Event
+  - Element.Style
+  - Element.Dimensions
+  - Fx.Morph
+  - Array
+provides: [Tab, Tab.plugins.None]
+...
 */
 
 	var Tab = new Class({ 
