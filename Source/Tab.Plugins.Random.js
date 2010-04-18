@@ -7,7 +7,7 @@ copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires: 
-  tab:0.1: 
+  tab:0.1.1: 
   - Tab
 provides: [Tab.plugins.Random]
 ...

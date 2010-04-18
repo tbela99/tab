@@ -1,8 +1,7 @@
 Matrix {#Tabsplugins:Matrix}
 ============
 
-Apply various effects to the transition, this plugin is designed to work with images. caption display is not [yet] handled. 
-you can easily do it with the onChange event :)
+Apply various effects to the transition, this plugin is designed to work with images.
 
 It should work in every browser **but IE6.**
 
@@ -12,7 +11,8 @@ It should work in every browser **but IE6.**
 * mode  - (*string*, optional) define the direction of the animation. default to *horizontal*. possible values are *vertical* | *horizontal*.
 * amount - (*int*, optional) number of rows. default to 8
 * fragments - (*int*, optional) number of fragments per row. default to 3.
-* transitions  - (*mixed*, optional) list of transitions to use. if not specified all transitions will be applied. default to *['grow', 'floom',  'wave']*
+* transitions  - (*mixed*, optional) list of transitions to use. if not specified all transitions will be applied. default to *['grow', 'floom',  'wave', 'lines', 'chains']*
+
 ## Example:
 
 	//example 1

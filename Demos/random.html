@@ -3,7 +3,7 @@
 
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title>Matrix Plugin</title>
+<title>Random Plugin</title>
 <style type="text/css">
 html {
 
@@ -78,7 +78,7 @@ div.tabs a.selected {
 <script type="text/javascript" src="../PeriodicalExecuter.js"></script>
 
 <script type="text/javascript" src="../Source/Tab.js"></script>
-<script type="text/javascript" src="../Source/Tab.Plugins.Matrix.js"></script>
+<script type="text/javascript" src="../Source/Tab.Plugins.Random.js"></script>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -91,17 +91,15 @@ div.tabs a.selected {
 			form = document.forms[0], 
 			options = {
 		
-				duration: 75,
+				duration: 800,
 				random: true,
 				//transitions: matches				axis: 'vertical',
-				amount: 8,
-				fragments: 3
 			},
 			tab,
-			duration;
+			duration = 1000;
 		
 		if(matches && matches.length > 0) matches.each(function (v, k) { matches[k] = v.replace('transitions[]=', '') });
-		else matches = ['wave'/* , 'grow', 'floom' */];
+		else matches = ['fade'/* , 'move', 'slideIn' */];
 		
 		matches.each(function(v) { form[v].checked = true });
 		
@@ -151,7 +149,7 @@ div.tabs a.selected {
 				container: 'slide', 
 				tabs: 'div.tabs a',
 				activeClass: 'selected',
-				animation: 'Matrix',
+				animation: 'Random',
 				params: options,
 				fx: {
 				
@@ -159,7 +157,7 @@ div.tabs a.selected {
 				}
 			});
 			
-		duration = ((options.duration * options.amount * options.fragments) / 1000).toInt() + 5;
+		duration = duration + 5;
 		pe = new PeriodicalExecuter(function () {
 		
 			tab.next()
@@ -189,10 +187,10 @@ div.tabs a.selected {
       <div class="tabs"><a href="#0">1</a><a href="#1">2</a><a href="#2">3</a><a href="#3">4</a><a href="#4">5</a></div>
       <form action="" method="get">
         <div style="padding: 10px 0 0">Parameters: 
-          <input name="transitions[]" type="checkbox" value="wave" id="wave" /><label for="wave">Wave</label> <input name="transitions[]" type="checkbox" value="grow" id="grow" /><label for="grow">Grow</label>
-          <input name="transitions[]" type="checkbox" value="floom" id="floom" /><label for="floom">Floom</label>
-		  <input name="transitions[]" type="checkbox" value="lines" id="lines" /><label for="lines">Lines</label>
-		  <input name="transitions[]" type="checkbox" value="chains" id="chains" /><label for="chains">Chains</label>
+          <input name="transitions[]" type="checkbox" value="fade" id="fade" /><label for="fade">Fade</label> 
+		  <input name="transitions[]" type="checkbox" value="move" id="move" /><label for="move">Move</label>
+          <input name="transitions[]" type="checkbox" value="slideIn" id="slideIn" /><label for="slideIn">slideIn</label>
+		  <input name="transitions[]" type="checkbox" value="slideOut" id="slideOut" /><label for="slideOut">slideOut</label>
           <input type="submit" value="Apply" />
         </div>
         <div style="padding: 10px 0 0">Parameters: 
@@ -209,15 +207,7 @@ div.tabs a.selected {
 </label>
             <br/>
             <label for="duration">Duration (ms)
-            <input name="duration" type="text" value="75" size="5" id="duration" />
-            </label>
-            <br/>
-            <label for="amount">Slice
-            <input name="amount" type="text" value="8" size="5" id="amount" />
-            </label>
-            <br/>
-            <label for="fragments">Fragments
-            <input name="fragments" type="text" value="3" size="5" id="fragments" />
+            <input name="duration" type="text" value="800" size="5" id="duration" />
             </label>
           </div>
         </div>
@@ -226,7 +216,7 @@ div.tabs a.selected {
       <div>Tab demo, using the Matrix plugin.</div>
       
   <div>Feel free to modify it.</div>      
-  <div>Inspired by <a href="http://blog.olicio.us/2009/07/25/floom/" target="_blank">Floom</a> and <a href="http://nivo.dev7studios.com/" target="_blank">Nivo Slider</a>. Follow me on twitter at <a href="http://twitter.com/tbela99" target="_blank">@tbela99</a></div>
+  <div>Inspired by <a href="http://blog.olicio.us/2009/07/25/slideIn/" target="_blank">slideIn</a> and <a href="http://nivo.dev7studios.com/" target="_blank">Nivo Slider</a>. Follow me on twitter at <a href="http://twitter.com/tbela99" target="_blank">@tbela99</a></div>
       <div style="text-align:center"><a href="http://twitter.com/tbela99" target="_blank">Twitter</a> | <a href="http://tbela99.blogspot.com/" target="_blank">Blog</a></div>
 </div>
 </body></html>

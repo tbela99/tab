@@ -3,7 +3,7 @@
 
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title>Matrix Plugin</title>
+<title>Move Plugin</title>
 <style type="text/css">
 html {
 
@@ -78,32 +78,24 @@ div.tabs a.selected {
 <script type="text/javascript" src="../PeriodicalExecuter.js"></script>
 
 <script type="text/javascript" src="../Source/Tab.js"></script>
-<script type="text/javascript" src="../Source/Tab.Plugins.Matrix.js"></script>
+<script type="text/javascript" src="../Source/Tab.Plugins.Move.js"></script>
 
 <script type="text/javascript">
 //<![CDATA[
 
 	window.addEvent('domready', function () {
 	
-		var query = decodeURIComponent(location.search), 
-			matches = query.match(/transitions\[\]=([^&]+)/g), 
-			params = query.replace(/^\?|(&?transitions\[\]=([^&]+)&?)/g, '').split('&'),
+		var query = decodeURIComponent(location.search),  
+			params = query.replace(/^\?/g, '').split('&'),
 			form = document.forms[0], 
 			options = {
 		
 				duration: 75,
-				random: true,
-				//transitions: matches				axis: 'vertical',
-				amount: 8,
-				fragments: 3
+				//transitions: matches,
+				axis: 'vertical'
 			},
 			tab,
-			duration;
-		
-		if(matches && matches.length > 0) matches.each(function (v, k) { matches[k] = v.replace('transitions[]=', '') });
-		else matches = ['wave'/* , 'grow', 'floom' */];
-		
-		matches.each(function(v) { form[v].checked = true });
+			duration = 800;
 		
 		if(params && params.length > 0) {
 			params.each(function (v) {
@@ -138,20 +130,14 @@ div.tabs a.selected {
 					if(param[0] == 'duration') duration = param[1];
 					else options[param[0]] = param[1]
 				}
-			});
-			
-			//needed
-			if($type(options.random) != 'boolean') options.random = options.random.toInt();
+			})
 		}
-		
-		//delay should great than options.animation * options.amount * options.fragments
-		options.transitions = matches;
 		
 		tab = new Tab({
 				container: 'slide', 
 				tabs: 'div.tabs a',
 				activeClass: 'selected',
-				animation: 'Matrix',
+				animation: 'Move',
 				params: options,
 				fx: {
 				
@@ -159,11 +145,11 @@ div.tabs a.selected {
 				}
 			});
 			
-		duration = ((options.duration * options.amount * options.fragments) / 1000).toInt() + 5;
+			
 		pe = new PeriodicalExecuter(function () {
 		
 			tab.next()
-		}, duration);
+		}, duration + 5);
 		
 		$$('div.tabs a').each(function (el) {
 		
@@ -189,35 +175,13 @@ div.tabs a.selected {
       <div class="tabs"><a href="#0">1</a><a href="#1">2</a><a href="#2">3</a><a href="#3">4</a><a href="#4">5</a></div>
       <form action="" method="get">
         <div style="padding: 10px 0 0">Parameters: 
-          <input name="transitions[]" type="checkbox" value="wave" id="wave" /><label for="wave">Wave</label> <input name="transitions[]" type="checkbox" value="grow" id="grow" /><label for="grow">Grow</label>
-          <input name="transitions[]" type="checkbox" value="floom" id="floom" /><label for="floom">Floom</label>
-		  <input name="transitions[]" type="checkbox" value="lines" id="lines" /><label for="lines">Lines</label>
-		  <input name="transitions[]" type="checkbox" value="chains" id="chains" /><label for="chains">Chains</label>
-          <input type="submit" value="Apply" />
-        </div>
-        <div style="padding: 10px 0 0">Parameters: 
           <div style="padding: 10px 0 10px 10px">
             <label for="mode">Axis
             <select name="mode" id="mode"><option>horizontal</option><option>vertical</option></select>
-            </label>
-            <br/>Random:
-            <label for="random0">
-            <input name="random" id="random0" checked="checked" type="radio" value="0" /> No
-</label>
-            <label for="random1">
-            <input name="random" id="random1" checked="checked" type="radio" value="1" /> Yes
-</label>
+            </label><input type="submit" value="Apply" />
             <br/>
             <label for="duration">Duration (ms)
-            <input name="duration" type="text" value="75" size="5" id="duration" />
-            </label>
-            <br/>
-            <label for="amount">Slice
-            <input name="amount" type="text" value="8" size="5" id="amount" />
-            </label>
-            <br/>
-            <label for="fragments">Fragments
-            <input name="fragments" type="text" value="3" size="5" id="fragments" />
+            <input name="duration" type="text" value="800" size="5" id="duration" />
             </label>
           </div>
         </div>
