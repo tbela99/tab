@@ -91,14 +91,14 @@ div.tabs a.selected {
 			form = document.forms[0], 
 			options = {
 		
-				duration: 125,
+				duration: 75,
 				random: true,
 				//transitions: matches				axis: 'vertical',
 				amount: 8,
 				fragments: 3
 			},
 			tab,
-			duration;
+			duration = 75;
 		
 		if(matches && matches.length > 0) matches.each(function (v, k) { matches[k] = v.replace('transitions[]=', '') });
 		else matches = ['wave'/* , 'grow', 'floom' */];
@@ -209,7 +209,7 @@ div.tabs a.selected {
 </label>
             <br/>
             <label for="duration">Duration (ms)
-            <input name="duration" type="text" value="125" size="5" id="duration" />
+            <input name="duration" type="text" value="75" size="5" id="duration" />
             </label>
             <br/>
             <label for="amount">Slice
