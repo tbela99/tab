@@ -1,0 +1,230 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Matrix Plugin</title>
+<style type="text/css">
+html {
+
+	font-family:Arial, Helvetica, sans-serif;
+	color: #333;
+	font-size:1.2em;
+}
+body {
+
+	font-size: 75%;
+	line-height:19px;
+}
+.hidden {
+
+	display:none;
+}
+.slide {
+	
+	width: 400px;
+	margin: 10px auto;
+}		
+.help {
+	font-size: 90%;
+	color: #111;
+	margin: 10px 0;
+}	
+a {
+
+	text-decoration: none;
+	color:#069;
+}
+div.tabs {
+
+	text-align: center;
+}
+div.tabs a {
+
+	margin: 0 3px 0 0;
+}
+div.tabs a.selected {
+
+	text-decoration: underline;
+}
+
+/*
+
+*/
+#slide {
+
+	position: relative;
+	height: 300px;
+	width: 400px;
+	overflow: hidden;
+}
+#slide span {
+
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	padding: 10px;
+	width: 380px;
+	color: #fff;
+	background: url(../Assets/images/grey.png);
+	background: rgba(0, 0, 0, .7)
+}
+</style>
+<script type="text/javascript" src="../mootools.js"></script>
+<script type="text/javascript" src="..//PeriodicalExecuter.js"></script>
+
+<script type="text/javascript" src="../Source/Tab.js"></script>
+<script type="text/javascript" src="../Source/Tab.Plugins.Matrix.js"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+
+	window.addEvent('domready', function () {
+	
+		var query = decodeURIComponent(location.search), 
+			matches = query.match(/transitions\[\]=([^&]+)/g), 
+			params = query.replace(/^\?|(&?transitions\[\]=([^&]+)&?)/g, '').split('&'),
+			form = document.forms[0], 
+			options = {
+		
+				duration: 75,
+				random: true,
+				//transitions: matches,
+				duration: 300,
+				axis: 'vertical',
+				amount: 8,
+				fragments: 3
+			},
+			tab,
+			duration;
+		
+		if(matches && matches.length > 0) matches.each(function (v, k) { matches[k] = v.replace('transitions[]=', '') });
+		else matches = ['wave'/* , 'grow', 'floom' */];
+		
+		matches.each(function(v) { form[v].checked = true });
+		
+		if(params && params.length > 0) {
+			params.each(function (v) {
+		
+				var param = v.split('='),
+					el = form[param[0]];
+				
+				if(param.length > 1) {
+					
+					if(el.length) {
+					
+						if($(el)) $A(el.options).each(function (option, index) {
+						
+								if(option.value == param[1]) el.selectedIndex = index
+							});
+							
+						//radio
+						else $A(el).each(function (el) {
+						
+							if(el.value == param[1]) el.checked = true
+						})
+					}
+					else {
+					
+						if($(el).get('tag') == 'select') $A(el.options).each(function (option, index) {
+						
+							if(option.value == param[1]) el.selectedIndex = index
+						});
+						else $(el).set('value', param[1]);
+					}
+					//if($(el).get('tag') == 'select') $A(el.options)
+					if(param[0] == 'duration') duration = param[1];
+					else options[param[0]] = param[1]
+				}
+			});
+			
+			//needed
+			if($type(options.random) != 'boolean') options.random = options.random.toInt();
+		}
+		
+		//delay should great than options.animation * options.amount * options.fragments
+		options.transitions = matches;
+		
+		tab = new Tab({
+				container: 'slide', 
+				tabs: 'div.tabs a',
+				activeClass: 'selected',
+				animation: 'Matrix',
+				params: options,
+				fx: {
+				
+					duration: duration
+				}
+			});
+			
+		duration = ((options.duration * options.amount * options.fragments) / 1000).toInt() + 5;
+		pe = new PeriodicalExecuter(function () {
+		
+			tab.next()
+		}, duration);
+		
+		$$('div.tabs a').each(function (el) {
+		
+			el.addEvent('click', function () {
+				
+				pe.stop();
+				(function () { pe.registerCallback() }).delay(2 * duration)
+			})
+		})
+		
+
+	})
+//]]></script>
+</head><body>
+<div class="slide">
+  <div id="slide">
+    <div class="ctab"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide1.jpg" width="400" height="300" /></a><span>Caption 1: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div class="ctab hidden"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide2.jpg" width="400" height="300" /></a><span>Caption 2: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div class="ctab hidden"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide3.jpg" width="400" height="300" /></a><span>Caption 3: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div class="ctab hidden"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide4.jpg" width="400" height="300" /></a><span>Caption 4: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div class="ctab hidden"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide5.jpg" width="400" height="300" /></a><span>Caption 5: put anything you want in the caption. Note that there is a link in the image</span></div>
+  	  </div>
+      <div class="tabs"><a href="#0">1</a><a href="#1">2</a><a href="#2">3</a><a href="#3">4</a><a href="#4">5</a></div>
+      <form action="" method="get">
+        <div style="padding: 10px 0 0">Parameters: 
+          <input name="transitions[]" type="checkbox" value="wave" id="wave" /><label for="wave">Wave</label> <input name="transitions[]" type="checkbox" value="grow" id="grow" /><label for="grow">Grow</label>
+          <input name="transitions[]" type="checkbox" value="floom" id="floom" /><label for="floom">Floom</label>
+		  <input name="transitions[]" type="checkbox" value="lines" id="lines" /><label for="lines">Lines</label>
+		  <input name="transitions[]" type="checkbox" value="chains" id="chains" /><label for="chains">Chains</label>
+          <input type="submit" value="Apply" />
+        </div>
+        <div style="padding: 10px 0 0">Parameters: 
+          <div style="padding: 10px 0 10px 10px">
+            <label for="mode">Axis
+            <select name="mode" id="mode"><option>horizontal</option><option>vertical</option></select>
+            </label>
+            <br/>Random:
+            <label for="random0">
+            <input name="random" id="random0" checked="checked" type="radio" value="0" /> No
+</label>
+            <label for="random1">
+            <input name="random" id="random1" checked="checked" type="radio" value="1" /> Yes
+</label>
+            <br/>
+            <label for="duration">Duration (ms)
+            <input name="duration" type="text" value="75" size="5" id="duration" />
+            </label>
+            <br/>
+            <label for="amount">Slice
+            <input name="amount" type="text" value="8" size="5" id="amount" />
+            </label>
+            <br/>
+            <label for="fragments">Fragments
+            <input name="fragments" type="text" value="3" size="5" id="fragments" />
+            </label>
+          </div>
+        </div>
+  </form>
+      
+      <div>Tab demo, using the Matrix plugin.</div>
+      
+  <div>Feel free to modify it.</div>      
+  <div>Inspired by <a href="http://blog.olicio.us/2009/07/25/floom/" target="_blank">Floom</a> and <a href="http://nivo.dev7studios.com/" target="_blank">Nivo Slider</a>. Follow me on twitter at <a href="http://twitter.com/tbela99" target="_blank">@tbela99</a></div>
+      <div style="text-align:center"><a href="http://twitter.com/tbela99" target="_blank">Twitter</a> | <a href="http://tbela99.blogspot.com/" target="_blank">Blog</a></div>
+</div>
+</body></html>

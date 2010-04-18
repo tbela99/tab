@@ -37,7 +37,7 @@ provides: [Tab.plugins.Matrix]
 		options: {
 		
 				random: true,
-				transitions: ['grow', 'floom',  'wave'],
+				transitions: ['grow', 'floom',  'wave', 'lines', 'chains'],
 				mode: 'horizontal',
 				//The matrix
 				amount: 8, //slices
@@ -54,38 +54,32 @@ provides: [Tab.plugins.Matrix]
 			this.panels = panels;
 			this.fx = $merge(this.fx, fx);
 			
-			var size, img, link, props;
+			var size, img, images = [];
+				
 			this.slides = [];
 			
 			this.current = 0;
 			this.container = $(panels[0]).setStyle('display', 'block').getParent();
+			this.parents = [];
 	
 			panels.each(function (el) {
 			
 				img = el.get('tag') == 'img' ? el : el.getElement('img');
+				images.push(img);
 				
-				props = {
+				this.slides.push({
 				
-					image: img.src,
-					title: img.title
-				};
-				
-				// link = img.getParent('a');
-				
-				// if(link) props.url = a.href;
-				
-				this.slides.push(props)
+					image: img.src
+				})
 				
 			}, this);
 			
 			Asset.images(this.slides.map(function (el) { return el.image }), {
 					
 						onComplete: function () {
+							panels[0].setStyles({display: 'block'})
 							
-							panels[0].setStyles({display: 'block'});
 							size = this.size = this.container.getSize();
-							
-							this.container.setStyles({width: size.x, height: size.y, position: 'relative', overflow: 'hidden'});
 							
 							this.slices = {
 								els: {},
@@ -93,12 +87,24 @@ provides: [Tab.plugins.Matrix]
 								width: size.x,
 								fragments: this.options.fragments
 							};	
+								
+							this.container.setStyles({width: size.x, height: size.y, position: 'relative', overflow: 'hidden'});
+										
+							panels.each(function (el, index) {
+							
+								img = images[index];
+								
+								this.parents.push(img.getParent().setStyles({display: 'block', height: size.y, width: size.x}))
+								img.dispose();
+								
+								el.setStyles({display: 'block', opacity: 0, zIndex: 1, position: 'absolute', left: 0, top: 0})
+							}, this);
 							
 							for(var i = 0; i < this.options.amount; i++) this.slices.els[i] = [];
 							
-							this.setMode(this.options.mode).panels.each(function (el) { el.dispose() });
+							this.setMode(this.options.mode);
 							this.preloaded = true;
-							this.move('', '', this.current, '')
+							this.move(panels[this.current], '', this.current, '')
 							
 						}.bind(this)
 					}
@@ -124,11 +130,9 @@ provides: [Tab.plugins.Matrix]
 				
 				for(i = 0; i < options.amount; i++) {
 					
-					var items = [];
-					
 					for(j = 0; j < options.fragments; j++) matrix.push({index: i, fragment: j});
 				}
-						
+				
 				if(options.random) {
 				
 					this.setMode(['vertical', 'horizontal'].shuffle()[0]);
@@ -140,6 +144,9 @@ provides: [Tab.plugins.Matrix]
 				
 				vertical = options.mode == 'vertical';
 				bg = {'background-image': 'url(' + this.slides[newIndex].image + ')'};
+				
+				if(curTab) curTab.tween('opacity', 0);
+				newTab.tween('opacity', 1);
 				
 				matrix.each(function (item, index) {
 						
@@ -173,11 +180,12 @@ provides: [Tab.plugins.Matrix]
 			
 		setMode: function (mode) {
 		
-			var slices = this.slices;
+			var slices = this.slices,
+				size = this.size;
 			
 			$extend(slices, {
-					width: mode == 'vertical' ? this.size.x / this.options.amount : this.size.x / slices.fragments,
-					height: mode == 'vertical' ? this.size.y / slices.fragments : this.size.y / this.options.amount
+					width: mode == 'vertical' ? size.x / this.options.amount : size.x / slices.fragments,
+					height: mode == 'vertical' ? size.y / slices.fragments : size.y / this.options.amount
 				});
 			
 			this.options.mode = mode;
@@ -203,11 +211,6 @@ provides: [Tab.plugins.Matrix]
 			};
 		},
 		
-		/*
-		
-			transitions
-		*/
-		
 		coordinates: function (item, vertical, raw) {
 
 			var slice = this.slices;
@@ -226,6 +229,72 @@ provides: [Tab.plugins.Matrix]
 		},
 		//
 		
+		/*
+		
+			transitions
+		*/
+		
+		chains: function (item, vertical, options, slice, styles) {
+		
+			var morph = $merge(
+							{opacity: [0, 1]}, 
+							this.coordinates(item, vertical, true)
+						),
+						coord = vertical ? 'top' : 'left',
+						scoord = vertical ? 'left' : 'top',
+				styles = $merge(styles, {
+					opacity: 0,
+					width: slice.width,
+					height: slice.height,
+					position: 'absolute',
+					zIndex: 0
+				}),
+				start = slice[vertical ? 'height' : 'width'] + morph[coord];
+				
+			styles[scoord] = morph[scoord];
+			//vertical: top: dynamic, left: fixed
+			morph[coord] = [item.index % 2 == 0 ? - start : start, morph[coord]];
+			
+			slice.els[item.index].push(new Element('div', {
+			
+				morph: {
+					duration: this.fx.duration * 4
+				},
+				styles: styles
+			}).inject(this.container, 'top').morph(morph))
+		},
+		
+		//todo: reverse effect
+		lines: function (item, vertical, options, slice, styles) {
+		
+			var morph = $merge(
+							{opacity: [0, 1]}, 
+							this.coordinates(item, vertical, true)
+						),
+						coord = vertical ? 'top' : 'left',
+						scoord = vertical ? 'left' : 'top',
+				styles = $merge(styles, {
+					opacity: 0,
+					width: slice.width,
+					height: slice.height,
+					position: 'absolute',
+					zIndex: 0
+				});
+				
+			styles[scoord] = morph[scoord];
+			//vertical: top: dynamic, left: fixed
+			morph[coord] = [-slice[vertical ? 'height' : 'width'] - morph[coord], morph[coord]];
+			
+			slice.els[item.index].push(new Element('div', {
+			
+				morph: {
+					duration: this.fx.duration * 4
+				},
+				styles: styles
+			}).inject(this.container, 'top').morph(morph))
+		},
+		
+		//todo: reverse effect
 		grow: function (item, vertical, options, slice, styles) {
 		
 			var morph = {
@@ -241,9 +310,10 @@ provides: [Tab.plugins.Matrix]
 				},
 				styles: $merge(styles, { 
 							opacity: 0,
-							position: 'absolute'
+							position: 'absolute',
+							zIndex: 0
 						}, this.coordinates(item, vertical, true))
-			}).inject(this.container).morph(morph))
+			}).inject(this.container, 'top').morph(morph))
 		},
 		
 		//very cool
@@ -257,9 +327,10 @@ provides: [Tab.plugins.Matrix]
 					opacity: 0,
 					position: 'absolute',
 					width: slice.width,
-					height: slice.height
+					height: slice.height,
+					zIndex: 0
 				})
-			}).inject(this.container).morph($merge({opacity: 1}, this.coordinates(item, vertical))))
+			}).inject(this.container, 'top').morph($merge({opacity: 1}, this.coordinates(item, vertical))))
 		},
 		
 		//reproduce the floom effect
@@ -279,9 +350,10 @@ provides: [Tab.plugins.Matrix]
 					opacity: 0,
 					width: slice.width,
 					height: slice.height,
-					position: 'absolute'
+					position: 'absolute',
+					zIndex: 0
 				}, this.coordinates(item, vertical, true))
-			}).inject(this.container).morph(morph))
+			}).inject(this.container, 'top').morph(morph))
 		}
 	});
 	

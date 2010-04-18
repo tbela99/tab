@@ -51,6 +51,17 @@ provides: [Tab, Tab.plugins.None]
 
 				this.addEvents({
 				
+					onCreate: function(newPanel, index) {
+						
+						this.tabs.each(function (el, val) {
+						
+							el[val == index ? 'removeClass' : 'addClass'](options.inactiveClass)[val == index ? 'addClass' : 'removeClass'](options.activeClass)
+						});
+						
+						this.selected = newPanel;
+						this.current = index
+						
+					}.bind(this),
 					onChange: function(newPanel, oldPanel, index, oldIndex) {
 						
 						var _new = this.tabs[index], _old = this.tabs[oldIndex], options = this.options
