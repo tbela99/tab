@@ -2,5 +2,5 @@ name: Tab
 author: tbela99
 category: Interface
 tags: [animation, tab swapper, slideshow, tabs]
-demo: http://dl.dropbox.com/u/1731360/tabs/demo.html
+demo: http://tbela99.github.com/tab/Demos/matrix.html?transitions[]=wave&mode=horizontal&random=1&duration=75&amount=8&fragments=3
 current: 0.1.1
