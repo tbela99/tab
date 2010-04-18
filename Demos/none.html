@@ -78,7 +78,6 @@ div.tabs a.selected {
 <script type="text/javascript" src="../PeriodicalExecuter.js"></script>
 
 <script type="text/javascript" src="../Source/Tab.js"></script>
-<script type="text/javascript" src="../Source/Tab.Plugins.Move.js"></script>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -91,8 +90,6 @@ div.tabs a.selected {
 			options = {
 		
 				duration: 75,
-				//transitions: matches,
-				axis: 'vertical'
 			},
 			tab,
 			duration = 800;
@@ -137,8 +134,6 @@ div.tabs a.selected {
 				container: 'slide', 
 				tabs: 'div.tabs a',
 				activeClass: 'selected',
-				animation: 'Move',
-				params: options,
 				fx: {
 				
 					duration: duration
@@ -176,10 +171,6 @@ div.tabs a.selected {
       <form action="" method="get">
         <div style="padding: 10px 0 0">Parameters: 
           <div style="padding: 10px 0 10px 10px">
-            <label for="mode">Axis
-            <select name="mode" id="mode"><option>horizontal</option><option>vertical</option></select>
-            </label><input type="submit" value="Apply" />
-            <br/>
             <label for="duration">Duration (ms)
             <input name="duration" type="text" value="800" size="5" id="duration" />
             </label>
@@ -187,9 +178,9 @@ div.tabs a.selected {
         </div>
   </form>
       
-      <div>Tab demo, using the Matrix plugin.</div>
+      <div>Tab demo.</div>
       
-  <div>Feel free to try and/or modify.</div>      
-  <div style="text-align:center"><a href="http://twitter.com/tbela99" target="_blank">Twitter</a> | <a href="http://tbela99.blogspot.com/" target="_blank">Blog</a></div>
+  <div>Feel free to use and/or modify.</div>  
+      <div style="text-align:center"><a href="http://twitter.com/tbela99" target="_blank">Twitter</a> | <a href="http://tbela99.blogspot.com/" target="_blank">Blog</a></div>
 </div>
 </body></html>
