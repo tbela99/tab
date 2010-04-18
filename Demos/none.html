@@ -144,7 +144,7 @@ div.tabs a.selected {
 		pe = new PeriodicalExecuter(function () {
 		
 			tab.next()
-		}, duration + 5);
+		}, duration / 1000 + 5);
 		
 		$$('div.tabs a').each(function (el) {
 		

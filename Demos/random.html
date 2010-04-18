@@ -157,11 +157,11 @@ div.tabs a.selected {
 				}
 			});
 			
-		duration = duration + 5;
+			
 		pe = new PeriodicalExecuter(function () {
 		
 			tab.next()
-		}, duration);
+		}, duration / 1000 + 5);
 		
 		$$('div.tabs a').each(function (el) {
 		
