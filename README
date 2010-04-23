@@ -8,6 +8,8 @@ you can have effects like the ![barack slideshow](http://devthought.com/wp-conte
 
 #### More demos
 
+plase make sure to refresh the page it anything doesn't show up, your browser may use an older version of the script.
+
 - ![Matrix](http://tbela99.github.com/tab/Demos/matrix.html)
 - ![Random](http://tbela99.github.com/tab/Demos/random.html?transitions[]=slideOut&directions[]=left&directions[]=right&mode=horizontal&random=0&duration=800)
 - ![Move](http://tbela99.github.com/tab/Demos/move.html)
