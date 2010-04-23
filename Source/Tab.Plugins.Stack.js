@@ -24,7 +24,7 @@ provides: [Tab.plugins.Stack]
 		},
 		fx: {
 		
-			duration: 500, 
+			duration: 800, 
 			link: 'chain'
 		},
 		Binds: ['reindex'],
@@ -38,6 +38,8 @@ provides: [Tab.plugins.Stack]
 			this.reindexing = false;
 			this.rightEdge = 0;
 			this.d = 1;
+			
+			this.fx.duration  = (this.fx.duration / 2).toInt();
 			
 			var wrapper = new Element('div', {
 				'class': 'stackWrapper',
@@ -111,12 +113,6 @@ provides: [Tab.plugins.Stack]
 		
 		swap: function(direction) {
 		
-			if(this.reindexing) {
-			
-				$clear(this.reindexing);
-				this.reindexing = null;
-			}
-
 			var current = this.stack[0], 
 				options = this.options,
 				next,
@@ -139,6 +135,12 @@ provides: [Tab.plugins.Stack]
 					this.stack.erase(current).push(current);
 			}
 			
+			if(this.reindexing) {
+			
+				$clear(this.reindexing);
+				this.reindexing = null;
+			}
+
 			this.reindexing = this.reindex.delay(this.fx.duration);
 
 			out = [$random((-options.scattering * 2).toInt(), 0), $random(this.rightEdge, this.rightEdge + (options.scattering * 2))];
