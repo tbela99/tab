@@ -3,7 +3,7 @@
 
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title>Random Plugin</title>
+<title>Stack Plugin</title>
 <style type="text/css">
 html {
 
@@ -78,7 +78,7 @@ div.tabs a.selected {
 <script type="text/javascript" src="../PeriodicalExecuter.js"></script>
 
 <script type="text/javascript" src="../Source/Tab.js"></script>
-<script type="text/javascript" src="../Source/Tab.Plugins.Random.js"></script>
+<script type="text/javascript" src="../Source/Tab.Plugins.Stack.js"></script>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -87,38 +87,12 @@ div.tabs a.selected {
 	
 		var query = decodeURIComponent(location.search), 
 			matches = query.match(/transitions\[\]=([^&]+)/g), 
-			params,
+			params = query.replace(/^\?|(&?transitions\[\]=([^&]+)&?)/g, '').split('&'),
 			form = document.forms[0], 
-			options = {
-		
-				//transitions: matches,
-				duration: 800,
-				random: true,				
-				axis: 'vertical'
-			},
+			options = { },
 			tab,
-			duration = 1000;
+			duration = 300;
 		
-		if(matches && matches.length > 0) matches.each(function (v, k) { matches[k] = v.replace('transitions[]=', '') });
-		else matches = ['fade'/* , 'move', 'slideIn' */];
-		
-		matches.each(function(v) { form[v].checked = true });
-		
-		options.transitions = matches;
-		
-		matches = query.match(/directions\[\]=([^&]+)/g);
-		
-		if(matches && matches.length > 0) {
-			
-			matches.each(function (v, k) { matches[k] = v.replace('directions[]=', '') });
-			
-			matches.each(function(v) { form[v].checked = true });
-			
-			options.directions = matches
-		}
-		
-		params = query.replace(/^\?|(&?((transitions)|(directions))\[\]=([^&]+)&?)/g, '').split('&')
-			
 		if(params && params.length > 0) {
 			params.each(function (v) {
 		
@@ -152,17 +126,17 @@ div.tabs a.selected {
 					if(param[0] == 'duration') duration = param[1];
 					else options[param[0]] = param[1]
 				}
-			});
-			
-			//needed
-			if($type(options.random) != 'boolean') options.random = options.random.toInt();
+			})
 		}
+		
+		//delay should great than options.animation * options.amount * options.fragments
+		options.transitions = matches;
 		
 		tab = new Tab({
 				container: 'slide', 
 				tabs: 'div.tabs a',
 				activeClass: 'selected',
-				animation: 'Random',
+				animation: 'Stack',
 				params: options,
 				fx: {
 				
@@ -199,35 +173,13 @@ div.tabs a.selected {
   	  </div>
       <div class="tabs"><a href="#0">1</a><a href="#1">2</a><a href="#2">3</a><a href="#3">4</a><a href="#4">5</a></div>
       <form action="" method="get">
-        <div style="padding: 10px 0 0">Parameters: 
-          <input name="transitions[]" type="checkbox" value="fade" id="fade" /><label for="fade">Fade</label> 
-		  <input name="transitions[]" type="checkbox" value="move" id="move" /><label for="move">Move</label>
-          <input name="transitions[]" type="checkbox" value="slideIn" id="slideIn" /><label for="slideIn">slideIn</label>
-		  <input name="transitions[]" type="checkbox" value="slideOut" id="slideOut" /><label for="slideOut">slideOut</label>
-          <input type="submit" value="Apply" />
-        </div>
-        <div style="padding: 10px 0 0">Directions: 
-          <input name="directions[]" type="checkbox" value="left" id="left" /><label for="left">Left</label> 
-		  <input name="directions[]" type="checkbox" value="top" id="top" /><label for="top">Top</label>
-          <input name="directions[]" type="checkbox" value="right" id="right" /><label for="right">Right</label>
-		  <input name="directions[]" type="checkbox" value="bottom" id="bottom" /><label for="bottom">Bottom</label>
-        </div>
+        
         <div style="padding: 10px 0 0">Parameters: 
           <div style="padding: 10px 0 10px 10px">
-            <label for="mode">Axis
-            <select name="mode" id="mode"><option>horizontal</option><option>vertical</option></select>
-            </label>
-            <br/>Random:
-            <label for="random0">
-            <input name="random" id="random0" checked="checked" type="radio" value="0" /> No
-</label>
-            <label for="random1">
-            <input name="random" id="random1" checked="checked" type="radio" value="1" /> Yes
-</label>
-            <br/>
             <label for="duration">Duration (ms)
-            <input name="duration" type="text" value="800" size="5" id="duration" />
+            <input name="duration" type="text" value="300" size="5" id="duration" />
             </label>
+			<input type="submit" value="Apply" />
           </div>
         </div>
   </form>

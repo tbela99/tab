@@ -7,7 +7,7 @@ copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires: 
-  tab:0.1.1: 
+  tab:0.1.2: 
   - Tab
 provides: [Tab.plugins.Move]
 ...
@@ -54,7 +54,7 @@ provides: [Tab.plugins.Move]
 				
 			}, this);
 			
-			this.container = $(panels[0]).getParent().setStyles({overflow: 'hidden', position: 'relative', width: panels[0].offsetWidth, height: panels[0].offsetHeight})
+			this.container = panels[0].getParent().setStyles({overflow: 'hidden', position: 'relative', width: panels[0].offsetWidth, height: panels[0].offsetHeight})
 		},
 		move: function (newTab, curTab, newIndex, oldIndex) {
 			

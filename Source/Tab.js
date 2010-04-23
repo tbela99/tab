@@ -38,7 +38,7 @@ provides: [Tab, Tab.plugins.None]
 				fx: {
 					
 					//Fx parameters
-					transition:	'pow:in:out'
+					transition:	'sine:out'
 				},
 				inactiveClass: '', //unselected tab
 				activeClass: '', //selected tab

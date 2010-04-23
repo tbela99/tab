@@ -91,14 +91,14 @@ div.tabs a.selected {
 			form = document.forms[0], 
 			options = {
 		
-				duration: 75,
 				random: true,
-				//transitions: matches				axis: 'vertical',
+				axis: 'both',
+				//transitions: matches,
 				amount: 8,
 				fragments: 3
 			},
 			tab,
-			duration = 75;
+			duration = 600;
 		
 		if(matches && matches.length > 0) matches.each(function (v, k) { matches[k] = v.replace('transitions[]=', '') });
 		else matches = ['wave'/* , 'grow', 'floom' */];
@@ -155,11 +155,12 @@ div.tabs a.selected {
 				params: options,
 				fx: {
 				
+					//transition: 'pow:out',
 					duration: duration
 				}
 			});
 			
-		duration = ((options.duration * options.amount * options.fragments) / 1000).toInt() + 5;
+		duration = ((50 * options.amount * options.fragments) / 1000).toInt() + 5;
 		pe = new PeriodicalExecuter(function () {
 		
 			tab.next()
@@ -180,8 +181,8 @@ div.tabs a.selected {
 </head><body>
 <div class="slide">
   <div id="slide">
-    <div class="ctab"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide1.jpg" width="400" height="300" /></a><span>Caption 1: put anything you want in the caption. Note that there is a link in the image</span></div>
-        <div class="ctab hidden"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide2.jpg" width="400" height="300" /></a><span>Caption 2: put anything you want in the caption. Note that there is a link in the image</span></div>
+    <div class="ctab"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide1.jpg" width="400" height="300" /></a><span>Caption 1: put a smile on your face</span></div>
+        <div class="ctab hidden"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide2.jpg" width="400" height="300" /></a><span>Caption 2: what is this ?</span></div>
         <div class="ctab hidden"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide3.jpg" width="400" height="300" /></a><span>Caption 3: put anything you want in the caption. Note that there is a link in the image</span></div>
         <div class="ctab hidden"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide4.jpg" width="400" height="300" /></a><span>Caption 4: put anything you want in the caption. Note that there is a link in the image</span></div>
         <div class="ctab hidden"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide5.jpg" width="400" height="300" /></a><span>Caption 5: put anything you want in the caption. Note that there is a link in the image</span></div>
@@ -193,12 +194,13 @@ div.tabs a.selected {
           <input name="transitions[]" type="checkbox" value="floom" id="floom" /><label for="floom">Floom</label>
 		  <input name="transitions[]" type="checkbox" value="lines" id="lines" /><label for="lines">Lines</label>
 		  <input name="transitions[]" type="checkbox" value="chains" id="chains" /><label for="chains">Chains</label>
+		  <input name="transitions[]" type="checkbox" value="fold" id="fold" /><label for="fold">Fold</label>
           <input type="submit" value="Apply" />
         </div>
         <div style="padding: 10px 0 0">Parameters: 
           <div style="padding: 10px 0 10px 10px">
             <label for="mode">Axis
-            <select name="mode" id="mode"><option>horizontal</option><option>vertical</option></select>
+            <select name="mode" id="mode"><option>both</option><option>horizontal</option><option>vertical</option></select>
             </label>
             <br/>Random:
             <label for="random0">
@@ -209,7 +211,7 @@ div.tabs a.selected {
 </label>
             <br/>
             <label for="duration">Duration (ms)
-            <input name="duration" type="text" value="75" size="5" id="duration" />
+            <input name="duration" type="text" value="600" size="5" id="duration" />
             </label>
             <br/>
             <label for="amount">Slice

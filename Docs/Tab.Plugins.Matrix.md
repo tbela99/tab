@@ -8,10 +8,10 @@ It should work in every browser **but IE6.**
 ### Options:
 
 * random  - (*boolean*, optional) apply effects randomly. default to true.
-* mode  - (*string*, optional) define the direction of the animation. default to *horizontal*. possible values are *vertical* | *horizontal*.
+* mode  - (*string*, optional) define the direction of the animation. default to *horizontal*. possible values are *vertical* | *horizontal* | *both*.
 * amount - (*int*, optional) number of rows. default to 8
 * fragments - (*int*, optional) number of fragments per row. default to 3.
-* transitions  - (*mixed*, optional) list of transitions to use. if not specified all transitions will be applied. default to *['grow', 'floom',  'wave', 'lines', 'chains']*
+* transitions  - (*mixed*, optional) list of transitions to use. if not specified all transitions will be applied. default to *['grow', 'floom',  'wave', 'lines', 'chains', 'fold']*
 
 ## Example:
 
@@ -30,11 +30,11 @@ It should work in every browser **but IE6.**
 							fragments: 1
 						},
 						fx: {
-							duration: 5000 //this should be greater than params.duration * params.fragments * params.amount
+							duration: 500 //this should be greater than params.duration * params.fragments * params.amount
 						}
 					});
 
-	//example 1
+	//example 2
 	var swapper2 = new Tab({
 						container: 'slide2', 
 						//setup animation
@@ -42,10 +42,10 @@ It should work in every browser **but IE6.**
 						params: {
 						
 							//plugins parameters here
-							transitions: ['slideIn', 'slideOut']
+							transitions: ['fold', 'chains']
 						},
 						fx: {
-							duration: 5000
+							duration: 500
 						}
 					});
 

@@ -7,7 +7,7 @@ copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires: 
-  tab:0.1.1.1: 
+  tab:0.1.2: 
   - Tab
 provides: [Tab.plugins.Matrix]
 ...
@@ -37,20 +37,22 @@ provides: [Tab.plugins.Matrix]
 		options: {
 		
 				random: true,
-				transitions: ['grow', 'floom',  'wave', 'lines', 'chains'],
-				mode: 'horizontal',
+				transitions: ['grow', 'floom',  'wave', 'lines', 'chains', 'fold'],
+				mode: 'horizontal', //vertical | both
 				//The matrix
 				amount: 8, //slices
 				fragments: 3 //slices fragments
 			},
 		fx: {
 		
-			duration: 75
+			duration: 300
 		},
 		initialize: function(panels, options, fx) {
 			
 			this.options = $merge(this.options, options);
-			this.options.transitions = $splat(this.options.transitions);
+			
+			
+			this.options.randomMode = this.options.mode == 'both';this.options.transitions = $splat(this.options.transitions);
 			this.panels = panels;
 			this.fx = $merge(this.fx, fx);
 			
@@ -59,7 +61,7 @@ provides: [Tab.plugins.Matrix]
 			this.slides = [];
 			
 			this.current = 0;
-			this.container = $(panels[0]).setStyle('display', 'block').getParent();
+			this.container = panels[0].setStyle('display', 'block').getParent();
 			this.parents = [];
 	
 			panels.each(function (el) {
@@ -95,15 +97,14 @@ provides: [Tab.plugins.Matrix]
 								img = images[index];
 								
 								this.parents.push(img.getParent().setStyles({display: 'block', height: size.y, width: size.x}))
-								img.dispose();
+								img.destroy();
 								
 								el.setStyles({display: 'block', opacity: 0, zIndex: 1, position: 'absolute', left: 0, top: 0})
 							}, this);
 							
 							for(var i = 0; i < this.options.amount; i++) this.slices.els[i] = [];
 							
-							this.setMode(this.options.mode);
-							this.preloaded = true;
+							this.setMode(this.options.mode).preloaded = true;
 							this.move(panels[this.current], '', this.current, '')
 							
 						}.bind(this)
@@ -113,6 +114,11 @@ provides: [Tab.plugins.Matrix]
 
 		move: function (newTab, curTab, newIndex, oldIndex) { 
 
+			if(curTab) curTab.tween('opacity', 0);
+			newTab.tween('opacity', 1);
+			
+			this.current = newIndex;
+			
 			if(this.preloaded) {
 					
 				var time = 0, 
@@ -126,8 +132,6 @@ provides: [Tab.plugins.Matrix]
 					vertical,
 					bg;
 				
-				this.current = newIndex;
-				
 				for(i = 0; i < options.amount; i++) {
 					
 					for(j = 0; j < options.fragments; j++) matrix.push({index: i, fragment: j});
@@ -135,18 +139,17 @@ provides: [Tab.plugins.Matrix]
 				
 				if(options.random) {
 				
-					this.setMode(['vertical', 'horizontal'].shuffle()[0]);
+					
 					method = ['reverse', 'shuffle', false].shuffle()[0];
 					
 					//randomize order
 					if(method) matrix[method]()
 				}
 				
+				if(options.randomMode) this.setMode('both');
+				
 				vertical = options.mode == 'vertical';
 				bg = {'background-image': 'url(' + this.slides[newIndex].image + ')'};
-				
-				if(curTab) curTab.tween('opacity', 0);
-				newTab.tween('opacity', 1);
 				
 				matrix.each(function (item, index) {
 						
@@ -168,20 +171,22 @@ provides: [Tab.plugins.Matrix]
 											// destory slices when durations finishes
 											$each(slices.els, function(slice){ slice.each(function (el) { el.destroy() }) })
 											
-										}).delay(Math.max(time, this.fx.duration * 4) + 1000, this);
+										}).delay(Math.max(time, this.fx.duration) + 100, this);
 										
-						}).delay(20 + time, this, [item, vertical, $merge(this[options.mode](item), bg), transition, index == options.amount - 1]);
+						}).delay(25 + time, this, [item, vertical, $merge(this[options.mode](item), bg), transition, index == options.amount - 1]);
 					time += 50 
-				}, this);
+				}, this)
 				
 				//not ready
-			} else this.current = newIndex
+			}
 		},
 			
 		setMode: function (mode) {
 		
 			var slices = this.slices,
 				size = this.size;
+			
+			if(mode == 'both') mode = ['vertical', 'horizontal'].shuffle()[0];
 			
 			$extend(slices, {
 					width: mode == 'vertical' ? size.x / this.options.amount : size.x / slices.fragments,
@@ -234,10 +239,34 @@ provides: [Tab.plugins.Matrix]
 			transitions
 		*/
 		
+		fold: function (item, vertical, options, slice, styles) {
+		
+			var styles = $merge(styles, {
+						opacity: 0, /* */
+						width: slice.width,
+						height: slice.height,
+						position: 'absolute',
+						zIndex: 0
+					},
+					this.coordinates(item, vertical, true)
+				),
+				morph = {opacity: 1},
+				prop = vertical ? 'width' : 'height';
+				
+			morph[prop] = styles[prop];	
+			styles[prop] = 0;
+			
+			slice.els[item.index].push(new Element('div', {
+			
+				morph: this.fx,
+				styles: styles
+			}).inject(this.container, 'top').morph(morph))
+		},
+		
 		chains: function (item, vertical, options, slice, styles) {
 		
 			var morph = $merge(
-							{opacity: [0, 1]}, 
+							{opacity:1}, 
 							this.coordinates(item, vertical, true)
 						),
 						coord = vertical ? 'top' : 'left',
@@ -257,9 +286,7 @@ provides: [Tab.plugins.Matrix]
 			
 			slice.els[item.index].push(new Element('div', {
 			
-				morph: {
-					duration: this.fx.duration * 4
-				},
+				morph: this.fx,
 				styles: styles
 			}).inject(this.container, 'top').morph(morph))
 		},
@@ -268,7 +295,7 @@ provides: [Tab.plugins.Matrix]
 		lines: function (item, vertical, options, slice, styles) {
 		
 			var morph = $merge(
-							{opacity: [0, 1]}, 
+							{opacity: 1}, 
 							this.coordinates(item, vertical, true)
 						),
 						coord = vertical ? 'top' : 'left',
@@ -287,9 +314,7 @@ provides: [Tab.plugins.Matrix]
 			
 			slice.els[item.index].push(new Element('div', {
 			
-				morph: {
-					duration: this.fx.duration * 4
-				},
+				morph: this.fx,
 				styles: styles
 			}).inject(this.container, 'top').morph(morph))
 		},
@@ -305,9 +330,7 @@ provides: [Tab.plugins.Matrix]
 			
 			morph['margin-' + ['left', 'top', 'right', 'bottom'].shuffle()[0]] = [20, 0];
 			slice.els[item.index].push(new Element('div', {
-				morph: {
-					duration: this.fx.duration * 4
-				},
+				morph: this.fx,
 				styles: $merge(styles, { 
 							opacity: 0,
 							position: 'absolute',
@@ -320,9 +343,7 @@ provides: [Tab.plugins.Matrix]
 		wave: function (item, vertical, options, slice, styles) {
 		
 			slice.els[item.index].push(new Element('div', {
-				morph: {
-					duration: this.fx.duration * 4
-				},
+				morph: this.fx,
 				styles: $merge(styles, { 
 					opacity: 0,
 					position: 'absolute',
@@ -343,9 +364,7 @@ provides: [Tab.plugins.Matrix]
 			morph['margin-' + ['left', 'top', 'right', 'bottom'].shuffle()[0]] = [20, 0];
 			slice.els[item.index].push(new Element('div', {
 			
-				morph: {
-					duration: this.fx.duration * 4
-				},
+				morph: this.fx,
 				styles: $merge(styles, {
 					opacity: 0,
 					width: slice.width,

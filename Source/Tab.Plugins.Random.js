@@ -1,13 +1,13 @@
 /*
 ---
-script: Tabs.Plugins.Move.js
+script: Tabs.Plugins.Random.js
 license: MIT-style license.
 description: Random - Provide random multiple effetcs like the barack slideshow.
 copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires: 
-  tab:0.1.1: 
+  tab:0.1.2: 
   - Tab
 provides: [Tab.plugins.Random]
 ...
@@ -18,8 +18,9 @@ provides: [Tab.plugins.Random]
 			/*
 				useOpacity: false,
 				opacity: .7,
+				random: false,
+				directions: ['left', 'right', 'top', 'bottom'],
 			*/
-			
 				transitions: ['fade', 'move', 'slideIn', 'slideOut']
 			},
 		fx: {
@@ -37,10 +38,11 @@ provides: [Tab.plugins.Random]
 			['move', 'slideIn', 'slideOut'].each(function (v) {
 			
 				if(options.transitions.indexOf(v) != -1) {
+				
 					options.transitions.erase(v);
 					
 					if(v == 'move') v = '_move';
-					['left', 'right', 'top', 'bottom'].each(function (d) {
+					if(v != 'fade') $splat(options.directions || ['left', 'right', 'top', 'bottom']).each(function (d) {
 					
 						options.transitions.push(v + '-' + d)
 					})
@@ -70,7 +72,8 @@ provides: [Tab.plugins.Random]
 		},
 		move: function (newTab, curTab) {
 			
-			var transition = this.options.transitions[this.current];
+			var options = this.options,
+				transition = options.transitions[this.current];
 			this.ct = curTab;
 			this.nt = newTab;
 			
@@ -81,7 +84,7 @@ provides: [Tab.plugins.Random]
 
 			this[parts[0]](curTab, newTab, parts[1]);
                         
-			this.current = (this.current + 1) % this.options.transitions.length
+			this.current = options.random ? $random(0, options.transitions.length - 1) : (this.current + 1) % options.transitions.length
 		},
 		
 		slideIn: function (curTab, newTab, f) {
