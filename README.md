@@ -4,11 +4,11 @@ Tab
 Minimalistic but extensible tab swapper. It can be used to create a tab swapper as well as a galerie slideshow. 
 you can have effects like **Moostack**, the [barack slideshow](http://devthought.com/wp-content/moogets/BarackSlideshow/demo.html) or [jQuery nivoslider](http://nivo.dev7studios.com/) or whatever you want by providing an animation plugin. 
 
-[Demo](http://tbela99.github.com/tab/Demos/matrix.html?transitions[]=wave&mode=both&random=1&duration=300&amount=8&fragments=3)
+[Demo](http://tbela99.github.com/tab/Demos/matrix.html?transitions[]=fall&transitions[]=explode&transitions[]=implode&mode=vertical&random=0&duration=300&amount=8&fragments=3)
 
 #### More demos
 
-- [Matrix](http://tbela99.github.com/tab/Demos/matrix.html?transitions[]=wave&mode=both&random=1&duration=300&amount=8&fragments=3)
+- [Matrix](http://tbela99.github.com/tab/Demos/matrix.html?transitions[]=fall&transitions[]=explode&transitions[]=implode&mode=vertical&random=0&duration=300&amount=8&fragments=3)
 - [Random](http://tbela99.github.com/tab/Demos/random.html?transitions[]=slideOut&directions[]=left&directions[]=right&mode=horizontal&random=0&duration=800)
 - [Move](http://tbela99.github.com/tab/Demos/move.html)
 - [Stack](http://tbela99.github.com/tab/Demos/stack.html)

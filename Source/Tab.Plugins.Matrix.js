@@ -37,7 +37,8 @@ provides: [Tab.plugins.Matrix]
 		options: {
 		
 				random: true,
-				transitions: ['grow', 'floom',  'wave', 'lines', 'chains', 'fold'],
+				transitions: ['grow', 'floom', 'wave', 'lines', 'chains', 'fold', 'fall', 'explode', 'implode', 'out'],
+				sort: ['none', 'reverse', 'shuffle'],
 				mode: 'horizontal', //vertical | both
 				//The matrix
 				amount: 8, //slices
@@ -52,16 +53,23 @@ provides: [Tab.plugins.Matrix]
 			this.options = $merge(this.options, options);
 			
 			
-			this.options.randomMode = this.options.mode == 'both';this.options.transitions = $splat(this.options.transitions);
+			this.options.randomMode = this.options.mode == 'both';
+			this.options.transitions = $splat(this.options.transitions);
+			this.options.sort = $splat(this.options.sort);
 			this.panels = panels;
 			this.fx = $merge(this.fx, fx);
+			this.fx.duration = this.fx.duration.toInt();
 			
 			var size, img, images = [];
 				
 			this.slides = [];
 			
 			this.current = 0;
-			this.container = panels[0].setStyle('display', 'block').getParent();
+			this.previous = 0;
+			
+			//complete queue
+			this.queue = [];
+			this.container = panels[0].setStyles('display', 'block').getParent();
 			this.parents = [];
 	
 			panels.each(function (el) {
@@ -90,7 +98,7 @@ provides: [Tab.plugins.Matrix]
 								fragments: this.options.fragments
 							};	
 								
-							this.container.setStyles({width: size.x, height: size.y, position: 'relative', overflow: 'hidden'});
+							this.container.setStyles({width: size.x, height: size.y, position: 'relative', overflow: 'hidden', 'background-repeat': 'no-repeat'});
 										
 							panels.each(function (el, index) {
 							
@@ -99,7 +107,7 @@ provides: [Tab.plugins.Matrix]
 								this.parents.push(img.getParent().setStyles({display: 'block', height: size.y, width: size.x}))
 								img.destroy();
 								
-								el.setStyles({display: 'block', opacity: 0, zIndex: 1, position: 'absolute', left: 0, top: 0})
+								el.setStyles({display: 'block', opacity: 0, zIndex: 2, position: 'absolute', left: 0, top: 0})
 							}, this);
 							
 							for(var i = 0; i < this.options.amount; i++) this.slices.els[i] = [];
@@ -118,6 +126,7 @@ provides: [Tab.plugins.Matrix]
 			newTab.tween('opacity', 1);
 			
 			this.current = newIndex;
+			this.previous = oldIndex || 0;
 			
 			if(this.preloaded) {
 					
@@ -128,9 +137,10 @@ provides: [Tab.plugins.Matrix]
 					method, 
 					options = this.options,
 					slices = this.slices,
-					transition = options.transitions.shuffle()[0],
+					transition,
 					vertical,
-					bg;
+					bg,
+					queue = this.queue = [];
 				
 				for(i = 0; i < options.amount; i++) {
 					
@@ -139,13 +149,20 @@ provides: [Tab.plugins.Matrix]
 				
 				if(options.random) {
 				
+					method = options.sort.getRandom();
+					transition = options.transitions.getRandom()
 					
-					method = ['reverse', 'shuffle', false].shuffle()[0];
-					
-					//randomize order
-					if(method) matrix[method]()
+				} else {
+				
+					method = options.sort.shift();
+					options.sort.push(method);
+					transition = options.transitions.shift();
+					options.transitions.push(transition);
 				}
 				
+				//randomize order
+				if(method && matrix[method]) matrix[method]()
+					
 				if(options.randomMode) this.setMode('both');
 				
 				vertical = options.mode == 'vertical';
@@ -155,9 +172,6 @@ provides: [Tab.plugins.Matrix]
 						
 					i = item.index;
 					
-					// create the slices
-					if(slices.els[i].length > 0) slices.els[i].each(function (el) { el.destroy() });
-							
 					(function(item, vertical, styles, transition, step) {
 			
 							this[transition](item, vertical, options, slices, styles);
@@ -165,13 +179,23 @@ provides: [Tab.plugins.Matrix]
 							// move to the next slide
 							if (step) (function() {		
 							
-											// apply the image to the background
-											this.container.setStyles(bg);
-											
-											// destory slices when durations finishes
-											$each(slices.els, function(slice){ slice.each(function (el) { el.destroy() }) })
-											
-										}).delay(Math.max(time, this.fx.duration) + 100, this);
+								// apply the image to the background
+								this.container.setStyles(bg);
+								
+								time = 0;
+								queue.each(function (fn) {
+								
+									fn.delay(time + 25)
+									time += 50
+								});
+								
+								(function () {
+									
+									$each(slices.els, function(slice) { slice.each(function (el) { el.destroy() }) })
+									
+								}).delay(time + 25)
+								
+							}).delay(Math.max(time, this.fx.duration) + 100, this)
 										
 						}).delay(25 + time, this, [item, vertical, $merge(this[options.mode](item), bg), transition, index == options.amount - 1]);
 					time += 50 
@@ -186,7 +210,7 @@ provides: [Tab.plugins.Matrix]
 			var slices = this.slices,
 				size = this.size;
 			
-			if(mode == 'both') mode = ['vertical', 'horizontal'].shuffle()[0];
+			if(mode == 'both') mode = ['vertical', 'horizontal'].getRandom();
 			
 			$extend(slices, {
 					width: mode == 'vertical' ? size.x / this.options.amount : size.x / slices.fragments,
@@ -239,9 +263,197 @@ provides: [Tab.plugins.Matrix]
 			transitions
 		*/
 		
+		out: function (item, vertical, options, slice, styles) {
+		
+			var fx = this.fx,
+				coords = this.coordinates(item, vertical, true),
+				div = new Element('div', {
+				
+					styles: $merge(styles, {
+							opacity: 0, /* */
+							width: slice.width,
+							height: slice.height,
+							position: 'absolute',
+							zIndex: 0							
+						},
+						coords
+					)
+				}).inject(this.container, 'top'),
+				clone = div.clone().set({
+				
+					opacity: 1,
+					zIndex: 1,
+					styles: {
+						backgroundImage: 'url(' + this.slides[this.previous].image + ')'
+					},
+					morph: $merge(fx, {
+								
+							onComplete: function () {
+							
+								clone.destroy()
+							}
+						})
+				}).inject(this.container);
+				
+			
+			this.queue.push(function () {
+			
+				clone.morph({
+					
+						opacity: [1, .2],
+						width: 0,
+						height: 0
+					}
+				)
+			}.bind(this));
+				
+			//console.log(JSON.encode(fx.duration + 100))
+			slice.els[item.index].push(div.set({opacity: 1}))
+		},
+		
+		implode: function (item, vertical, options, slice, styles) {
+		
+			var fx = this.fx,
+				coords = this.coordinates(item, vertical, true),
+				div = new Element('div', {
+				
+					styles: $merge(styles, {
+							opacity: 0, /* */
+							width: slice.width,
+							height: slice.height,
+							position: 'absolute',
+							zIndex: 0							
+						},
+						coords
+					)
+				}).inject(this.container, 'top'),
+				clone = div.clone().set({
+				
+					opacity: 1,
+					zIndex: 1,
+					styles: {
+						backgroundImage: 'url(' + this.slides[this.previous].image + ')'
+					},
+					morph: $merge(fx, {
+								
+							onComplete: function () {
+							
+								(function () { clone.destroy() }).delay(50)
+							}
+						})
+				}).inject(this.container);
+				
+			
+			this.queue.push(function () {
+			
+				clone.morph({
+					
+						opacity: [1, .5],
+						left: (this.size.x.toInt() - slice.width) / 2,
+						top: (this.size.y.toInt() - slice.height) / 2
+					}
+				)
+			}.bind(this));
+				
+			//console.log(JSON.encode(fx.duration + 100))
+			slice.els[item.index].push(div.set({opacity: 1}))
+		},
+		
+		explode: function (item, vertical, options, slice, styles) {
+		
+			var fx = this.fx,
+				coords = this.coordinates(item, vertical, true),
+				div = new Element('div', {
+				
+					styles: $merge(styles, {
+							opacity: 0, /* */
+							width: slice.width,
+							height: slice.height,
+							position: 'absolute',
+							zIndex: 0							
+						},
+						coords
+					)
+				}).inject(this.container, 'top'),
+				clone = div.clone().set({
+				
+					opacity: 1,
+					zIndex: 1,
+					styles: {
+						backgroundImage: 'url(' + this.slides[this.previous].image + ')'
+					},
+					morph: $merge(fx, {
+								
+							onComplete: function () {
+							
+								clone.destroy()
+							}
+						})
+				}).inject(this.container);
+				
+			
+			this.queue.push(function () {
+			
+				clone.morph({
+					
+						opacity: [1, .2],
+						left: $random(-slice.width, this.size.x.toInt() + slice.width),
+						top: $random(-slice.height, this.size.y.toInt() + slice.height)
+					}
+				)
+			}.bind(this));
+				
+			//console.log(JSON.encode(fx.duration + 100))
+			slice.els[item.index].push(div.set({opacity: 1}))
+		},
+		
+		fall: function (item, vertical, options, slice, styles) {
+		
+			var fx = this.fx,
+				div = new Element('div', {
+				
+					styles: $merge(styles, {
+							opacity: 0, /* */
+							width: slice.width,
+							height: slice.height,
+							position: 'absolute',
+							zIndex: 0
+							
+						},
+						this.coordinates(item, vertical, true)
+					)
+				}).inject(this.container, 'top'),
+				clone = div.clone().inject(this.container).set({
+				
+					opacity: 1,
+					zIndex: 1,
+					styles: {
+						backgroundImage: 'url(' + this.slides[this.previous].image + ')'
+					}
+				});
+				
+			morph = $merge(fx, {
+							opacity: .2,	
+							onComplete: function () {
+							
+								clone.destroy()
+							}
+						});
+				
+			if(vertical) morph.top = [-slice.height, this.size.y.toInt() + slice.height].getRandom();
+			else morph.left = [-slice.width, this.size.x.toInt() + slice.width].getRandom();
+				
+			this.queue.push(function () {
+			
+				clone.morph(morph)
+			});
+				
+			slice.els[item.index].push(div.set({opacity: 1, zIndex: 0}))
+		},
+		
 		fold: function (item, vertical, options, slice, styles) {
 		
-			var styles = $merge(styles, {
+			styles = $merge(styles, {
 						opacity: 0, /* */
 						width: slice.width,
 						height: slice.height,
@@ -249,8 +461,9 @@ provides: [Tab.plugins.Matrix]
 						zIndex: 0
 					},
 					this.coordinates(item, vertical, true)
-				),
-				morph = {opacity: 1},
+				);
+				
+			var morph = {opacity: 1},
 				prop = vertical ? 'width' : 'height';
 				
 			morph[prop] = styles[prop];	
@@ -264,20 +477,21 @@ provides: [Tab.plugins.Matrix]
 		},
 		
 		chains: function (item, vertical, options, slice, styles) {
-		
+
+			styles = $merge(styles, {
+					opacity: 0,
+					width: slice.width,
+					height: slice.height,
+					position: 'absolute',
+					zIndex: 0
+			});
+
 			var morph = $merge(
 							{opacity:1}, 
 							this.coordinates(item, vertical, true)
 						),
 						coord = vertical ? 'top' : 'left',
 						scoord = vertical ? 'left' : 'top',
-				styles = $merge(styles, {
-					opacity: 0,
-					width: slice.width,
-					height: slice.height,
-					position: 'absolute',
-					zIndex: 0
-				}),
 				start = slice[vertical ? 'height' : 'width'] + morph[coord];
 				
 			styles[scoord] = morph[scoord];
@@ -291,22 +505,22 @@ provides: [Tab.plugins.Matrix]
 			}).inject(this.container, 'top').morph(morph))
 		},
 		
-		//todo: reverse effect
 		lines: function (item, vertical, options, slice, styles) {
-		
+                        
+			styles = $merge(styles, {
+				opacity: 0,
+				width: slice.width,
+				height: slice.height,
+				position: 'absolute',
+				zIndex: 0
+			});
+                                
 			var morph = $merge(
 							{opacity: 1}, 
 							this.coordinates(item, vertical, true)
 						),
 						coord = vertical ? 'top' : 'left',
-						scoord = vertical ? 'left' : 'top',
-				styles = $merge(styles, {
-					opacity: 0,
-					width: slice.width,
-					height: slice.height,
-					position: 'absolute',
-					zIndex: 0
-				});
+						scoord = vertical ? 'left' : 'top';
 				
 			styles[scoord] = morph[scoord];
 			//vertical: top: dynamic, left: fixed
@@ -319,7 +533,6 @@ provides: [Tab.plugins.Matrix]
 			}).inject(this.container, 'top').morph(morph))
 		},
 		
-		//todo: reverse effect
 		grow: function (item, vertical, options, slice, styles) {
 		
 			var morph = {
@@ -328,7 +541,7 @@ provides: [Tab.plugins.Matrix]
 				height: vertical ? [0, slice.height] : slice.height
 			};
 			
-			morph['margin-' + ['left', 'top', 'right', 'bottom'].shuffle()[0]] = [20, 0];
+			morph['margin-' + ['left', 'top', 'right', 'bottom'].getRandom()] = [20, 0];
 			slice.els[item.index].push(new Element('div', {
 				morph: this.fx,
 				styles: $merge(styles, { 
@@ -339,29 +552,27 @@ provides: [Tab.plugins.Matrix]
 			}).inject(this.container, 'top').morph(morph))
 		},
 		
-		//very cool
 		wave: function (item, vertical, options, slice, styles) {
 		
 			slice.els[item.index].push(new Element('div', {
 				morph: this.fx,
 				styles: $merge(styles, { 
-					opacity: 0,
+					opacity: 1,
 					position: 'absolute',
 					width: slice.width,
 					height: slice.height,
 					zIndex: 0
 				})
-			}).inject(this.container, 'top').morph($merge({opacity: 1}, this.coordinates(item, vertical))))
+			}).inject(this.container, 'top').morph($merge({opacity: 0}, this.coordinates(item, vertical))).morph({opacity: 1}))
 		},
 		
-		//reproduce the floom effect
 		floom: function (item, vertical, options, slice, styles) {
 		
 			var morph = {
 				opacity: 1
 			};
 			
-			morph['margin-' + ['left', 'top', 'right', 'bottom'].shuffle()[0]] = [20, 0];
+			morph['margin-' + ['left', 'top', 'right', 'bottom'].getRandom()] = [20, 0];
 			slice.els[item.index].push(new Element('div', {
 			
 				morph: this.fx,

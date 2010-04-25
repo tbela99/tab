@@ -86,58 +86,60 @@ div.tabs a.selected {
 	window.addEvent('domready', function () {
 	
 		var query = decodeURIComponent(location.search), 
-			matches = query.match(/transitions\[\]=([^&]+)/g), 
-			params,
+			//matches = query.match(/transitions\[\]=([^&]+)/g), 
+			params = query.substring(1).split('&'),
 			form = document.forms[0], 
 			options = {
 		
+				//random: true,
+				//sort: ['reverse', 'shuffle'],
+				axis: 'both',
 				//transitions: matches,
-				duration: 800,
-				random: true,				
-				axis: 'vertical'
+				amount: 8,
+				fragments: 3
 			},
 			tab,
-			duration = 1000;
+			duration = 300;
 		
-		if(matches && matches.length > 0) matches.each(function (v, k) { matches[k] = v.replace('transitions[]=', '') });
-		else matches = ['fade'/* , 'move', 'slideIn' */];
+		//if(matches && matches.length > 0) matches.each(function (v, k) { matches[k] = v.replace('transitions[]=', '') });
+		//else matches = ['wave'/* , 'grow', 'floom' */];
 		
-		matches.each(function(v) { form[v].checked = true });
+		//matches.each(function(v) { form[v].checked = true });
 		
-		options.transitions = matches;
-		
-		matches = query.match(/directions\[\]=([^&]+)/g);
-		
-		if(matches && matches.length > 0) {
-			
-			matches.each(function (v, k) { matches[k] = v.replace('directions[]=', '') });
-			
-			matches.each(function(v) { form[v].checked = true });
-			
-			options.directions = matches
-		}
-		
-		params = query.replace(/^\?|(&?((transitions)|(directions))\[\]=([^&]+)&?)/g, '').split('&')
-			
+		//alert(params);
 		if(params && params.length > 0) {
 			params.each(function (v) {
 		
-				var param = v.split('='),
+				//alert(v.replace('[]', '').split('='));
+				var param = v/*.replace('[]', '')*/.split('='),
 					el = form[param[0]];
 				
 				if(param.length > 1) {
 					
 					if(el.length) {
 					
-						if($(el)) $A(el.options).each(function (option, index) {
+						if($(el)) {
+							
+						$A(el.options).each(function (option, index) {
 						
 								if(option.value == param[1]) el.selectedIndex = index
 							});
 							
-						//radio
-						else $A(el).each(function (el) {
+							options[param[0]] = param[1]
+						}
+						//radio - checkbox
+						else $A(el).each(function (c) {
 						
-							if(el.value == param[1]) el.checked = true
+							if(c.value == param[1]) {
+							
+								if(el.length > 1) {
+									
+									options[param[0].replace('[]', '')] = options[param[0].replace('[]', '')] || [];
+									options[param[0].replace('[]', '')].push(param[1])
+								}
+								else options[param[0].replace('[]', '')] = param[1];
+								c.checked = true
+							}
 						})
 					}
 					else {
@@ -147,15 +149,15 @@ div.tabs a.selected {
 							if(option.value == param[1]) el.selectedIndex = index
 						});
 						else $(el).set('value', param[1]);
-					}
 					//if($(el).get('tag') == 'select') $A(el.options)
 					if(param[0] == 'duration') duration = param[1];
 					else options[param[0]] = param[1]
+					}
 				}
 			});
 			
 			//needed
-			if($type(options.random) != 'boolean') options.random = options.random.toInt();
+			if(options.random && options.random.toInt) options.random = options.random.toInt();
 		}
 		
 		tab = new Tab({

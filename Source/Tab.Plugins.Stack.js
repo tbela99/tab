@@ -42,7 +42,6 @@ provides: [Tab.plugins.Stack]
 			this.fx.duration  = (this.fx.duration / 2).toInt();
 			
 			var wrapper = new Element('div', {
-				'class': 'stackWrapper',
 				styles: {
 					position: 'absolute'
 				}
@@ -105,7 +104,8 @@ provides: [Tab.plugins.Stack]
 		reindex: function() {
 			var z = this.stack.length;
 			this.stack.each(function(wrapper){
-				wrapper.setStyle('z-index', z--);
+			
+				wrapper.setStyle('z-index', z--)
 			});
 
 			return this;
@@ -135,11 +135,7 @@ provides: [Tab.plugins.Stack]
 					this.stack.erase(current).push(current);
 			}
 			
-			if(this.reindexing) {
-			
-				$clear(this.reindexing);
-				this.reindexing = null;
-			}
+			if(this.reindexing) $clear(this.reindexing);
 
 			this.reindexing = this.reindex.delay(this.fx.duration);
 

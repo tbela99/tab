@@ -19,8 +19,8 @@ provides: [Tab.plugins.Random]
 				useOpacity: false,
 				opacity: .7,
 				random: false,
-				directions: ['left', 'right', 'top', 'bottom'],
 			*/
+				directions: ['left', 'right', 'top', 'bottom'],
 				transitions: ['fade', 'move', 'slideIn', 'slideOut']
 			},
 		fx: {
@@ -34,6 +34,7 @@ provides: [Tab.plugins.Random]
 					
 			options = this.options = $merge(this.options, options);
 			options.transitions = $splat(this.options.transitions);
+			options.directions = $splat(this.options.directions);
 			
 			['move', 'slideIn', 'slideOut'].each(function (v) {
 			
@@ -42,12 +43,12 @@ provides: [Tab.plugins.Random]
 					options.transitions.erase(v);
 					
 					if(v == 'move') v = '_move';
-					if(v != 'fade') $splat(options.directions || ['left', 'right', 'top', 'bottom']).each(function (d) {
+					if(v != 'fade') this.options.directions.each(function (d) {
 					
 						options.transitions.push(v + '-' + d)
 					})
 				}
-			});
+			}, this);
 			
 			this.panels = panels;
 			

@@ -84,14 +84,15 @@ div.tabs a.selected {
 //<![CDATA[
 
 	window.addEvent('domready', function () {
-	
+
 		var query = decodeURIComponent(location.search), 
-			matches = query.match(/transitions\[\]=([^&]+)/g), 
-			params = query.replace(/^\?|(&?transitions\[\]=([^&]+)&?)/g, '').split('&'),
+			//matches = query.match(/transitions\[\]=([^&]+)/g), 
+			params = query.substring(1).split('&'),
 			form = document.forms[0], 
 			options = {
 		
-				random: true,
+				//random: true,
+				//sort: ['reverse', 'shuffle'],
 				axis: 'both',
 				//transitions: matches,
 				amount: 8,
@@ -100,30 +101,45 @@ div.tabs a.selected {
 			tab,
 			duration = 300;
 		
-		if(matches && matches.length > 0) matches.each(function (v, k) { matches[k] = v.replace('transitions[]=', '') });
-		else matches = ['wave'/* , 'grow', 'floom' */];
+		//if(matches && matches.length > 0) matches.each(function (v, k) { matches[k] = v.replace('transitions[]=', '') });
+		//else matches = ['wave'/* , 'grow', 'floom' */];
 		
-		matches.each(function(v) { form[v].checked = true });
+		//matches.each(function(v) { form[v].checked = true });
 		
+		//alert(params);
 		if(params && params.length > 0) {
 			params.each(function (v) {
 		
-				var param = v.split('='),
+				//alert(v.replace('[]', '').split('='));
+				var param = v/*.replace('[]', '')*/.split('='),
 					el = form[param[0]];
 				
 				if(param.length > 1) {
 					
 					if(el.length) {
 					
-						if($(el)) $A(el.options).each(function (option, index) {
+						if($(el)) {
+							
+						$A(el.options).each(function (option, index) {
 						
 								if(option.value == param[1]) el.selectedIndex = index
 							});
 							
-						//radio
-						else $A(el).each(function (el) {
+							options[param[0]] = param[1]
+						}
+						//radio - checkbox
+						else $A(el).each(function (c) {
 						
-							if(el.value == param[1]) el.checked = true
+							if(c.value == param[1]) {
+							
+								if(el.length > 1) {
+									
+									options[param[0].replace('[]', '')] = options[param[0].replace('[]', '')] || [];
+									options[param[0].replace('[]', '')].push(param[1])
+								}
+								else options[param[0].replace('[]', '')] = param[1];
+								c.checked = true
+							}
 						})
 					}
 					else {
@@ -133,19 +149,16 @@ div.tabs a.selected {
 							if(option.value == param[1]) el.selectedIndex = index
 						});
 						else $(el).set('value', param[1]);
-					}
 					//if($(el).get('tag') == 'select') $A(el.options)
 					if(param[0] == 'duration') duration = param[1];
 					else options[param[0]] = param[1]
+					}
 				}
 			});
 			
 			//needed
-			if($type(options.random) != 'boolean') options.random = options.random.toInt();
-		}
-		
-		//delay should great than options.animation * options.amount * options.fragments
-		options.transitions = matches;
+			if(options.random && options.random.toInt) options.random = options.random.toInt();
+		};
 		
 		tab = new Tab({
 				container: 'slide', 
@@ -159,6 +172,8 @@ div.tabs a.selected {
 					duration: duration
 				}
 			});
+			
+		//console.log(JSON.encode(options))
 			
 		duration = ((50 * options.amount * options.fragments) / 1000).toInt() + 5;
 		pe = new PeriodicalExecuter(function () {
@@ -195,6 +210,10 @@ div.tabs a.selected {
 		  <input name="transitions[]" type="checkbox" value="lines" id="lines" /><label for="lines">Lines</label>
 		  <input name="transitions[]" type="checkbox" value="chains" id="chains" /><label for="chains">Chains</label>
 		  <input name="transitions[]" type="checkbox" value="fold" id="fold" /><label for="fold">Fold</label>
+		  <input name="transitions[]" type="checkbox" value="fall" id="fall" /><label for="fall">Fall</label>
+		  <input name="transitions[]" type="checkbox" value="explode" id="explode" /><label for="explode">Explode</label>
+		  <input name="transitions[]" type="checkbox" value="implode" id="implode" /><label for="implode">Implode</label>
+		  <input name="transitions[]" type="checkbox" value="out" id="out" /><label for="out">Out</label>
           <input type="submit" value="Apply" />
         </div>
         <div style="padding: 10px 0 0">Parameters: 
@@ -202,12 +221,22 @@ div.tabs a.selected {
             <label for="mode">Axis
             <select name="mode" id="mode"><option>both</option><option>horizontal</option><option>vertical</option></select>
             </label>
+            <br/>Sort:
+            <label for="sort0">
+            <input name="sort[]" id="sort0" type="checkbox" value="none" /> None
+</label>
+            <label for="sort1">
+            <input name="sort[]" id="sort1" type="checkbox" value="shuffle" /> Shuffle
+</label>
+            <label for="sort2">
+            <input name="sort[]" id="sort2" type="checkbox" value="reverse" /> Reverse
+</label>
             <br/>Random:
             <label for="random0">
-            <input name="random" id="random0" checked="checked" type="radio" value="0" /> No
+            <input name="random" id="random0" type="radio" value="0" /> No
 </label>
             <label for="random1">
-            <input name="random" id="random1" checked="checked" type="radio" value="1" /> Yes
+            <input name="random" id="random1"  type="radio" value="1" /> Yes
 </label>
             <br/>
             <label for="duration">Duration (ms)

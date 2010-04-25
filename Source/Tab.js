@@ -38,7 +38,8 @@ provides: [Tab, Tab.plugins.None]
 				fx: {
 					
 					//Fx parameters
-					transition:	'sine:out'
+					transition:	'sine:out',
+					link: 'chain'
 				},
 				inactiveClass: '', //unselected tab
 				activeClass: '', //selected tab
