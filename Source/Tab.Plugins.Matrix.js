@@ -7,7 +7,7 @@ copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires: 
-  tab:0.1.3: 
+  tab:0.1.3.1: 
   - Tab
 provides: [Tab.plugins.Matrix]
 ...
@@ -37,7 +37,7 @@ provides: [Tab.plugins.Matrix]
 		options: {
 		
 				random: true,
-				transitions: ['grow', 'floom', 'wave', 'lines', 'chains', 'fold', 'fall', 'explode', 'implode', 'out'],
+				transitions: ['grow', 'floom', 'wave', 'lines', 'chains', 'fold', 'fall', 'explode', 'implode', 'out', 'split'],
 				sort: ['none', 'reverse', 'shuffle'],
 				mode: 'horizontal', //vertical | both
 				//The matrix
@@ -68,7 +68,8 @@ provides: [Tab.plugins.Matrix]
 			this.previous = 0;
 			
 			//complete queue
-			this.queue = [];
+			//this.queue = [];
+			//this.tmp = {};
 			this.container = panels[0].setStyles('display', 'block').getParent();
 			this.parents = [];
 	
@@ -140,7 +141,8 @@ provides: [Tab.plugins.Matrix]
 					transition,
 					vertical,
 					bg,
-					queue = this.queue = [];
+					queue = this.queue = [],
+					tmp = this.tmp = {};
 				
 				for(i = 0; i < options.amount; i++) {
 					
@@ -355,7 +357,7 @@ provides: [Tab.plugins.Matrix]
 			slice.els[item.index].push(div.set({opacity: 1}))
 		},
 		
-		explode: function (item, vertical, options, slice, styles) {
+		split: function (item, vertical, options, slice, styles) {
 		
 			var fx = this.fx,
 				coords = this.coordinates(item, vertical, true),
@@ -399,6 +401,61 @@ provides: [Tab.plugins.Matrix]
 				)
 			}.bind(this));
 				
+			slice.els[item.index].push(div.set({opacity: 1}))
+		},
+		
+		explode: function (item, vertical, options, slice, styles) {
+		
+			var fx = this.fx,
+				tmp = this.tmp,
+				coords = this.coordinates(item, vertical, true),
+				div = new Element('div', {
+				
+					styles: $merge(styles, {
+							opacity: 0, /* */
+							width: slice.width,
+							height: slice.height,
+							position: 'absolute',
+							zIndex: 0							
+						},
+						coords
+					)
+				}).inject(this.container, 'top'),
+				clone = div.clone().set({
+				
+					opacity: 1,
+					zIndex: 1,
+					styles: {
+						backgroundImage: 'url(' + this.slides[this.previous].image + ')'
+					}
+				}).inject(this.container);
+				
+			tmp.clones = tmp.clones || [];
+			tmp.morph = tmp.morph || {};
+				
+			if(tmp.clones.length == 0) {
+				
+				this.queue.push(function () {
+					
+					new Fx.Elements(tmp.clones, $merge(fx, {
+					
+						duration: Math.max(fx.duration, 2000),
+						onComplete: function () {
+						
+							tmp.clones.each(function (el) { el.destroy() })
+						}
+					})).start(tmp.morph)
+				}.bind(this))
+			};
+			
+			tmp.morph[tmp.clones.length] = {
+						
+							opacity: 0,
+							left: $random(-slice.width, this.size.x.toInt() + slice.width),
+							top: $random(-slice.height, this.size.y.toInt() + slice.height)
+						};
+			tmp.clones.push(clone);
+						
 			slice.els[item.index].push(div.set({opacity: 1}))
 		},
 		

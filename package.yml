@@ -3,4 +3,4 @@ author: tbela99
 category: Interface
 tags: [animation, tab swapper, slideshow, tabs]
 demo: http://tbela99.github.com/tab/Demos/matrix.html?transitions[]=fall&transitions[]=explode&transitions[]=implode&mode=vertical&random=0&duration=300&amount=8&fragments=3
-current: 0.1.3
+current: 0.1.3.1
