@@ -46,7 +46,7 @@ provides: [Tab.plugins.Matrix]
 			},
 		fx: {
 		
-			duration: 300
+			duration: 800
 		},
 		initialize: function(panels, options, fx) {
 			
