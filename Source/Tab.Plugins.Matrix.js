@@ -170,8 +170,6 @@ provides: [Tab.plugins.Matrix]
 				
 				matrix.each(function (item, index) {
 						
-					i = item.index;
-					
 					(function(item, vertical, styles, transition, step) {
 			
 							this[transition](item, vertical, options, slices, styles);
@@ -307,7 +305,6 @@ provides: [Tab.plugins.Matrix]
 				)
 			}.bind(this));
 				
-			//console.log(JSON.encode(fx.duration + 100))
 			slice.els[item.index].push(div.set({opacity: 1}))
 		},
 		
@@ -355,7 +352,6 @@ provides: [Tab.plugins.Matrix]
 				)
 			}.bind(this));
 				
-			//console.log(JSON.encode(fx.duration + 100))
 			slice.els[item.index].push(div.set({opacity: 1}))
 		},
 		
@@ -403,7 +399,6 @@ provides: [Tab.plugins.Matrix]
 				)
 			}.bind(this));
 				
-			//console.log(JSON.encode(fx.duration + 100))
 			slice.els[item.index].push(div.set({opacity: 1}))
 		},
 		
@@ -429,16 +424,16 @@ provides: [Tab.plugins.Matrix]
 					zIndex: 1,
 					styles: {
 						backgroundImage: 'url(' + this.slides[this.previous].image + ')'
-					}
-				});
-				
-			morph = $merge(fx, {
-							opacity: .2,	
+					},
+					morph: $merge(fx, {	
 							onComplete: function () {
 							
 								clone.destroy()
 							}
-						});
+						})
+				});
+				
+			morph = {opacity: .2};
 				
 			if(vertical) morph.top = [-slice.height, this.size.y.toInt() + slice.height].getRandom();
 			else morph.left = [-slice.width, this.size.x.toInt() + slice.width].getRandom();
