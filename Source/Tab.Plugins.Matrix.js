@@ -168,7 +168,7 @@ provides: [Tab.plugins.Matrix]
 				if(options.randomMode) this.setMode('both');
 				
 				vertical = options.mode == 'vertical';
-				bg = {'background-image': 'url(' + this.slides[newIndex].image + ')'};
+				bg = {'background-image': 'url(' + this.slides[newIndex].image + ')', 'background-repeat': 'no-repeat'};
 				
 				matrix.each(function (item, index) {
 						
