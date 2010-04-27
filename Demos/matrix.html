@@ -168,14 +168,14 @@ div.tabs a.selected {
 				params: options,
 				fx: {
 				
-					//transition: 'pow:out',
+					//transition: 'bounce:in',
 					duration: duration
 				}
 			});
 			
 		//console.log(JSON.encode(options))
 			
-		duration = ((50 * options.amount * options.fragments) / 1000).toInt() + 5;
+		duration = ((50 * options.amount * options.fragments) / 1000).toInt() + 10;
 		pe = new PeriodicalExecuter(function () {
 		
 			tab.next()
