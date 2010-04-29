@@ -132,7 +132,7 @@ div.tabs a.selected {
 						
 							if(c.value == param[1]) {
 							
-								if(el.length > 1) {
+								if(el.length > 1 && el[0].type == 'checkbox') {
 									
 									options[param[0].replace('[]', '')] = options[param[0].replace('[]', '')] || [];
 									options[param[0].replace('[]', '')].push(param[1])

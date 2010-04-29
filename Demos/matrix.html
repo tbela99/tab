@@ -99,13 +99,14 @@ div.tabs a.selected {
 				fragments: 3
 			},
 			tab,
-			duration = 300;
+			duration = 800;
 		
 		//if(matches && matches.length > 0) matches.each(function (v, k) { matches[k] = v.replace('transitions[]=', '') });
 		//else matches = ['wave'/* , 'grow', 'floom' */];
 		
 		//matches.each(function(v) { form[v].checked = true });
 		
+		//console.log(params)
 		//alert(params);
 		if(params && params.length > 0) {
 			params.each(function (v) {
@@ -114,6 +115,7 @@ div.tabs a.selected {
 				var param = v/*.replace('[]', '')*/.split('='),
 					el = form[param[0]];
 				
+				//console.log(param)
 				if(param.length > 1) {
 					
 					if(el.length) {
@@ -132,7 +134,7 @@ div.tabs a.selected {
 						
 							if(c.value == param[1]) {
 							
-								if(el.length > 1) {
+								if(el.length > 1 && el[0].type == 'checkbox') {
 									
 									options[param[0].replace('[]', '')] = options[param[0].replace('[]', '')] || [];
 									options[param[0].replace('[]', '')].push(param[1])
@@ -241,7 +243,7 @@ div.tabs a.selected {
 </label>
             <br/>
             <label for="duration">Duration (ms)
-            <input name="duration" type="text" value="300" size="5" id="duration" />
+            <input name="duration" type="text" value="800" size="5" id="duration" />
             </label>
             <br/>
             <label for="amount">Slice

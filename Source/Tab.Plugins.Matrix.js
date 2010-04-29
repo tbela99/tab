@@ -36,10 +36,49 @@ provides: [Tab.plugins.Matrix]
 	Tab.prototype.plugins.Matrix = new Class({
 		options: {
 		
+				/* per transition settings, here you go! */
+				/*
+				settings: {
+				
+					split: {
+					
+						params: {
+						
+							random: true,
+							sort: ['reverse', 'none'],
+							amount: 10,
+							fragments: 5
+						}
+					},
+					fold: {
+					
+						params: {
+						
+							mode: 'vertical',
+							amount: 10,
+							fragments: 1
+						}
+					},
+					lines: {
+					
+						fx: {
+						
+							transition: 'bounce:out'
+						}
+					},
+					explode: {
+					
+						fx: {
+						
+							transition: 'bounce:in'
+						}
+					}
+				},
+				*/
 				random: true,
 				transitions: ['grow', 'floom', 'wave', 'lines', 'chains', 'fold', 'fall', 'explode', 'implode', 'out', 'split'],
 				sort: ['none', 'reverse', 'shuffle'],
-				mode: 'horizontal', //vertical | both
+				mode: 'vertical', //horizontal | both
 				//The matrix
 				amount: 8, //slices
 				fragments: 3 //slices fragments
@@ -50,15 +89,24 @@ provides: [Tab.plugins.Matrix]
 		},
 		initialize: function(panels, options, fx) {
 			
+			//console.log(JSON.encode(options));
 			this.options = $merge(this.options, options);
+			this.settings = this.options.settings || {};
 			
+			delete this.options.settings;
 			
 			this.options.randomMode = this.options.mode == 'both';
 			this.options.transitions = $splat(this.options.transitions);
 			this.options.sort = $splat(this.options.sort);
-			this.panels = panels;
+			
 			this.fx = $merge(this.fx, fx);
 			this.fx.duration = this.fx.duration.toInt();
+			
+			//unlink
+			this._options = $merge(this.options);
+			this._fx = $merge(this.fx);
+			
+			this.panels = panels;
 			
 			var size, img, images = [];
 				
@@ -131,6 +179,9 @@ provides: [Tab.plugins.Matrix]
 			
 			if(this.preloaded) {
 					
+				this.fx = this._fx;
+				this.options = this._options;
+				
 				var time = 0, 
 					i, 
 					j,
@@ -138,19 +189,13 @@ provides: [Tab.plugins.Matrix]
 					method, 
 					options = this.options,
 					slices = this.slices,
-					//els = slices.els,
 					transition,
 					vertical,
 					bg,
 					queue = [],
 					tmp = {},
-					els = {};
-				
-				for(i = 0; i < options.amount; i++) {
-					
-					els[i] = [];
-					for(j = 0; j < options.fragments; j++) matrix.push({index: i, fragment: j});
-				}
+					els = {},
+					settings;
 				
 				if(options.random) {
 				
@@ -165,10 +210,39 @@ provides: [Tab.plugins.Matrix]
 					options.transitions.push(transition);
 				}
 				
+				settings = this.settings[transition];
+				
+				if(settings) {
+					
+					this.fx = $merge(this._fx, settings.fx);
+					options = this.options = $merge(this._options, settings.params);
+					
+					options.transitions = $splat(options.transitions);
+					options.sort = $splat(options.sort);
+					options.randomMode = options.mode == 'both';
+					this.fx.duration = this.fx.duration.toInt();
+					
+					if(options.random) method = options.sort.getRandom();
+						
+					else {
+					
+						method = options.sort.shift();
+						options.sort.push(method)
+					}
+				}
+								
+				slices.fragments = options.fragments;
+				
+				for(i = 0; i < options.amount; i++) {
+					
+					els[i] = [];
+					for(j = 0; j < options.fragments; j++) matrix.push({index: i, fragment: j});
+				}
+				
 				//randomize order
 				if(method && matrix[method]) matrix[method]();
 					
-				if(options.randomMode) this.setMode('both');
+				this.setMode(options.randomMode == 'both' ? 'both' : options.mode);
 				
 				vertical = options.mode == 'vertical';
 				bg = {'background-image': 'url(' + this.slides[newIndex].image + ')', 'background-repeat': 'no-repeat'};
@@ -177,9 +251,10 @@ provides: [Tab.plugins.Matrix]
 						
 					(function(item, vertical, styles, transition, step) {
 			
+							// move to the next slide
 							this[transition](item, vertical, options, slices, styles, els, queue, tmp);
 							
-							// move to the next slide
+							//finish and clean up
 							if (step) (function() {		
 							
 								// apply the image to the background
@@ -608,10 +683,10 @@ provides: [Tab.plugins.Matrix]
 			}).inject(this.container, 'top').morph(morph))
 		},
 		
-		wave: function (item, vertical, options, slice, styles, els) {
+		wave: function (item, vertical, options, slice, styles, els, queue) {
 		
-			els[item.index].push(new Element('div', {
-				morph: this.fx,
+			var morph = new Element('div', {
+				morph: $merge(this.fx, {duration: this.fx.duration / 2}),
 				styles: $merge(styles, { 
 					opacity: 1,
 					position: 'absolute',
@@ -619,7 +694,12 @@ provides: [Tab.plugins.Matrix]
 					height: slice.height,
 					zIndex: 0
 				})
-			}).inject(this.container, 'top').morph($merge({opacity: 0}, this.coordinates(item, vertical))).morph({opacity: 1}))
+			}).inject(this.container, 'top').morph($merge({opacity: 0}, this.coordinates(item, vertical))).morph({opacity: 1});
+			
+			queue.push(function () {
+			
+				morph.destroy()
+			})
 		},
 		
 		floom: function (item, vertical, options, slice, styles, els) {
