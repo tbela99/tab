@@ -5,7 +5,6 @@ Minimalistic but extensible tab swapper. It can be used to create a tab swapper 
 you can have effects like **Moostack**, the [barack slideshow](http://devthought.com/wp-content/moogets/BarackSlideshow/demo.html) or [jQuery nivoslider](http://nivo.dev7studios.com/) or whatever you want by providing an animation plugin. 
 
 [Demo](http://tbela99.github.com/tab/Demos/matrix.html)
-![Screenshot](http://tbela99.github.com/tab/thumbnail.jpg)
 
 #### More demos
 
