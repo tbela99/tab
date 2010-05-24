@@ -93,10 +93,11 @@ div.tabs a.selected {
 		
 				//random: true,
 				//sort: ['reverse', 'shuffle'],
-				axis: 'both',
+				//axis: 'both',
 				//transitions: matches,
-				amount: 8,
-				fragments: 3
+				//amount: 8,
+				//fragments: 3,
+				circular: true
 			},
 			tab,
 			duration = 300;
@@ -175,7 +176,7 @@ div.tabs a.selected {
 			
 		pe = new PeriodicalExecuter(function () {
 		
-			tab.next()
+			tab.previous()
 		}, duration / 1000 + 5);
 		
 		$$('div.tabs a').each(function (el) {

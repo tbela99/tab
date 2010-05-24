@@ -105,22 +105,22 @@ provides: [Tab, Tab.plugins.None]
 			
 			next: function () {
 			
-				return this.setSelectedIndex((this.getSelectedIndex() + this.panels.length + 1) % this.panels.length);
+				return this.setSelectedIndex((this.getSelectedIndex() + this.panels.length + 1) % this.panels.length, 1);
 			},
 			
 			previous: function () {
 			
-				return this.setSelectedIndex((this.getSelectedIndex() + this.panels.length - 1) % this.panels.length);
+				return this.setSelectedIndex((this.getSelectedIndex() + this.panels.length - 1) % this.panels.length, -1);
 			},
 			
-			getSelectedIndex: function() { return this.current; },
+			getSelectedIndex: function() { return this.current },
 			
-			setSelectedIndex: function(index) {
+			setSelectedIndex: function(index, direction) {
 
 				var current = this.current,
 					curPanel = this.panels[current],
 					newPanel = this.panels[index],
-					params = [newPanel, curPanel, index, current];
+					params = [newPanel, curPanel, index, current, direction];
 							
 				if(this.current == index || this.selected == newPanel || index < 0 || index >= this.panels.length) return this;
 							
