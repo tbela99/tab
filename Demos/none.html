@@ -84,8 +84,7 @@ div.tabs a.selected {
 
 	window.addEvent('domready', function () {
 	
-		var query = decodeURIComponent(location.search), 
-			//matches = query.match(/transitions\[\]=([^&]+)/g), 
+		var query = decodeURIComponent(location.search),  
 			params = query.substring(1).split('&'),
 			form = document.forms[0], 
 			options = {
@@ -100,64 +99,77 @@ div.tabs a.selected {
 			tab,
 			duration = 300;
 		
-		//if(matches && matches.length > 0) matches.each(function (v, k) { matches[k] = v.replace('transitions[]=', '') });
-		//else matches = ['wave'/* , 'grow', 'floom' */];
-		
-		//matches.each(function(v) { form[v].checked = true });
-		
-		//alert(params);
 		if(params && params.length > 0) {
-			params.each(function (v) {
-		
-				//alert(v.replace('[]', '').split('='));
-				var param = v/*.replace('[]', '')*/.split('='),
-					el = form[param[0]];
+			
+			var tb = {};
+			
+			params.each(function (val) {
+			
+				val = val.split('=');
 				
-				if(param.length > 1) {
-					
+				if(val[0].test(/\[.*]$/)) {
+				
+					tb[val[0]] = tb[val[0]] || [];
+					tb[val[0]].push(val[1])
+				} else tb[val[0]] = val[1]
+			});
+			
+			$each(tb, function (val, key) {
+		
+				var el = form[key];
+				
+				if(el) {
+				
 					if(el.length) {
 					
+						//select
 						if($(el)) {
 							
-						$A(el.options).each(function (option, index) {
-						
-								if(option.value == param[1]) el.selectedIndex = index
-							});
+							$A(el.options).each(function (option, index) {
 							
-							options[param[0]] = param[1]
+								if(option.value == val) el.selectedIndex = index
+							});
+								
+							options[key] = val
 						}
 						//radio - checkbox
-						else $A(el).each(function (c) {
+						else {
 						
-							if(c.value == param[1]) {
+							val = $splat(val);
+							$A(el).each(function (c) {
 							
-								if(el.length > 1) {
+								for(var i = val.length - 1; i >= 0; i--)
+									if(c.value == val[i]) {
 									
-									options[param[0].replace('[]', '')] = options[param[0].replace('[]', '')] || [];
-									options[param[0].replace('[]', '')].push(param[1])
-								}
-								else options[param[0].replace('[]', '')] = param[1];
-								c.checked = true
-							}
-						})
+										if(el.length > 1 && el[0].type == 'checkbox') {
+											
+											options[key.replace('[]', '')] = val
+										}
+										else options[key.replace('[]', '')] = val[i];
+										c.checked = true
+									}
+							})
+						}
+						
 					}
 					else {
 					
 						if($(el).get('tag') == 'select') $A(el.options).each(function (option, index) {
 						
-							if(option.value == param[1]) el.selectedIndex = index
+							if(option.value == val) el.selectedIndex = index
 						});
-						else $(el).set('value', param[1]);
-					//if($(el).get('tag') == 'select') $A(el.options)
-					if(param[0] == 'duration') duration = param[1];
-					else options[param[0]] = param[1]
+						else $(el).set('value', val);
+						//if($(el).get('tag') == 'select') $A(el.options)
+						if(key == 'duration') duration = val;
+						else options[key] = val
 					}
 				}
 			});
 			
 			//needed
 			if(options.random && options.random.toInt) options.random = options.random.toInt();
-		}
+		};
+		
 		
 		tab = new Tab({
 				container: 'slide', 

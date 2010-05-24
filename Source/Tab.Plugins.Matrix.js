@@ -7,7 +7,7 @@ copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires: 
-  tab:0.1.3.3: 
+  tab:0.1.3.4: 
   - Tab
 provides: [Tab.plugins.Matrix]
 ...
@@ -89,7 +89,6 @@ provides: [Tab.plugins.Matrix]
 		},
 		initialize: function(panels, options, fx) {
 			
-			//console.log(JSON.encode(options));
 			this.options = $merge(this.options, options);
 			this.settings = this.options.settings || {};
 			
@@ -115,9 +114,6 @@ provides: [Tab.plugins.Matrix]
 			this.current = 0;
 			this.previous = 0;
 			
-			//complete queue
-			//this.queue = [];
-			//this.tmp = {};
 			this.container = panels[0].setStyles('display', 'block').getParent();
 			this.parents = [];
 	
@@ -149,7 +145,7 @@ provides: [Tab.plugins.Matrix]
 								fragments: this.options.fragments
 							};
 							
-							this.container.setStyles({width: size.x, height: size.y, position: 'relative', overflow: 'hidden', 'background-repeat': 'no-repeat'});
+							this.container.setStyles({width: size.x, height: size.y, position: 'relative', overflow: 'hidden', backgroundRepeat: 'no-repeat'});
 										
 							panels.each(function (el, index) {
 							
@@ -242,10 +238,10 @@ provides: [Tab.plugins.Matrix]
 				//randomize order
 				if(method && matrix[method]) matrix[method]();
 					
-				this.setMode(options.randomMode == 'both' ? 'both' : options.mode);
+				this.setMode(options.randomMode ? 'both' : options.mode);
 				
 				vertical = options.mode == 'vertical';
-				bg = {'background-image': 'url(' + this.slides[newIndex].image + ')', 'background-repeat': 'no-repeat'};
+				bg = {backgroundImage: 'url(' + this.slides[newIndex].image + ')', backgroundRepeat: 'no-repeat'};
 				
 				matrix.each(function (item, index) {
 						
@@ -303,7 +299,7 @@ provides: [Tab.plugins.Matrix]
 			var slices = this.slices;
 			
 			return {
-				'background-position': '-' + (item.fragment * slices.width) + 'px -' + (this.slices.height * item.index) + 'px'
+				backgroundPosition: '-' + (item.fragment * slices.width) + 'px -' + (this.slices.height * item.index) + 'px'
 			};	
 		},
 		
@@ -312,7 +308,7 @@ provides: [Tab.plugins.Matrix]
 			var slices = this.slices;
 			
 			return {
-				'background-position': '-' + (this.slices.width * item.index) + 'px -' + (item.fragment * slices.height) + 'px'
+				backgroundPosition: '-' + (this.slices.width * item.index) + 'px -' + (item.fragment * slices.height) + 'px'
 			};
 		},
 		
