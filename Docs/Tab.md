@@ -95,7 +95,11 @@ set the displayed panel.
 ### Arguments:
 
 - index - (*int*) index of the panel to display.
+- direction - (*int*, optional) direction of the animation. allowed values are -1 for right to left and 1 for left to right. this is used in Tab.plugins.Move when [circular][] is true
 
 ### Returns:
 
 * (*object*) - This Tab instance.
+
+
+[circular]: [Tab.Plugins.Move#Tabs-plugins:options]

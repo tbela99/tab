@@ -30,7 +30,8 @@ provides: [Tab.plugins.Move]
 		},
 		initialize: function(panels, options, fx) {
 		
-			options = this.options = $merge(this.options, options);
+			this.options = $merge(this.options, options);
+			
 			this.panels = panels.map(function (el) {
 			
 				
@@ -87,18 +88,16 @@ provides: [Tab.plugins.Move]
 						index = (i + oldIndex + length) % length;
 						panel = panels[index];
 						
-						
 						if(horizontal) panel.setStyle('left', pos);
 						else panel.setStyles({left: 0, top: pos});
 						pos -= panel[side];
 					}
 					
 					//ltr
-				} else for(i = 0; i < length; i++) {
+				} else if(direction == 1) for(i = 0; i < length; i++) {
 				
 					index = (i + oldIndex + length) % length;
-					panel = panels[index];
-				
+					panel = panels[index];				
 					
 					if(horizontal) panel.setStyle('left', pos);
 					else panel.setStyles({left: 0, top: pos});

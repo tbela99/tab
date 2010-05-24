@@ -87,7 +87,17 @@ provides: [Tab, Tab.plugins.None]
 									
 						styles: {cursor: 'pointer'}, 
 						events: {
-							click: function(e) { e.stop(); this.setSelectedIndex(index) }.bind(this)						
+							click: function(e) {
+								
+								e.stop(); 
+								
+								//detect direction. inspired by moostack
+								var forward = this.current < index ? index - this.current : this.panels.length - this.current + index,
+									backward = this.current > index ? this.current - index : this.current + this.panels.length - index;
+									
+								this.setSelectedIndex(index, Math.abs(forward) <= Math.abs(backward) ? 1 : -1) 
+							
+							}.bind(this)						
 						}
 					}).addClass(options.inactiveClass).removeClass(options.activeClass);
 					
