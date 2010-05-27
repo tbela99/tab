@@ -87,6 +87,7 @@ provides: [Tab, Tab.plugins.None]
 									
 						styles: {cursor: 'pointer'}, 
 						events: {
+						
 							click: function(e) {
 								
 								e.stop(); 
