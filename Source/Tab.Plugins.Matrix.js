@@ -119,7 +119,6 @@ provides: [Tab.plugins.Matrix]
 			var size, img, images = [];
 				
 			this.slides = [];
-			this.running = false;
 			
 			this.current = 0;
 			this.previous = 0;
