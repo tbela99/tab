@@ -74,6 +74,9 @@ provides: [Tab.plugins.Matrix]
 						}
 					}
 				},
+				
+				//queuing animations
+				queue: false,
 				*/
 				random: true,
 				transitions: ['grow', 'floom', 'wave', 'lines', 'chains', 'fold', 'fall', 'explode', 'implode', 'out', 'split'],
@@ -94,6 +97,12 @@ provides: [Tab.plugins.Matrix]
 			
 			delete this.options.settings;
 			
+			/*
+			
+				animation queue
+			*/
+			this.queue = [];
+			
 			this.options.randomMode = this.options.mode == 'both';
 			this.options.transitions = $splat(this.options.transitions);
 			this.options.sort = $splat(this.options.sort);
@@ -110,11 +119,12 @@ provides: [Tab.plugins.Matrix]
 			var size, img, images = [];
 				
 			this.slides = [];
+			this.running = false;
 			
 			this.current = 0;
 			this.previous = 0;
 			
-			this.container = panels[0].setStyles('display', 'block').getParent();
+			this.container = panels[0].setStyle('display', 'block').getParent();
 			this.parents = [];
 	
 			panels.each(function (el) {
@@ -138,8 +148,6 @@ provides: [Tab.plugins.Matrix]
 							
 							this.slices = {
 								
-								//leaking
-								//els: {},
 								height: size.y,
 								width: size.x,
 								fragments: this.options.fragments
@@ -165,7 +173,7 @@ provides: [Tab.plugins.Matrix]
 				)
 		},
 
-		move: function (newTab, curTab, newIndex, oldIndex) { 
+		move: function (newTab, curTab, newIndex, oldIndex, force) { 
 
 			if(curTab) curTab.tween('opacity', 0);
 			newTab.tween('opacity', 1);
@@ -173,8 +181,15 @@ provides: [Tab.plugins.Matrix]
 			this.current = newIndex;
 			this.previous = oldIndex || 0;
 			
+			if(this.running || (this.queue.length > 0 && !force)) {
+			
+				this.queue.push(arguments);
+				return
+			}
+			
 			if(this.preloaded) {
 					
+				this.running = true;
 				this.fx = this._fx;
 				this.options = this._options;
 				
@@ -255,7 +270,6 @@ provides: [Tab.plugins.Matrix]
 							
 								// apply the image to the background
 								this.container.setStyles(bg);
-								
 								time = 0;
 								queue.each(function (fn) {
 								
@@ -265,9 +279,20 @@ provides: [Tab.plugins.Matrix]
 								
 								(function () {
 									
-									$each(els, function(slice) { slice.each(function (el) { el.destroy() }) })
+									$each(els, function(slice) { slice.each(function (el) { el.destroy() }) });
+									this.running = false;
+									if(this.queue.length > 0) {
 									
-								}).delay(time + 25)
+										(function () {
+													
+											var args = $A(this.queue.pop());
+											if(!this.options.queue) this.queue.empty();
+											args.push(true);
+											this.move.apply(this, args)
+										}).delay(500, this)
+									}
+									
+								}).delay(time + 25, this)
 								
 							}).delay(Math.max(time, this.fx.duration) + 100, this)
 										
