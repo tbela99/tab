@@ -14,6 +14,7 @@ It should work in every browser but **IE6**.
 * sort - (*mixed*, optional) the sort filter to apply to the slices. default to *['none', 'reverse', 'shuffle']*.
 * transitions  - (*mixed*, optional) list of transitions to use, there are now 11 transitions available. you can specify one or more transitions. by default all transitions will be applied. default to *['grow', 'floom', 'wave', 'lines', 'chains', 'fold', 'fall', 'explode', 'implode', 'out', 'split']*
 * settings - (*object*, optional) .
+* queue  - (*boolean*, optional) defines the way multiple call to *Tab#next*, *Tab#previous* and *Tab#setSelectedIndex* should be handled. if true they will be queued, otherwise only the last one will run. default to false.
 
 #### settings
 This property allow you to setup per transition settings. the object keys are transitions name and values are:
