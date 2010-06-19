@@ -13,81 +13,10 @@ provides: [Tab.plugins.Random]
 ...
 */
 
-	Tab.prototype.plugins.Random = new Class({
-		options: {
-			/*
-				useOpacity: false,
-				opacity: .7,
-				random: false,
-			*/
-				directions: ['left', 'right', 'top', 'bottom'],
-				transitions: ['fade', 'move', 'slideIn', 'slideOut']
-			},
-		fx: {
-		
-			link: 'chain',
-			duration: 1000
-		},
-		initialize: function(panels, options, fx) {
-		
-			fx = $merge(this.fx, fx);
-					
-			options = this.options = $merge(this.options, options);
-			options.transitions = $splat(this.options.transitions);
-			options.directions = $splat(this.options.directions);
-			
-			['move', 'slideIn', 'slideOut'].each(function (v) {
-			
-				if(options.transitions.indexOf(v) != -1) {
-				
-					options.transitions.erase(v);
-					
-					if(v == 'move') v = '_move';
-					if(v != 'fade') this.options.directions.each(function (d) {
-					
-						options.transitions.push(v + '-' + d)
-					})
-				}
-			}, this);
-			
-			this.panels = panels;
-			
-			panels.each(function (el) {
-			
-				el.set({
-						styles: {
-						
-							position: 'absolute',
-							zIndex: 0,
-							display: 'none'
-						},
-						morph: fx
-					})
-			});
-			
-			var panel = panels[0];
-			
-			this.container = panel.setStyle('display', 'block').getParent().setStyles({position: 'relative', overflow: 'hidden', height: panel.offsetHeight, width: panel.offsetWidth});
-			
-			this.current = 0
-		},
-		move: function (newTab, curTab) {
-			
-			var options = this.options,
-				transition = options.transitions[this.current];
-			this.ct = curTab;
-			this.nt = newTab;
-			
-			//reset first!
-			if(curTab) curTab.setStyles({left: 0, top: 0});
+(function () {
 
-			var parts = transition.split('-');
-
-			this[parts[0]](curTab, newTab, parts[1]);
-                        
-			this.current = options.random ? $random(0, options.transitions.length - 1) : (this.current + 1) % options.transitions.length
-		},
-		
+	var transitions = {
+	
 		slideIn: function (curTab, newTab, f) {
 		
 			//curTab.setStyle('z-index', 0);
@@ -171,7 +100,7 @@ provides: [Tab.plugins.Random]
 			var morph = {height: newTab.offsetHeight, width: newTab.offsetWidth}
 			this.container.morph(morph)
 		},
-		_move: function (curTab, newTab, f) {
+		move: function (curTab, newTab, f) {
 			
 			if(curTab) {
 			
@@ -237,5 +166,85 @@ provides: [Tab.plugins.Random]
 			morph = {height: newTab.offsetHeight, width: newTab.offsetWidth}
 			this.container.morph(morph)
 		}
-	});
+	};
+	
+	Tab.prototype.plugins.Random = new Class({
+		options: {
+			/*
+				useOpacity: false,
+				opacity: .7,
+				random: false,
+				transitions: ['fade', 'move', 'slideIn', 'slideOut'],
+			*/
+				directions: ['left', 'right', 'top', 'bottom']
+			},
+		fx: {
+		
+			link: 'chain',
+			duration: 1000
+		},
+		transitions: {},
+		initialize: function(panels, options, fx) {
+		
+			fx = $merge(this.fx, fx);
+					
+			options = this.addTransition(transitions).options = $merge(this.options, options);
+			options.directions = $splat(this.options.directions);
+			
+			var tr = $splat(this.options.transitions || $H(this.transitions).getKeys());
+			
+			this.options.transitions = [];
+			
+			tr.each(function (v) { 
+				if(v != 'fade') this.options.directions.each(function (d) { options.transitions.push(v + '-' + d) });
+				else options.transitions.push(v)
+			}, this);
+			
+			this.panels = panels;
+			
+			panels.each(function (el) {
+			
+				el.set({
+						styles: {
+						
+							position: 'absolute',
+							zIndex: 0,
+							display: 'none'
+						},
+						morph: fx
+					})
+			});
+			
+			var panel = panels[0];
+			
+			this.container = panel.setStyle('display', 'block').getParent().setStyles({position: 'relative', overflow: 'hidden', height: panel.offsetHeight, width: panel.offsetWidth});
+			
+			this.current = 0
+		},
+		move: function (newTab, curTab) {
+			
+			var options = this.options,
+				transition = options.transitions[this.current];
+			this.ct = curTab;
+			this.nt = newTab;
+			
+			//reset first!
+			if(curTab) curTab.setStyles({left: 0, top: 0});
+
+			var parts = transition.split('-');
+
+			this.transitions[parts[0]](curTab, newTab, parts[1]);
+                        
+			this.current = options.random ? $random(0, options.transitions.length - 1) : (this.current + 1) % options.transitions.length
+		},
+		
+		addTransition: function (tr, fn) {
+		
+			if(typeof tr == 'object') $each(tr, function (fn, key) { this.transitions[key] = fn.bind(this) }, this);
+			else this.transitions[tr] = fn.bind(this);
+			
+			return this
+		}
+	})
+})();
 
