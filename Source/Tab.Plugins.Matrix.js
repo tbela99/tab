@@ -12,357 +12,16 @@ requires:
 provides: [Tab.plugins.Matrix]
 ...
 */
-	Array.implement({
-	
-		shuffle: function () {
-		
-			var v, i, k;
-			
-			for(i = 0; i < this.length; i++) {
-			
-				k = $random(0, this.length - 1);
-				
-				if(k != i) {
-					v = this[i];
-					this[i] = this[k];
-					this[k] = v
-				}				
-			}
-			
-			return this
-		}
-	});
-	
-	Tab.prototype.plugins.Matrix = new Class({
-		options: {
-		
-				/* per transition settings, here you go! */
-				/*
-				settings: {
-				
-					split: {
-					
-						params: {
-						
-							random: true,
-							sort: ['reverse', 'none'],
-							amount: 10,
-							fragments: 5
-						}
-					},
-					fold: {
-					
-						params: {
-						
-							mode: 'vertical',
-							amount: 10,
-							fragments: 1
-						}
-					},
-					lines: {
-					
-						fx: {
-						
-							transition: 'bounce:out'
-						}
-					},
-					explode: {
-					
-						fx: {
-						
-							transition: 'bounce:in'
-						}
-					}
-				},
-				
-				//queuing animations
-				queue: false,
-				*/
-				random: true,
-				transitions: ['grow', 'floom', 'wave', 'lines', 'chains', 'fold', 'fall', 'explode', 'implode', 'out', 'split'],
-				sort: ['none', 'reverse', 'shuffle'],
-				mode: 'vertical', //horizontal | both
-				//The matrix
-				amount: 8, //slices
-				fragments: 3 //slices fragments
-			},
-		fx: {
-		
-			duration: 800
-		},
-		initialize: function(panels, options, fx) {
-			
-			this.options = $merge(this.options, options);
-			this.settings = this.options.settings || {};
-			
-			delete this.options.settings;
-			
-			/*
-			
-				animation queue
-			*/
-			this.queue = [];
-			
-			this.options.randomMode = this.options.mode == 'both';
-			this.options.transitions = $splat(this.options.transitions);
-			this.options.sort = $splat(this.options.sort);
-			
-			this.fx = $merge(this.fx, fx);
-			this.fx.duration = this.fx.duration.toInt();
-			
-			//unlink
-			this._options = $merge(this.options);
-			this._fx = $merge(this.fx);
-			
-			this.panels = panels;
-			
-			var size, img, images = [];
-				
-			this.slides = [];
-			
-			this.current = 0;
-			this.previous = 0;
-			
-			this.container = panels[0].setStyle('display', 'block').getParent();
-			this.parents = [];
-	
-			panels.each(function (el) {
-			
-				img = el.get('tag') == 'img' ? el : el.getElement('img');
-				images.push(img);
-				
-				this.slides.push({
-				
-					image: img.src
-				})
-				
-			}, this);
-			
-			Asset.images(this.slides.map(function (el) { return el.image }), {
-					
-						onComplete: function () {
-							panels[0].setStyles({display: 'block'})
-							
-							size = this.size = this.container.getSize();
-							
-							this.slices = {
-								
-								height: size.y,
-								width: size.x,
-								fragments: this.options.fragments
-							};
-							
-							this.container.setStyles({width: size.x, height: size.y, position: 'relative', overflow: 'hidden', backgroundRepeat: 'no-repeat'});
-										
-							panels.each(function (el, index) {
-							
-								img = images[index];
-								
-								this.parents.push(img.getParent().setStyles({display: 'block', height: size.y, width: size.x}))
-								img.destroy();
-								
-								el.setStyles({display: 'block', opacity: 0, zIndex: 2, position: 'absolute', left: 0, top: 0})
-							}, this);
-							
-							this.setMode(this.options.mode).preloaded = true;
-							this.move(panels[this.current], '', this.current, '')
-							
-						}.bind(this)
-					}
-				)
-		},
 
-		move: function (newTab, curTab, newIndex, oldIndex, force) { 
+(function () {
 
-			if(curTab) curTab.tween('opacity', 0);
-			newTab.tween('opacity', 1);
-			
-			this.current = newIndex;
-			this.previous = oldIndex || 0;
-			
-			if(this.running || (this.queue.length > 0 && !force)) {
-			
-				this.queue.push(arguments);
-				return
-			}
-			
-			if(this.preloaded) {
-					
-				this.running = true;
-				this.fx = this._fx;
-				this.options = this._options;
-				
-				var time = 0, 
-					i, 
-					j,
-					matrix = [],
-					method, 
-					options = this.options,
-					slices = this.slices,
-					transition,
-					vertical,
-					bg,
-					queue = [],
-					tmp = {},
-					els = {},
-					settings,
-					//some transitions have big latency before they begin
-					delay = true;
-				
-				if(options.random) {
-				
-					method = options.sort.getRandom();
-					transition = options.transitions.getRandom()
-					
-				} else {
-				
-					method = options.sort.shift();
-					options.sort.push(method);
-					transition = options.transitions.shift();
-					options.transitions.push(transition);
-				}
-				
-				settings = this.settings[transition];
-				
-				if(settings) {
-					
-					this.fx = $merge(this._fx, settings.fx);
-					options = this.options = $merge(this._options, settings.params);
-					
-					options.transitions = $splat(options.transitions);
-					options.sort = $splat(options.sort);
-					options.randomMode = options.mode == 'both';
-					this.fx.duration = this.fx.duration.toInt();
-					
-					if(options.random) method = options.sort.getRandom();
-						
-					else {
-					
-						method = options.sort.shift();
-						options.sort.push(method)
-					}
-				}
-								
-				slices.fragments = options.fragments;
-				
-				for(i = 0; i < options.amount; i++) {
-					
-					els[i] = [];
-					for(j = 0; j < options.fragments; j++) matrix.push({index: i, fragment: j});
-				}
-				
-				//randomize order
-				if(method && matrix[method]) matrix[method]();
-					
-				this.setMode(options.randomMode ? 'both' : options.mode);
-				
-				vertical = options.mode == 'vertical';
-				bg = {backgroundImage: 'url(' + this.slides[newIndex].image + ')', backgroundRepeat: 'no-repeat'};	
-				
-				if(['out', 'implode', 'split', 'explode', 'fall'].indexOf(transition) != -1) delay = false;
-				
-				matrix.each(function (item, index) {
-						
-					(function(item, vertical, styles, transition, step) {
-			
-							// move to the next slide
-							this[transition](item, vertical, options, slices, styles, els, queue, tmp);
-							
-							//finish and clean up
-							if (step) (function() {		
-							
-								// apply the image to the background
-								this.container.setStyles(bg);
-								time = 0;
-								queue.each(function (fn) {
-								
-									fn.delay(time + 25)
-									time += 50
-								});
-								
-								(function () {
-									
-									$each(els, function(slice) { slice.each(function (el) { el.destroy() }) });
-									this.running = false;
-									if(this.queue.length > 0) {
-									
-										(function () {
-													
-											var args = $A(this.queue.pop());
-											if(!this.options.queue) this.queue.empty();
-											args.push(true);
-											this.move.apply(this, args)
-										}).delay(500, this)
-									}
-									
-								}).delay(time + 25, this)
-								
-							}).delay(Math.max(time, this.fx.duration) + 100, this)
-										
-						}).delay(delay ? 25 + time : 0, this, [item, vertical, $merge(this[options.mode](item), bg), transition, index == options.amount - 1]);
-					time += 50 
-				}, this)
-			}
-		},
-			
-		setMode: function (mode) {
-		
-			var slices = this.slices,
-				size = this.size;
-			
-			if(mode == 'both') mode = ['vertical', 'horizontal'].getRandom();
-			
-			$extend(slices, {
-					width: mode == 'vertical' ? size.x / this.options.amount : size.x / slices.fragments,
-					height: mode == 'vertical' ? size.y / slices.fragments : size.y / this.options.amount
-				});
-			
-			this.options.mode = mode;
-			
-			return this
-		},
-
-		horizontal: function(item){
-		
-			var slices = this.slices;
-			
-			return {
-				backgroundPosition: '-' + (item.fragment * slices.width) + 'px -' + (this.slices.height * item.index) + 'px'
-			};	
-		},
-		
-		vertical: function(item){
-			
-			var slices = this.slices;
-			
-			return {
-				backgroundPosition: '-' + (this.slices.width * item.index) + 'px -' + (item.fragment * slices.height) + 'px'
-			};
-		},
-		
-		coordinates: function (item, vertical, raw) {
-
-			var slice = this.slices;
-			
-			return raw ? {
-
-					left: vertical ? item.index * slice.width : item.fragment * slice.width,
-					top: vertical ? item.fragment * slice.height : item.index * slice.height
-				}
-				:
-				{
-
-					left: vertical ? [0, item.index * slice.width] : [0, item.fragment * slice.width],
-					top: vertical ? [0, item.fragment * slice.height] : [0, item.index * slice.height]
-				}
-		},
-		//
-		
 		/*
 		
 			transitions
 		*/
 		
+	var transitions = {
+
 		out: function (item, vertical, options, slice, styles, els, queue) {
 		
 			var fx = this.fx,
@@ -745,5 +404,361 @@ provides: [Tab.plugins.Matrix]
 				}, this.coordinates(item, vertical, true))
 			}).inject(this.container, 'top').morph(morph))
 		}
+	};
+	
+	Array.implement({
+	
+		shuffle: function () {
+		
+			var v, i, k;
+			
+			for(i = 0; i < this.length; i++) {
+			
+				k = $random(0, this.length - 1);
+				
+				if(k != i) {
+					v = this[i];
+					this[i] = this[k];
+					this[k] = v
+				}				
+			}
+			
+			return this
+		}
 	});
 	
+	Tab.prototype.plugins.Matrix = new Class({
+		options: {
+		
+				/* per transition settings, here you go! */
+				/*
+				settings: {
+				
+					split: {
+					
+						params: {
+						
+							random: true,
+							sort: ['reverse', 'none'],
+							amount: 10,
+							fragments: 5
+						}
+					},
+					fold: {
+					
+						params: {
+						
+							mode: 'vertical',
+							amount: 10,
+							fragments: 1
+						}
+					},
+					lines: {
+					
+						fx: {
+						
+							transition: 'bounce:out'
+						}
+					},
+					explode: {
+					
+						fx: {
+						
+							transition: 'bounce:in'
+						}
+					}
+				},
+				
+				transitions: ['grow', 'floom', 'wave', 'lines', 'chains', 'fold', 'fall', 'explode', 'implode', 'out', 'split'],
+				//queuing animations
+				queue: false,
+				*/
+				random: true,
+				sort: ['none', 'reverse', 'shuffle'],
+				mode: 'vertical', //horizontal | both
+				//The matrix
+				amount: 8, //slices
+				fragments: 3 //slices fragments
+			},
+		fx: {
+		
+			duration: 800
+		},
+		transitions: {},
+		initialize: function(panels, options, fx) {
+			
+			this.addTransition(transitions).options = $merge(this.options, options);
+			this.settings = this.options.settings || {};
+			
+			delete this.options.settings;
+			
+			/*
+			
+				animation queue
+			*/
+			this.queue = [];
+			
+			this.options.randomMode = this.options.mode == 'both';
+			this.options.sort = $splat(this.options.sort);
+			
+			this.options.transitions = $splat(this.options.transitions || $H(this.transitions).getKeys());
+			
+			this.fx = $merge(this.fx, fx);
+			this.fx.duration = this.fx.duration.toInt();
+			
+			//unlink
+			this._options = $merge(this.options);
+			this._fx = $merge(this.fx);
+			
+			this.panels = panels;
+			
+			var size, img, images = [];
+				
+			this.slides = [];
+			
+			this.current = 0;
+			this.previous = 0;
+			
+			this.container = panels[0].setStyle('display', 'block').getParent();
+			this.parents = [];
+	
+			panels.each(function (el) {
+			
+				img = el.get('tag') == 'img' ? el : el.getElement('img');
+				images.push(img);
+				
+				this.slides.push({
+				
+					image: img.src
+				})
+				
+			}, this);
+			
+			Asset.images(this.slides.map(function (el) { return el.image }), {
+					
+						onComplete: function () {
+							panels[0].setStyles({display: 'block'})
+							
+							size = this.size = this.container.getSize();
+							
+							this.slices = {
+								
+								height: size.y,
+								width: size.x,
+								fragments: this.options.fragments
+							};
+							
+							this.container.setStyles({width: size.x, height: size.y, position: 'relative', overflow: 'hidden', backgroundRepeat: 'no-repeat'});
+										
+							panels.each(function (el, index) {
+							
+								img = images[index];
+								
+								this.parents.push(img.getParent().setStyles({display: 'block', height: size.y, width: size.x}))
+								img.destroy();
+								
+								el.setStyles({display: 'block', opacity: 0, zIndex: 2, position: 'absolute', left: 0, top: 0})
+							}, this);
+							
+							this.setMode(this.options.mode).preloaded = true;
+							this.move(panels[this.current], '', this.current, '')
+							
+						}.bind(this)
+					}
+				)
+		},
+
+		move: function (newTab, curTab, newIndex, oldIndex, force) { 
+
+			if(curTab) curTab.tween('opacity', 0);
+			newTab.tween('opacity', 1);
+			
+			this.current = newIndex;
+			this.previous = oldIndex || 0;
+			
+			if(this.running || (this.queue.length > 0 && !force)) {
+			
+				this.queue.push(arguments);
+				return
+			}
+			
+			if(this.preloaded) {
+					
+				this.running = true;
+				this.fx = this._fx;
+				this.options = this._options;
+				
+				var time = 0, 
+					i, 
+					j,
+					matrix = [],
+					method, 
+					options = this.options,
+					slices = this.slices,
+					transition,
+					vertical,
+					bg,
+					queue = [],
+					tmp = {},
+					els = {},
+					settings,
+					//some transitions have big latency before they begin
+					delay = true;
+				
+				if(options.random) {
+				
+					method = options.sort.getRandom();
+					transition = options.transitions.getRandom()
+					
+				} else {
+				
+					method = options.sort.shift();
+					options.sort.push(method);
+					transition = options.transitions.shift();
+					options.transitions.push(transition);
+				}
+				
+				settings = this.settings[transition];
+				
+				if(settings) {
+					
+					this.fx = $merge(this._fx, settings.fx);
+					options = this.options = $merge(this._options, settings.params);
+					
+					options.transitions = $splat(options.transitions);
+					options.sort = $splat(options.sort);
+					options.randomMode = options.mode == 'both';
+					this.fx.duration = this.fx.duration.toInt();
+					
+					if(options.random) method = options.sort.getRandom();
+						
+					else {
+					
+						method = options.sort.shift();
+						options.sort.push(method)
+					}
+				}
+								
+				slices.fragments = options.fragments;
+				
+				for(i = 0; i < options.amount; i++) {
+					
+					els[i] = [];
+					for(j = 0; j < options.fragments; j++) matrix.push({index: i, fragment: j});
+				}
+				
+				//randomize order
+				if(method && matrix[method]) matrix[method]();
+					
+				this.setMode(options.randomMode ? 'both' : options.mode);
+				
+				vertical = options.mode == 'vertical';
+				bg = {backgroundImage: 'url(' + this.slides[newIndex].image + ')', backgroundRepeat: 'no-repeat'};	
+				
+				if(['out', 'implode', 'split', 'explode', 'fall'].indexOf(transition) != -1) delay = false;
+				
+				matrix.each(function (item, index) {
+						
+					(function(item, vertical, styles, transition, step) {
+			
+							// move to the next slide
+							this.transitions[transition](item, vertical, options, slices, styles, els, queue, tmp);
+							
+							//finish and clean up
+							if (step) (function() {		
+							
+								// apply the image to the background
+								this.container.setStyles(bg);
+								time = 0;
+								queue.each(function (fn) {
+								
+									fn.delay(time + 25)
+									time += 50
+								});
+								
+								(function () {
+									
+									$each(els, function(slice) { slice.each(function (el) { el.destroy() }) });
+									this.running = false;
+									if(this.queue.length > 0) {
+									
+										(function () {
+													
+											var args = $A(this.queue.pop());
+											if(!this.options.queue) this.queue.empty();
+											args.push(true);
+											this.move.apply(this, args)
+										}).delay(500, this)
+									}
+									
+								}).delay(time + 25, this)
+								
+							}).delay(Math.max(time, this.fx.duration) + 100, this)
+										
+						}).delay(delay ? 25 + time : 0, this, [item, vertical, $merge(this[options.mode](item), bg), transition, index == options.amount - 1]);
+					time += 50 
+				}, this)
+			}
+		},
+			
+		setMode: function (mode) {
+		
+			var slices = this.slices,
+				size = this.size;
+			
+			if(mode == 'both') mode = ['vertical', 'horizontal'].getRandom();
+			
+			$extend(slices, {
+					width: mode == 'vertical' ? size.x / this.options.amount : size.x / slices.fragments,
+					height: mode == 'vertical' ? size.y / slices.fragments : size.y / this.options.amount
+				});
+			
+			this.options.mode = mode;
+			
+			return this
+		},
+
+		horizontal: function(item){
+		
+			var slices = this.slices;
+			
+			return {
+				backgroundPosition: '-' + (item.fragment * slices.width) + 'px -' + (this.slices.height * item.index) + 'px'
+			};	
+		},
+		
+		vertical: function(item){
+			
+			var slices = this.slices;
+			
+			return {
+				backgroundPosition: '-' + (this.slices.width * item.index) + 'px -' + (item.fragment * slices.height) + 'px'
+			};
+		},
+		
+		coordinates: function (item, vertical, raw) {
+
+			var slice = this.slices;
+			
+			return raw ? {
+
+					left: vertical ? item.index * slice.width : item.fragment * slice.width,
+					top: vertical ? item.fragment * slice.height : item.index * slice.height
+				}
+				:
+				{
+
+					left: vertical ? [0, item.index * slice.width] : [0, item.fragment * slice.width],
+					top: vertical ? [0, item.fragment * slice.height] : [0, item.index * slice.height]
+				}
+		},
+		
+		addTransition: function (tr, fn) {
+		
+			if(typeof tr == 'object') $each(tr, function (fn, key) { this.transitions[key] = fn.bind(this) }, this);
+			else this.transitions[tr] = fn.bind(this);
+			
+			return this
+		}
+	})	
+})();
