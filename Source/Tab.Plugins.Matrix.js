@@ -205,7 +205,9 @@ provides: [Tab.plugins.Matrix]
 					queue = [],
 					tmp = {},
 					els = {},
-					settings;
+					settings,
+					//some transitions have big latency before they begin
+					delay = true;
 				
 				if(options.random) {
 				
@@ -255,7 +257,9 @@ provides: [Tab.plugins.Matrix]
 				this.setMode(options.randomMode ? 'both' : options.mode);
 				
 				vertical = options.mode == 'vertical';
-				bg = {backgroundImage: 'url(' + this.slides[newIndex].image + ')', backgroundRepeat: 'no-repeat'};
+				bg = {backgroundImage: 'url(' + this.slides[newIndex].image + ')', backgroundRepeat: 'no-repeat'};	
+				
+				if(['out', 'implode', 'split', 'explode', 'fall'].indexOf(transition) != -1) delay = false;
 				
 				matrix.each(function (item, index) {
 						
@@ -295,7 +299,7 @@ provides: [Tab.plugins.Matrix]
 								
 							}).delay(Math.max(time, this.fx.duration) + 100, this)
 										
-						}).delay(25 + time, this, [item, vertical, $merge(this[options.mode](item), bg), transition, index == options.amount - 1]);
+						}).delay(delay ? 25 + time : 0, this, [item, vertical, $merge(this[options.mode](item), bg), transition, index == options.amount - 1]);
 					time += 50 
 				}, this)
 			}
