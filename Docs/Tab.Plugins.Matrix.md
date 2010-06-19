@@ -1,7 +1,7 @@
 Matrix {#Tabsplugins:Matrix}
 ============
 
-Apply various effects to the transition, this plugin is designed to work with images.
+Apply eleven customizable effects to the transition, this plugin is designed to work with images.
 
 It should work in every browser but **IE6**.
 
