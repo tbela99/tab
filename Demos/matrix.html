@@ -78,6 +78,7 @@ div.tabs a.selected {
 <script type="text/javascript" src="../PeriodicalExecuter.js"></script>
 
 <script type="text/javascript" src="../Source/Tab.js"></script>
+<script type="text/javascript" src="../Source/Tab.Extra.js"></script>
 <script type="text/javascript" src="../Source/Tab.Plugins.Matrix.js"></script>
 
 <script type="text/javascript">
@@ -233,12 +234,13 @@ div.tabs a.selected {
 			if(options.random && options.random.toInt) options.random = options.random.toInt();
 		};
 		
-		tab = new Tab({
+		tab = new Tab.Extra({
 				container: 'slide', 
 				tabs: 'div.tabs a',
 				activeClass: 'selected',
 				animation: 'Matrix',
 				params: options,
+				interval: ((50 * options.amount * options.fragments) / 1000).toInt() + 5,
 				fx: {
 				
 					//transition: 'bounce:in',
@@ -246,22 +248,10 @@ div.tabs a.selected {
 				}
 			});
 			
-		duration = ((50 * options.amount * options.fragments) / 1000).toInt() + 5;
-		pe = new PeriodicalExecuter(function () {
-		
-			tab.next()
-		}, duration);
-		
 		$$('div.tabs a').each(function (el) {
 		
-			el.addEvent('click', function () {
-				
-				pe.stop();
-				(function () { pe.registerCallback() }).delay(2 * duration)
-			})
+			el.addEvent('click', function () { tab.stop().start.delay(2 * duration) })
 		})
-		
-
 	})
 //]]></script>
 </head><body>

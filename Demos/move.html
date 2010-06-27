@@ -78,6 +78,7 @@ div.tabs a.selected {
 <script type="text/javascript" src="../PeriodicalExecuter.js"></script>
 
 <script type="text/javascript" src="../Source/Tab.js"></script>
+<script type="text/javascript" src="../Source/Tab.Extra.js"></script>
 <script type="text/javascript" src="../Source/Tab.Plugins.Move.js"></script>
 
 <script type="text/javascript">
@@ -174,7 +175,7 @@ div.tabs a.selected {
 		};
 		
 		
-		tab = new Tab({
+		tab = new Tab.Extra({
 				container: 'slide', 
 				tabs: 'div.tabs a',
 				activeClass: 'selected',
@@ -186,19 +187,9 @@ div.tabs a.selected {
 				}
 			});
 			
-			
-		pe = new PeriodicalExecuter(function () {
-		
-			tab.next()
-		}, duration / 1000 + 5);
-		
 		$$('div.tabs a').each(function (el) {
 		
-			el.addEvent('click', function () {
-				
-				pe.stop();
-				(function () { pe.registerCallback() }).delay(2 * duration)
-			})
+			el.addEvent('click', function () { tab.stop().start.delay(2 * duration) })
 		})
 	})
 //]]></script>
