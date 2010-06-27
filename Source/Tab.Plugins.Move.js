@@ -7,7 +7,7 @@ copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires: 
-  tab:0.1.3.6: 
+  tab:0.1.4: 
   - Tab
 provides: [Tab.plugins.Move]
 ...
