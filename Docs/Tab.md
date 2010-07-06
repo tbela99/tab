@@ -15,7 +15,7 @@ Tab Method: constructor {#Class:constructor}
 
 1. options - (*object*) See below.
 
-### Options: {#Tab:options}
+### Options: {#Tab-options}
 
 * container  - (*mixed*) the element that contains the panels.
 * selector  - (*string*, optional) only container children that match the selector will be grabbed.
@@ -27,7 +27,7 @@ Tab Method: constructor {#Class:constructor}
 * activeClass  - (*string*, optional) style applied to the selected tab.
 * inactiveClass  - (*string*, optional) style applied to every unselected tab.
 
-### Events:
+### Events: {#Tab-events}
 
 #### create
 

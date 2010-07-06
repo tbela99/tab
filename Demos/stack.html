@@ -172,23 +172,18 @@ div.tabs a.selected {
 			if(options.random && options.random.toInt) options.random = options.random.toInt();
 		};
 		
-		
 		tab = new Tab.Extra({
 				container: 'slide', 
 				tabs: 'div.tabs a',
 				activeClass: 'selected',
 				animation: 'Stack',
 				params: options,
+				delay: 2 * duration / 1000,
 				fx: {
 				
 					duration: duration
 				}
-			});
-			
-		$$('div.tabs a').each(function (el) {
-		
-			el.addEvent('click', function () { tab.stop().start.delay(2 * duration) })
-		})
+			})
 	})
 //]]></script>
 </head><body>

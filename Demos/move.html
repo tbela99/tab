@@ -181,16 +181,12 @@ div.tabs a.selected {
 				activeClass: 'selected',
 				animation: 'Move',
 				params: options,
+				delay: 2 * duration / 1000,
 				fx: {
 				
 					duration: duration
 				}
-			});
-			
-		$$('div.tabs a').each(function (el) {
-		
-			el.addEvent('click', function () { tab.stop().start.delay(2 * duration) })
-		})
+			})
 	})
 //]]></script>
 </head><body>
