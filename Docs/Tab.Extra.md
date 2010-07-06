@@ -15,7 +15,7 @@ Tab.Extra Method: constructor {#Class:constructor}
 
 1. options - (*object*) See below.
 
-Tab.Extra supports every Tab options. it also have specific options that control autoslide:
+Tab.Extra supports every Tab options plus specific parameters for the autoslide control:
 
 ### Options: {#Tab-extra-options}
 
