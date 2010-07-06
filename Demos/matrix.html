@@ -96,7 +96,9 @@ div.tabs a.selected {
 				axis: 'both',
 				amount: 8,
 				fragments: 3,
+			/*
 				transitions: ['explode', 'wave', 'implode', 'split', 'lines', 'chains', 'fold', 'grow', 'floom', 'fall', 'out'],
+			*/
 				//custom parameters for some transitions
 				settings: {
 				
@@ -241,17 +243,13 @@ div.tabs a.selected {
 				animation: 'Matrix',
 				params: options,
 				interval: ((50 * options.amount * options.fragments) / 1000).toInt() + 5,
+				delay: 2 * duration / 1000,
 				fx: {
 				
 					//transition: 'bounce:in',
 					duration: duration
 				}
-			});
-			
-		$$('div.tabs a').each(function (el) {
-		
-			el.addEvent('click', function () { tab.stop().start.delay(2 * duration) })
-		})
+			})
 	})
 //]]></script>
 </head><body>

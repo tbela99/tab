@@ -24,7 +24,7 @@ provides: [Core, MooTools, Type, typeOf, instanceOf]
 
 this.MooTools = {
 	version: '1.3dev',
-	build: 'b50ae2809ce2163d1e9268198cfb795906555213'
+	build: '765c4feb64681a786646570d28c0be97c266fd57'
 };
 
 // typeOf, instanceOf
@@ -1335,7 +1335,7 @@ if (Browser.firefox){
 	else setEngine('gecko', 18);
 }
 
-if (Browser.safari || Browser.chrome || Browser.konqueror){
+if (Browser.safari || Browser.chrome){
 	Browser.Engine.webkit = true;
 	
 	switch (Browser.version){
@@ -1399,7 +1399,7 @@ var Event = new Type('Event', function(event, win){
 
 	if (type.test(/key/)){
 		var code = event.which || event.keyCode;
-		var key = Event.Keys.keyOf(code);
+		var key = Object.keyOf(Event.Keys, code);
 		if (type == 'keydown'){
 			var fKey = code - 111;
 			if (fKey > 0 && fKey < 13) key = 'f' + fKey;
@@ -3087,7 +3087,11 @@ if (window.$$ == null) Window.implement('$$', function(selector){
 //</1.2compat>
 
 if (window.$$ == null) Window.implement('$$', function(selector){
-	return Slick.search(this.document, selector, new Elements);
+	if (arguments.length == 1){
+		if (typeof selector == 'string') return Slick.search(this.document, selector, new Elements);
+		else if (Type.isEnumerable(selector)) return new Elements(selector);
+	}
+	return new Elements(arguments);
 });
 
 (function(){
@@ -3301,7 +3305,7 @@ Element.implement({
 	},
 
 	getPrevious: function(match){
-		return document.id(Slick.find(this, '!+ ' + (match || '')));
+		return document.id(Slick.find(this, '!~ ' + (match || '')));
 	},
 
 	getAllPrevious: function(match){
@@ -3587,7 +3591,7 @@ Element.Properties.styles = {set: function(styles){
 	this.setStyles(styles);
 }};
 
-var hasFilter = (html.style.filter != null);
+var hasOpacity = (html.style.opacity != null);
 
 Element.Properties.opacity = {
 
@@ -3600,13 +3604,19 @@ Element.Properties.opacity = {
 			}
 		}
 		if (!this.currentStyle || !this.currentStyle.hasLayout) this.style.zoom = 1;
-		if (hasFilter) this.style.filter = (opacity == 1) ? '' : 'alpha(opacity=' + opacity * 100 + ')';
+		if (!hasOpacity) this.style.filter = (opacity == 1) ? '' : 'alpha(opacity=' + opacity * 100 + ')';
 		this.style.opacity = opacity;
-		this.store('opacity', opacity);
 	},
 
 	get: function(){
-		return this.retrieve('opacity', 1);
+		var opacity;
+		if (hasOpacity){
+			opacity = this.getComputedStyle('opacity');
+			return (opacity == '') ? 1 : opacity;
+		}
+		var filter = this.getComputedStyle('filter');
+		if (filter) opacity = filter.match(/alpha\(opacity=([\d.]+)\)/i);
+		return (opacity == null || filter == null) ? 1 : opacity[1] / 100;
 	}
 
 };
@@ -3963,8 +3973,8 @@ Element.implement({
 		var element = this;
 		if (isBody(element)) return null;
 		if (!Browser.ie) return element.offsetParent;
-		while ((element = element.parentNode) && !isBody(element)){
-			if (styleString(element, 'position') != 'static') return element;
+		while ((element = element.parentNode)){
+			if (styleString(element, 'position') != 'static' || isBody(element)) return element;
 		}
 		return null;
 	},
@@ -4406,6 +4416,7 @@ Fx.CSS = new Class({
 	//renders the change to an element
 
 	render: function(element, property, value, unit){
+
 		element.setStyle(property, this.serve(value, unit));
 	},
 
@@ -5451,6 +5462,7 @@ Swiff.remote = function(obj, fn){
 	var rs = obj.CallFunction('<invoke name="' + fn + '" returntype="javascript">' + __flash__argumentsToXML(arguments, 2) + '</invoke>');
 	return eval(rs);
 };
+
 
 
 	//MooTools More, <http://mootools.net/more>. Copyright (c) 2006-2009 Aaron Newton <http://clientcide.com/>, Valerio Proietti <http://mad4milk.net> & the MooTools team <http://mootools.net/developers>, MIT Style License.
@@ -7911,147 +7923,6 @@ Element.implement({
 			return elt.length == 1 ? elt[0]: elt;
 		}
 		});
-/*
-Script: URI.js
-	Provides methods useful in managing the window location and uris.
-
-	License:
-		MIT-style license.
-
-	Authors:
-		Sebastian Markbåge, Aaron Newton
-*/
-
-var URI = new Class({
-
-	Implements: Options,
-
-	options: {
-		/*base: false*/
-	},
-
-	regex: /^(?:(\w+):)?(?:\/\/(?:(?:([^:@]*):?([^:@]*))?@)?([^:\/?#]*)(?::(\d*))?)?(\.\.?$|(?:[^?#\/]*\/)*)([^?#]*)(?:\?([^#]*))?(?:#(.*))?/,
-	parts: ['scheme', 'user', 'password', 'host', 'port', 'directory', 'file', 'query', 'fragment'],
-	schemes: {http: 80, https: 443, ftp: 21, rtsp: 554, mms: 1755, file: 0},
-
-	initialize: function(uri, options){
-		this.setOptions(options);
-		var base = this.options.base || URI.base;
-		if(!uri) uri = base;
-		
-		if (uri && uri.parsed) this.parsed = $unlink(uri.parsed);
-		else this.set('value', uri.href || uri.toString(), base ? new URI(base) : false);
-	},
-
-	parse: function(value, base){
-		var bits = value.match(this.regex);
-		if (!bits) return false;
-		bits.shift();
-		return this.merge(bits.associate(this.parts), base);
-	},
-
-	merge: function(bits, base){
-		if ((!bits || !bits.scheme) && (!base || !base.scheme)) return false;
-		if (base){
-			this.parts.every(function(part){
-				if (bits[part]) return false;
-				bits[part] = base[part] || '';
-				return true;
-			});
-		}
-		bits.port = bits.port || this.schemes[bits.scheme.toLowerCase()];
-		bits.directory = bits.directory ? this.parseDirectory(bits.directory, base ? base.directory : '') : '/';
-		return bits;
-	},
-
-	parseDirectory: function(directory, baseDirectory) {
-		directory = (directory.substr(0, 1) == '/' ? '' : (baseDirectory || '/')) + directory;
-		if (!directory.test(URI.regs.directoryDot)) return directory;
-		var result = [];
-		directory.replace(URI.regs.endSlash, '').split('/').each(function(dir){
-			if (dir == '..' && result.length > 0) result.pop();
-			else if (dir != '.') result.push(dir);
-		});
-		return result.join('/') + '/';
-	},
-
-	combine: function(bits){
-		return bits.value || bits.scheme + '://' +
-			(bits.user ? bits.user + (bits.password ? ':' + bits.password : '') + '@' : '') +
-			(bits.host || '') + (bits.port && bits.port != this.schemes[bits.scheme] ? ':' + bits.port : '') +
-			(bits.directory || '/') + (bits.file || '') +
-			(bits.query ? '?' + bits.query : '') +
-			(bits.fragment ? '#' + bits.fragment : '');
-	},
-
-	set: function(part, value, base){
-		if (part == 'value'){
-			var scheme = value.match(URI.regs.scheme);
-			if (scheme) scheme = scheme[1];
-			if (scheme && !$defined(this.schemes[scheme.toLowerCase()])) this.parsed = { scheme: scheme, value: value };
-			else this.parsed = this.parse(value, (base || this).parsed) || (scheme ? { scheme: scheme, value: value } : { value: value });
-		} else if (part == 'data') {
-			this.setData(value);
-		} else {
-			this.parsed[part] = value;
-		}
-		return this;
-	},
-
-	get: function(part, base){
-		switch(part){
-			case 'value': return this.combine(this.parsed, base ? base.parsed : false);
-			case 'data' : return this.getData();
-		}
-		return this.parsed[part] || null;
-	},
-
-	go: function(){
-		document.location.href = this.toString();
-	},
-
-	toURI: function(){
-		return this;
-	},
-
-	getData: function(key, part){
-		var qs = this.get(part || 'query');
-		if (!$chk(qs)) return key ? null : {};
-		var obj = qs.parseQueryString();
-		return key ? obj[key] : obj;
-	},
-
-	setData: function(values, merge, part){
-		if ($type(arguments[0]) == 'string'){ 
-			values = this.getData(); 
-			values[arguments[0]] = arguments[1]; 
-		} else if (merge) {
-			values = $merge(this.getData(), values);
-		}
-		return this.set(part || 'query', Hash.toQueryString(values));
-	},
-
-	clearData: function(part){
-		return this.set(part || 'query', '');
-	}
-
-});
-
-['toString', 'valueOf'].each(function(method){
-	URI.prototype[method] = function(){
-		return this.get('value');
-	};
-});
-
-
-URI.regs = {
-	endSlash: /\/$/,
-	scheme: /^(\w+):/,
-	directoryDot: /\.\/|\.$/
-};
-
-URI.base = new URI(document.getElements('base[href]', true).getLast(), {base: document.location});
-
 String.implement({
 
 	toURI: function(options){

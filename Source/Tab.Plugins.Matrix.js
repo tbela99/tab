@@ -20,13 +20,27 @@ provides: [Tab.plugins.Matrix]
 			transitions
 		*/
 		
-	var transitions = {
+		//div to clone
+	var original = new Element('div'),
+		transitions = {
 
-		out: function (item, vertical, options, slice, styles, els, queue) {
+		/*
+			parameters for the transitions
+			
+			- item: matrix cell
+			- vertical: mode
+			- slice: size infos
+			- styles: styles infos
+			- els: elements garbage collector
+			- queue: collection of callbacks run when animation is finished. used essentially to cleanup elements.
+			- tmp: collection handled by the transition
+		*/
+		
+		out: function (item, vertical, slice, styles, els, queue) {
 		
 			var fx = this.fx,
 				coords = this.coordinates(item, vertical, true),
-				div = new Element('div', {
+				div = original.clone().set({
 				
 					styles: $merge(styles, {
 							width: slice.width,
@@ -68,11 +82,11 @@ provides: [Tab.plugins.Matrix]
 			els[item.index].push(div.set({opacity: 1}).inject(this.container, 'top'))
 		},
 		
-		implode: function (item, vertical, options, slice, styles, els, queue) {
+		implode: function (item, vertical, slice, styles, els, queue) {
 		
 			var fx = this.fx,
 				coords = this.coordinates(item, vertical, true),
-				div = new Element('div', {
+				div = original.clone().set({
 				
 					styles: $merge(styles, {
 							width: slice.width,
@@ -114,11 +128,11 @@ provides: [Tab.plugins.Matrix]
 			els[item.index].push(div.set({opacity: 1}).inject(this.container, 'top'))
 		},
 		
-		split: function (item, vertical, options, slice, styles, els, queue) {
+		split: function (item, vertical, slice, styles, els, queue) {
 		
 			var fx = this.fx,
 				coords = this.coordinates(item, vertical, true),
-				div = new Element('div', {
+				div = original.clone().set({
 				
 					styles: $merge(styles, {
 							width: slice.width,
@@ -160,11 +174,11 @@ provides: [Tab.plugins.Matrix]
 			els[item.index].push(div.set({opacity: 1}).inject(this.container, 'top'))
 		},
 		
-		explode: function (item, vertical, options, slice, styles, els, queue, tmp) {
+		explode: function (item, vertical, slice, styles, els, queue, tmp) {
 		
 			var fx = this.fx,
 				coords = this.coordinates(item, vertical, true),
-				div = new Element('div', {
+				div = original.clone().set({
 				
 					styles: $merge(styles, {
 							opacity: 0, /* */
@@ -222,10 +236,10 @@ provides: [Tab.plugins.Matrix]
 			els[item.index].push(div.set({opacity: 1}).inject(this.container, 'top'))
 		},
 		
-		fall: function (item, vertical, options, slice, styles, els, queue) {
+		fall: function (item, vertical, slice, styles, els, queue) {
 		
 			var fx = this.fx,
-				div = new Element('div', {
+				div = original.clone().set({
 				
 					styles: $merge(styles, {
 							width: slice.width,
@@ -265,7 +279,7 @@ provides: [Tab.plugins.Matrix]
 			els[item.index].push(div.set({opacity: 1, zIndex: 0}).inject(this.container, 'top'))
 		},
 		
-		fold: function (item, vertical, options, slice, styles, els) {
+		fold: function (item, vertical, slice, styles, els) {
 		
 			styles = $merge(styles, {
 						opacity: 0, /* */
@@ -283,14 +297,14 @@ provides: [Tab.plugins.Matrix]
 			morph[prop] = styles[prop];	
 			styles[prop] = 0;
 			
-			els[item.index].push(new Element('div', {
+			els[item.index].push(original.clone().set({
 			
 				morph: this.fx,
 				styles: styles
 			}).inject(this.container, 'top').morph(morph))
 		},
 		
-		chains: function (item, vertical, options, slice, styles, els) {
+		chains: function (item, vertical, slice, styles, els) {
 
 			styles = $merge(styles, {
 					opacity: 0,
@@ -312,14 +326,14 @@ provides: [Tab.plugins.Matrix]
 			//vertical: top: dynamic, left: fixed
 			morph[coord] = [item.index % 2 == 0 ? - start : start, morph[coord]];
 			
-			els[item.index].push(new Element('div', {
+			els[item.index].push(original.clone().set({
 			
 				morph: this.fx,
 				styles: styles
 			}).inject(this.container, 'top').morph(morph))
 		},
 		
-		lines: function (item, vertical, options, slice, styles, els) {
+		lines: function (item, vertical, slice, styles, els) {
                         
 			styles = $merge(styles, {
 				opacity: 0,
@@ -340,14 +354,14 @@ provides: [Tab.plugins.Matrix]
 			//vertical: top: dynamic, left: fixed
 			morph[coord] = [-slice[vertical ? 'height' : 'width'] - morph[coord], morph[coord]];
 			
-			els[item.index].push(new Element('div', {
+			els[item.index].push(original.clone().set({
 			
 				morph: this.fx,
 				styles: styles
 			}).inject(this.container, 'top').morph(morph))
 		},
 		
-		grow: function (item, vertical, options, slice, styles, els) {
+		grow: function (item, vertical, slice, styles, els) {
 		
 			var morph = {
 				opacity: 1,
@@ -356,7 +370,7 @@ provides: [Tab.plugins.Matrix]
 			};
 			
 			morph['margin-' + ['left', 'top', 'right', 'bottom'].getRandom()] = [20, 0];
-			els[item.index].push(new Element('div', {
+			els[item.index].push(original.clone().set({
 				morph: this.fx,
 				styles: $merge(styles, { 
 							opacity: 0,
@@ -366,9 +380,9 @@ provides: [Tab.plugins.Matrix]
 			}).inject(this.container, 'top').morph(morph))
 		},
 		
-		wave: function (item, vertical, options, slice, styles, els, queue) {
+		wave: function (item, vertical, slice, styles, els, queue) {
 		
-			var morph = new Element('div', {
+			var morph = original.clone().set({
 				morph: $merge(this.fx, {duration: this.fx.duration / 2}),
 				styles: $merge(styles, { 
 					opacity: 1,
@@ -384,15 +398,15 @@ provides: [Tab.plugins.Matrix]
 				morph.destroy()
 			})
 		},
-		
-		floom: function (item, vertical, options, slice, styles, els) {
+				
+		floom: function (item, vertical, slice, styles, els) {
 		
 			var morph = {
 				opacity: 1
 			};
 			
 			morph['margin-' + ['left', 'top', 'right', 'bottom'].getRandom()] = [20, 0];
-			els[item.index].push(new Element('div', {
+			els[item.index].push(original.clone().set({
 			
 				morph: this.fx,
 				styles: $merge(styles, {
@@ -431,9 +445,9 @@ provides: [Tab.plugins.Matrix]
 		options: {
 		
 				/* per transition settings, here you go! */
-				/*
+			
 				settings: {
-				
+				/*
 					split: {
 					
 						params: {
@@ -466,13 +480,36 @@ provides: [Tab.plugins.Matrix]
 						
 							transition: 'bounce:in'
 						}
+					},
+					wave: {
+					
+						params: {
+						
+							sort: ['none', 'reverse'],
+							fragments: 1
+						}
+					},
+					*/
+					out: {
+					
+						params: {
+						
+							sort: ['none', 'reverse']
+						}
+					},
+					grow: {
+					
+						params: {
+						
+							sort: ['none', 'reverse']
+						}
 					}
 				},
 				
-				transitions: ['grow', 'floom', 'wave', 'lines', 'chains', 'fold', 'fall', 'explode', 'implode', 'out', 'split'],
 				//queuing animations
+			/*
 				queue: false,
-				*/
+			*/
 				random: true,
 				sort: ['none', 'reverse', 'shuffle'],
 				mode: 'vertical', //horizontal | both
@@ -594,7 +631,7 @@ provides: [Tab.plugins.Matrix]
 					matrix = [],
 					method, 
 					options = this.options,
-					slices = this.slices,
+					slices,
 					transition,
 					vertical,
 					bg,
@@ -602,9 +639,11 @@ provides: [Tab.plugins.Matrix]
 					tmp = {},
 					els = {},
 					settings,
-					//some transitions have big latency before they begin
+					//fixed,
+					//some transitions have big latency before they begin. set the flag to ignore delay in this case
 					delay = true;
 				
+				//redundant
 				if(options.random) {
 				
 					method = options.sort.getRandom();
@@ -637,8 +676,15 @@ provides: [Tab.plugins.Matrix]
 						method = options.sort.shift();
 						options.sort.push(method)
 					}
+					
 				}
-								
+			
+				this.setMode(options.randomMode ? 'both' : options.mode);
+				slices = this.slices;
+				
+				vertical = options.mode == 'vertical';
+				bg = {backgroundImage: 'url(' + this.slides[newIndex].image + ')', backgroundRepeat: 'no-repeat'};	
+				
 				slices.fragments = options.fragments;
 				
 				for(i = 0; i < options.amount; i++) {
@@ -650,11 +696,7 @@ provides: [Tab.plugins.Matrix]
 				//randomize order
 				if(method && matrix[method]) matrix[method]();
 					
-				this.setMode(options.randomMode ? 'both' : options.mode);
-				
-				vertical = options.mode == 'vertical';
-				bg = {backgroundImage: 'url(' + this.slides[newIndex].image + ')', backgroundRepeat: 'no-repeat'};	
-				
+				//ignore delay
 				if(['out', 'implode', 'split', 'explode', 'fall'].indexOf(transition) != -1) delay = false;
 				
 				matrix.each(function (item, index) {
@@ -662,14 +704,15 @@ provides: [Tab.plugins.Matrix]
 					(function(item, vertical, styles, transition, step) {
 			
 							// move to the next slide
-							this.transitions[transition](item, vertical, options, slices, styles, els, queue, tmp);
+							this.transitions[transition](item, vertical, slices, styles, els, queue, tmp);
 							
 							//finish and clean up
 							if (step) (function() {		
 							
+								time = 0;
+								
 								// apply the image to the background
 								this.container.setStyles(bg);
-								time = 0;
 								queue.each(function (fn) {
 								
 									fn.delay(time + 25)
@@ -697,20 +740,21 @@ provides: [Tab.plugins.Matrix]
 										
 						}).delay(delay ? 25 + time : 0, this, [item, vertical, $merge(this[options.mode](item), bg), transition, index == options.amount - 1]);
 					time += 50 
-				}, this)
+				}, this)	
 			}
 		},
 			
 		setMode: function (mode) {
 		
 			var slices = this.slices,
-				size = this.size;
+				size = this.size,
+				options = this.options;
 			
 			if(mode == 'both') mode = ['vertical', 'horizontal'].getRandom();
 			
 			$extend(slices, {
-					width: mode == 'vertical' ? size.x / this.options.amount : size.x / slices.fragments,
-					height: mode == 'vertical' ? size.y / slices.fragments : size.y / this.options.amount
+					width: mode == 'vertical' ? size.x / options.amount : size.x / options.fragments,
+					height: mode == 'vertical' ? size.y / options.fragments : size.y / options.amount
 				});
 			
 			this.options.mode = mode;
@@ -753,10 +797,10 @@ provides: [Tab.plugins.Matrix]
 				}
 		},
 		
-		addTransition: function (tr, fn) {
+		addTransition: function (key, fn) {
 		
-			if(typeof tr == 'object') $each(tr, function (fn, key) { this.transitions[key] = fn.bind(this) }, this);
-			else this.transitions[tr] = fn.bind(this);
+			if(typeof key == 'object') $each(key, function (fn, key) { this.transitions[key] = fn.bind(this) }, this);
+			else this.transitions[key] = fn.bind(this);
 			
 			return this
 		}
