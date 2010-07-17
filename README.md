@@ -4,7 +4,7 @@ Tab
 Minimalistic but extensible tab swapper. It can be used to create a tab swapper as well as a galerie slideshow. 
 you can have effects like **Moostack**, the [barack slideshow](http://devthought.com/wp-content/moogets/BarackSlideshow/demo.html) or [jQuery nivoslider](http://nivo.dev7studios.com/) or whatever you want by providing an animation plugin. 
 ![Screenshot](http://url_to_project_screenshot)
-[Demo](http://github.com/tab/thumbnail.jpg)
+[Demo](http://github.com/tbela99/tab/raw/master/thumbnail.jpg)
 
 #### More demos
 
