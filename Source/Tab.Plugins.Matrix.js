@@ -121,8 +121,7 @@ provides: [Tab.plugins.Matrix]
 						opacity: [1, .5],
 						left: (this.size.x.toInt() - slice.width) / 2,
 						top: (this.size.y.toInt() - slice.height) / 2
-					}
-				)
+					})
 			}.bind(this));
 				
 			els[item.index].push(div.set({opacity: 1}).inject(this.container, 'top'))
@@ -167,8 +166,7 @@ provides: [Tab.plugins.Matrix]
 						opacity: [1, .2],
 						left: $random(-slice.width, this.size.x.toInt() + slice.width),
 						top: $random(-slice.height, this.size.y.toInt() + slice.height)
-					}
-				)
+					})
 			}.bind(this));
 				
 			els[item.index].push(div.set({opacity: 1}).inject(this.container, 'top'))
@@ -422,22 +420,16 @@ provides: [Tab.plugins.Matrix]
 	
 	Array.implement({
 	
-		shuffle: function () {
+		shuffle: function() {
 		
-			var v, i, k;
+			for (var i = this.length; i && --i;) {
 			
-			for(i = 0; i < this.length; i++) {
-			
-				k = $random(0, this.length - 1);
-				
-				if(k != i) {
-					v = this[i];
-					this[i] = this[k];
-					this[k] = v
-				}				
+				var temp = this[i], r = Math.floor(Math.random() * ( i + 1 ));
+				this[i] = this[r];
+				this[r] = temp;
 			}
 			
-			return this
+			return this;
 		}
 	});
 	

@@ -30,7 +30,7 @@ provides: [Tab.plugins.Stack]
 		Binds: ['reindex'],
 		initialize: function(panels, options, fx) {
 		
-			this.container = panels[0].setStyle('display', 'block').getParent().setStyles({position: 'relative', overflow: 'visible'});
+			this.container = panels[0].setStyle('display', 'block').getParent().setStyles({width: el.getStyle('width'), position: 'relative', overflow: 'visible'});
 			
 			this.options = $merge(this.options, options);
 			this.fx = $merge(this.fx, fx);
@@ -92,9 +92,7 @@ provides: [Tab.plugins.Stack]
 		
 			if($type(index) == 'element') index = index.getParent().retrieve('stack:index');
 
-			if($type(index) != 'number') return this;
-
-			if(this.current == index) return this;
+			if($type(index) != 'number' || this.current == index) return this;
 			
 			var forward = this.current < index ? index - this.current : this.stack.length - this.current + index,
 				backward = this.current > index ? this.current - index : this.current + this.stack.length - index;

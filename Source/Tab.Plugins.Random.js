@@ -204,9 +204,10 @@ provides: [Tab.plugins.Random]
 			
 			panels.each(function (el) {
 			
-				el.set({
+				el.setStyle('display', 'block').set({
 						styles: {
 						
+							width: el.getStyle('width'),
 							position: 'absolute',
 							zIndex: 0,
 							display: 'none'
@@ -247,4 +248,3 @@ provides: [Tab.plugins.Random]
 		}
 	})
 })();
-

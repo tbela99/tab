@@ -32,7 +32,7 @@ provides: [Tab.plugins.Move]
 		
 			this.options = $merge(this.options, options);
 			
-			this.panels = panels.map(function (el) { return el.setStyles({position: 'absolute', display: 'block'}) });
+			this.panels = panels.map(function (el) { return el.setStyle('display', 'block').setStyles({position: 'absolute', width: el.getStyle('width')}) });
 			
 			this.fx = new Fx.Elements(panels, $merge(this.fx, fx));
 			

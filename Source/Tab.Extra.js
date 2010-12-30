@@ -36,7 +36,7 @@ provides: [Tab.Extra]
 				
 					el.addEvent('click', function () {
 					
-						if(this.running) this.stop().start.delay(this.options.interval + this.options.delay)
+						if(this.running) this.stop().start.delay(this.options.delay * 1000)
 						
 					}.bind(this))
 				}, this);
