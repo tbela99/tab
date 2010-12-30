@@ -78,12 +78,10 @@ provides: [Tab, Tab.plugins.None]
 				
 				options = this.options;
 				
-				this.tabs = $$(options.tabs) ;
 				this.panels = $(options.container).getChildren(options.selector);
+				this.tabs = $$(options.tabs).map(function (el, index) {
 				
-				this.tabs.each(function (el, index) {
-				
-					el.set({		
+					return el.set({		
 									
 						styles: {cursor: 'pointer'}, 
 						events: {
@@ -108,7 +106,7 @@ provides: [Tab, Tab.plugins.None]
 				
 				var current = options.current || 0;
 				
-				this.fireEvent('onCreate', [this.panels[current], current]);
+				this.fireEvent('create', [this.panels[current], current]);
 				this.setSelectedIndex(current || 0);	
 				
 				return this
@@ -137,7 +135,7 @@ provides: [Tab, Tab.plugins.None]
 							
 				this.anim.move.apply(this.anim, params);
 				
-				return this.fireEvent('onChange', params)
+				return this.fireEvent('change', params)
 			}
 		});
 	
