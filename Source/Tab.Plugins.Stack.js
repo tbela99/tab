@@ -7,8 +7,8 @@ description: Stack - swap panel using a stack.
 copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
-requires: 
-  tab:0.1.4: 
+requires:
+  tab:0.1.4:
   - Tab
 provides: [Tab.plugins.Stack]
 ...
@@ -19,108 +19,109 @@ provides: [Tab.plugins.Stack]
 	Tab.prototype.plugins.Stack = new Class({
 
 		options: {
-		
+
 			scattering: 0
 		},
 		fx: {
-		
-			duration: 800, 
+
+			duration: 800,
 			link: 'chain'
 		},
 		Binds: ['reindex'],
+		Implements: [Options, Events],
 		initialize: function(panels, options, fx) {
-		
-			this.container = panels[0].setStyle('display', 'block').getParent().setStyles({width: el.getStyle('width'), position: 'relative', overflow: 'visible'});
-			
-			this.options = $merge(this.options, options);
-			this.fx = $merge(this.fx, fx);
+
+			this.setOptions(options);
+			this.fx = Object.merge({}, this.fx, fx);
 			this.current = 0;
 			this.reindexing = false;
 			this.rightEdge = 0;
 			this.d = 1;
-			
+
 			this.fx.duration  = (this.fx.duration / 2).toInt();
-			
+
 			var wrapper = new Element('div', {
 				styles: {
 					position: 'absolute'
 				}
-			}), 
+			}),
 			height = 0,
 			r,
 			z = panels.length;
 
 			this.stack = panels.map(function(el, index) {
-				
-				r = this.d * $random(0, this.options.scattering);		
+
+				r = this.d * Number.random(0, this.options.scattering);
 				this.d = -this.d;
-				
+
 				height = Math.max(height, el.offsetHeight);
 				el.setStyles({display: 'block'});
-				
+
 				if(this.rightEdge < el.offsetWidth) this.rightEdge = el.offsetWidth
-				
+
 				return wrapper.clone()
 					.set({
 						styles: {
-							
+
 							height: el.offsetHeight,
 							width: el.offsetWidth,
 							zIndex: z--
 						},
 						morph: this.fx
 					}).
-					store('stack:index', index) 
+					store('stack:index', index)
 					.wraps(el)
 			}, this);
-			
+
+			this.container = this.stack[0].getParent().setStyles({width: this.stack[0].getStyle('width'), position: 'relative', overflow: 'visible'});
+
 			this.container.tween('height', height + this.options.scattering);
 
 			wrapper.destroy();
 
 			this.rightEdge += this.options.scattering;
-			
+
 			this.update();
 		},
-		
-		move: function () { 
 
-			return this.goTo(arguments[2])
+		move: function () {
+
+			return this.goTo(arguments[2]).fireEvent('change', arguments).fireEvent('complete')
 		},
-			
-		goTo: function(index) {
-		
-			if($type(index) == 'element') index = index.getParent().retrieve('stack:index');
 
-			if($type(index) != 'number' || this.current == index) return this;
-			
+		goTo: function(index) {
+
+			if(typeOf(index) == 'element') index = index.getParent().retrieve('stack:index');
+
+			if(typeOf(index) != 'number' || this.current == index) return this;
+
 			var forward = this.current < index ? index - this.current : this.stack.length - this.current + index,
 				backward = this.current > index ? this.current - index : this.current + this.stack.length - index;
 			return this.swapMany((Math.abs(forward) <= Math.abs(backward)) ? forward : -backward);
 		},
-		
+
 		reindex: function() {
 			var z = this.stack.length;
 			this.stack.each(function(wrapper){
-			
+
 				wrapper.setStyle('z-index', z--)
 			});
 
 			return this;
 		},
-		
+
 		swap: function(direction) {
-		
-			var current = this.stack[0], 
+
+			var current = this.stack[0],
 				options = this.options,
 				next,
 				out,
 				last,
 				elt,
-				r = this.d * $random(0, options.scattering);	
-			
+				r = this.d * Number.random(0, options.scattering);
+
 			this.d = -this.d;
-			
+
 			switch(direction) {
 				case 'prev':
 					next = this.stack.getLast();
@@ -132,32 +133,32 @@ provides: [Tab.plugins.Stack]
 					next = this.stack[1];
 					this.stack.erase(current).push(current);
 			}
-			
-			if(this.reindexing) $clear(this.reindexing);
+
+			if(this.reindexing) clearTimeout(this.reindexing);
 
 			this.reindexing = this.reindex.delay(this.fx.duration);
 
-			out = [$random((-options.scattering * 2).toInt(), 0), $random(this.rightEdge, this.rightEdge + (options.scattering * 2))];
-			last = [$random(0, options.scattering), $random(0, options.scattering)];
+			out = [Number.random((-options.scattering * 2).toInt(), 0), Number.random(this.rightEdge, this.rightEdge + (options.scattering * 2))];
+			last = [Number.random(0, options.scattering), Number.random(0, options.scattering)];
 			elt = direction == 'next' ? current : next;
 			elt.morph({
-				'margin-top': out[0],
-				'margin-left': out[1]
+				marginTop: out[0],
+				marginLeft: out[1]
 			}).morph({
-				'margin-top': last[0],
-				'margin-left': last[1]
+				marginTop: last[0],
+				marginLeft: last[1]
 			});
-			
+
 			return this.update()
 		},
 
 		swapMany: function(many) {
-			
+
 			var direction = many < 0 ? 'prev' : 'next', time = 0;
 			many = Math.abs(many);
 
 			while(many--) {
-				
+
 				this.swap.delay(time + 25, this, direction);
 				time += 75
 			}
@@ -166,7 +167,7 @@ provides: [Tab.plugins.Stack]
 		},
 
 		update: function() {
-			
+
 			this.current = this.stack[0].retrieve('stack:index');
 			return this
 		}

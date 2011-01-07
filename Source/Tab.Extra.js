@@ -15,52 +15,55 @@ provides: [Tab.Extra]
 
 	Tab.Extra = new Class({ 
 		
-		/*
-		
 			options: {
 			
+		/*
+		
 				interval: 10, //interval between 2 executions in seconds
 				delay: 10, //delay between the moment a tab is clicked and the auto slide is restarted
-				reverse: true //move backward
+				reverse: true, //move backward
+		*/
+				autostart: true
 			},
 			reverse: false, //move direction
-		*/
 			Extends: Tab,
 			Binds: ['update', 'start', 'stop'],
 			initialize: function(options) {
 
-				this.parent($merge({interval: 10, delay: 10}, options));
+				this.parent(Object.append({interval: 10, delay: 10}, options));
 
 				//handle click on tab. wait 10 seconds before we go
 				this.tabs.each(function (el) {
 				
 					el.addEvent('click', function () {
 					
-						if(this.running) this.stop().start.delay(this.options.delay * 1000)
+						this.stop().start.delay(this.options.delay * 1000)
 						
-					}.bind(this))
+					}.pass(null, this))
 				}, this);
 				
-				this.reverse = !!this.options.reverse;
+				//this.reverse = !!this.options.reverse;
 				this.running = false;
 				this.timer = new PeriodicalExecuter(this.update, this.options.interval);
+				
+				if(!this.options.autostart) this.stop();
 				
 				return this
 			},
 			
-			update: function () { return this[this.reverse ? 'previous' : 'next']() },
+			update: function () { return this[this.options.reverse ? 'previous' : 'next']() },
 			
 			start: function () {
 			
 				this.timer.registerCallback();
-				this.running = true;
+				//this.running = true;
 				return this
 			},
 			
 			stop: function() { 
 			
 				this.timer.stop();
-				this.running = false;
+				//this.running = false;
 				return this
 			}
 		});

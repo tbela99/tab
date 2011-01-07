@@ -46,8 +46,7 @@ provides: [Tab.plugins.Random]
 						break;
 			}
 			
-			newTab.morph(morph).get('morph').chain(function () { curTab.setStyle('display', 'none'); newTab.setStyle('z-index', 0) });
-			this.container.morph({height: newTab.offsetHeight, width: newTab.offsetWidth})
+			newTab.morph(morph).get('morph').chain(function () { curTab.setStyle('display', 'none'); newTab.setStyle('z-index', 0); this.fireEvent('complete') }.pass(null, this))
 		},
 		slideOut: function (curTab, newTab, f) {
 		
@@ -78,8 +77,8 @@ provides: [Tab.plugins.Random]
 						break;
 			}
 			
-			curTab.morph(morph).get('morph');
-			this.container.morph({height: newTab.offsetHeight, width: newTab.offsetWidth})
+			curTab.morph(morph);
+			this.fireEvent('complete')
 		},
 		fade: function (curTab, newTab) {
 			
@@ -91,14 +90,16 @@ provides: [Tab.plugins.Random]
 										morph({opacity: 1}).get('morph').chain(function () {
 						
 								curTab.setStyles({opacity: 0, display: 'none'});
-								newTab.setStyle('z-index', 0)
-							})
+								newTab.setStyle('z-index', 0);
+								this.fireEvent('complete')
+							}.pass(null, this))
 			}
 								
-			else newTab.set({styles:{display: 'block'}}).morph({opacity: [.5, 1]})
+			else {
 			
-			var morph = {height: newTab.offsetHeight, width: newTab.offsetWidth}
-			this.container.morph(morph)
+				newTab.set({styles:{display: 'block'}}).morph({opacity: [.5, 1]});
+				this.fireEvent('complete')
+			}
 		},
 		move: function (curTab, newTab, f) {
 			
@@ -149,7 +150,7 @@ provides: [Tab.plugins.Random]
 						obj[index] = {opacity: [opacity, 1], left: [p.offsetLeft, p.offsetLeft - offset]}
 					});
 				
-				if(!options.useOpacity) $each(obj, function (k) { delete k.opacity });
+				if(!options.useOpacity) Object.each(obj, function (k) { delete k.opacity });
 			
 				l.each(function (p, index) {
 				
@@ -157,14 +158,16 @@ provides: [Tab.plugins.Random]
 					
 					if(index == 1) p.get('morph').chain(function () {
 					
-						l[0].setStyles({display: 'none', left: 0, top: 0})
-					})
-				})
+						l[0].setStyles({display: 'none', left: 0, top: 0});
+						this.fireEvent('complete')
+					}.pass(null, this))
+				}, this)
 				
-			} else 	newTab.setStyles({opacity: 1, display: 'block'});
+			} else 	{
 			
-			morph = {height: newTab.offsetHeight, width: newTab.offsetWidth}
-			this.container.morph(morph)
+				newTab.setStyles({opacity: 1, display: 'block'});
+				this.fireEvent('complete')
+			}
 		}
 	};
 	
@@ -184,14 +187,15 @@ provides: [Tab.plugins.Random]
 			duration: 1000
 		},
 		transitions: {},
+		Implements: [Options, Events],
 		initialize: function(panels, options, fx) {
 		
-			fx = $merge(this.fx, fx);
+			fx = Object.merge({}, this.fx, fx);
 					
-			options = this.addTransition(transitions).options = $merge(this.options, options);
-			options.directions = $splat(this.options.directions);
+			options = this.setOptions(options).addTransition(transitions).options;
+			options.directions = Array.from(this.options.directions);
 			
-			var tr = $splat(this.options.transitions || $H(this.transitions).getKeys());
+			var tr = Array.from(this.options.transitions || Object.keys(this.transitions));
 			
 			this.options.transitions = [];
 			
@@ -236,13 +240,15 @@ provides: [Tab.plugins.Random]
 
 			this.transitions[parts[0]](curTab, newTab, parts[1]);
                         
-			this.current = options.random ? $random(0, options.transitions.length - 1) : (this.current + 1) % options.transitions.length
+			this.current = options.random ? Number.random(0, options.transitions.length - 1) : (this.current + 1) % options.transitions.length;
+			
+			this.fireEvent('change', arguments).fireEvent('resize', newTab);
 		},
 		
 		addTransition: function (tr, fn) {
 		
-			if(typeof tr == 'object') $each(tr, function (fn, key) { this.transitions[key] = fn.bind(this) }, this);
-			else this.transitions[tr] = fn.bind(this);
+			if(typeof tr == 'object') Object.each(tr, function (fn, key) { this.transitions[key] = fn.pass(null, this) }, this);
+			else this.transitions[tr] = fn.pass(null, this);
 			
 			return this
 		}

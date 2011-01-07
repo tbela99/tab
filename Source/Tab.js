@@ -35,6 +35,7 @@ provides: [Tab, Tab.plugins.None]
 							//animation plugin parameters
 				},
 			*/
+				link: 'chain',
 				fx: {
 					
 					//Fx parameters
@@ -46,13 +47,14 @@ provides: [Tab, Tab.plugins.None]
 				animation: 'None'
 			},
 			current: 0,
+			queue: [],
 			Implements: [Options, Events],
 			
 			initialize: function(options) {
 
 				this.addEvents({
 				
-					onCreate: function(newPanel, index) {
+					create: function(newPanel, index) {
 						
 						this.tabs.each(function (el, val) {
 						
@@ -62,23 +64,14 @@ provides: [Tab, Tab.plugins.None]
 						this.selected = newPanel;
 						this.current = index
 						
-					}.bind(this),
-					onChange: function(newPanel, oldPanel, index, oldIndex) {
-						
-						var _new = this.tabs[index], _old = this.tabs[oldIndex], options = this.options
-						
-						if(_old) _old.removeClass(options.activeClass).addClass(options.inactiveClass);
-						if(_new) _new.removeClass(options.inactiveClass).addClass(options.activeClass);
-						
-						this.selected = newPanel;
-						this.current = index
-					}.bind(this)
-						
+					}
+					
 				}).setOptions(options);
 				
 				options = this.options;
+				this.container = $(options.container).set('morph', {link: 'cancel'});
 				
-				this.panels = $(options.container).getChildren(options.selector);
+				this.panels = this.container.getChildren(options.selector);
 				this.tabs = $$(options.tabs).map(function (el, index) {
 				
 					return el.set({		
@@ -96,13 +89,13 @@ provides: [Tab, Tab.plugins.None]
 									
 								this.setSelectedIndex(index, Math.abs(forward) <= Math.abs(backward) ? 1 : -1) 
 							
-							}.bind(this)						
+							}.pass(null, this)						
 						}
 					}).addClass(options.inactiveClass).removeClass(options.activeClass);
 					
 				}, this);
 				
-				this.anim = new this.plugins[options.animation](this.panels, options.params, options.fx);
+				this.anim = new this.plugins[options.animation](this.panels, Object.merge({onResize: this.resize.pass(null, this), onChange: this.change.pass(null, this), onComplete: this.complete.pass(null, this) }, options.params), options.fx);
 				
 				var current = options.current || 0;
 				
@@ -122,20 +115,74 @@ provides: [Tab, Tab.plugins.None]
 				return this.setSelectedIndex((this.getSelectedIndex() + this.panels.length - 1) % this.panels.length, -1);
 			},
 			
+			change: function(newPanel, oldPanel, index, oldIndex) {
+				
+				var _new = this.tabs[index], _old = this.tabs[oldIndex], options = this.options
+				
+				if(_old) _old.removeClass(options.activeClass).addClass(options.inactiveClass);
+				if(_new) _new.removeClass(options.inactiveClass).addClass(options.activeClass);
+						
+				this.selected = newPanel;
+				this.current = index;
+				
+				this.fireEvent('change', arguments)
+			},
+			
+			complete: function () {
+			
+				this.running = false;
+				this.fireEvent('complete', [this.selected, this.current]);
+								
+				//consider only the last parameters
+				if(this.queue.length > 0) {
+				
+					var args = this.queue.pop();
+					this.setSelectedIndex.apply(this, args);
+				}
+			},
+			
+			resize: function (panel) {
+			
+				panel = panel || this.selected;
+				
+				var position = panel.style.position;
+				
+				panel.style.position = 'static';
+						
+				this.container.get('morph').start({height: panel.offsetHeight, width: panel.offsetWidth});
+				panel.style.position = position
+			},
+			
 			getSelectedIndex: function() { return this.current },
 			
 			setSelectedIndex: function(index, direction) {
 
+				if(this.running) {
+				
+					switch(this.options.link) {
+					
+						case 'cancel':
+									if(this.anim.cancel) this.anim.cancel();
+									break;
+						case 'chain':
+									this.queue = [arguments];
+									return this;
+						case 'ignore':
+									return this;
+					}
+				}
+				
 				var current = this.current,
 					curPanel = this.panels[current],
 					newPanel = this.panels[index],
 					params = [newPanel, curPanel, index, current, direction];
 							
 				if(this.current == index || this.selected == newPanel || index < 0 || index >= this.panels.length) return this;
-							
+						
+				this.running = true;
 				this.anim.move.apply(this.anim, params);
 				
-				return this.fireEvent('change', params)
+				return this
 			}
 		});
 	
@@ -144,17 +191,17 @@ provides: [Tab, Tab.plugins.None]
 	
 		None: new Class({
 		
-			initialize: function (panels) {
+			Implements: Events,
+			initialize: function (panels, options) {
 			
-				panels.each(function (el, index) {
-				
-					el.setStyle('display', index == 0 ? 'block' : 'none')
-				})
+				this.addEvents(options);
+				panels.each(function (el, index) { el.style.display = index == 0 ? 'block' : 'none' })
 			},
 			move: function (newPanel, oldPanel) {
 			
-				newPanel.setStyle('display', 'block');
-				if(oldPanel) oldPanel.setStyle('display', 'none')
+				newPanel.style.display = 'block';
+				if(oldPanel) oldPanel.style.display = 'none';
+				this.fireEvent('change', arguments).fireEvent('complete');
 			}
 		})
 	};

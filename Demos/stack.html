@@ -116,7 +116,7 @@ div.tabs a.selected {
 				} else tb[val[0]] = val[1]
 			});
 			
-			$each(tb, function (val, key) {
+			Object.each(tb, function (val, key) {
 		
 				var el = form[key];
 				
@@ -127,7 +127,7 @@ div.tabs a.selected {
 						//select
 						if($(el)) {
 							
-							$A(el.options).each(function (option, index) {
+							Array.from(el.options).each(function (option, index) {
 							
 								if(option.value == val) el.selectedIndex = index
 							});
@@ -137,8 +137,8 @@ div.tabs a.selected {
 						//radio - checkbox
 						else {
 						
-							val = $splat(val);
-							$A(el).each(function (c) {
+							val = Array.from(val);
+							Array.from(el).each(function (c) {
 							
 								for(var i = val.length - 1; i >= 0; i--)
 									if(c.value == val[i]) {
@@ -156,12 +156,12 @@ div.tabs a.selected {
 					}
 					else {
 					
-						if($(el).get('tag') == 'select') $A(el.options).each(function (option, index) {
+						if($(el).get('tag') == 'select') Array.from(el.options).each(function (option, index) {
 						
 							if(option.value == val) el.selectedIndex = index
 						});
 						else $(el).set('value', val);
-						//if($(el).get('tag') == 'select') $A(el.options)
+						//if($(el).get('tag') == 'select') Array.from(el.options)
 						if(key == 'duration') duration = val;
 						else options[key] = val
 					}
@@ -182,6 +182,10 @@ div.tabs a.selected {
 				fx: {
 				
 					duration: duration
+				},
+				onComplete: function () {
+				
+					if(window.console && console.log) console.log(arguments)
 				}
 			})
 	})
