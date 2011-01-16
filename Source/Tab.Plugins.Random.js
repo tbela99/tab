@@ -190,7 +190,7 @@ provides: [Tab.plugins.Random]
 		Implements: [Options, Events],
 		initialize: function(panels, options, fx) {
 		
-			fx = Object.merge({}, this.fx, fx);
+			fx = Object.merge(this.fx, fx);
 					
 			options = this.setOptions(options).addTransition(transitions).options;
 			options.directions = Array.from(this.options.directions);
@@ -225,6 +225,21 @@ provides: [Tab.plugins.Random]
 			this.container = panel.setStyle('display', 'block').getParent().setStyles({position: 'relative', overflow: 'hidden', height: panel.offsetHeight, width: panel.offsetWidth});
 			
 			this.current = 0
+		},
+		add: function (el) {
+					
+			el.setStyle('display', 'block').set({
+					styles: {
+					
+						width: el.getStyle('width'),
+						position: 'absolute',
+						zIndex: 0,
+						display: 'none'
+					},
+					morph: this.fx
+				});
+				
+			return this
 		},
 		move: function (newTab, curTab) {
 			

@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
 
 
@@ -163,7 +163,8 @@ div.tabs a.selected {
 				}
 			},
 			tab,
-			duration = 500;
+			duration = 500,
+			removed = 0;
 		
 		if(params && params.length > 0) {
 			
@@ -254,7 +255,45 @@ div.tabs a.selected {
 				
 					if(window.console && console.log) console.log(arguments)
 				}
-			})
+			});
+			
+			function change() {
+			
+				var panel = this.retrieve('panel');
+				
+				if(this.checked) {
+					
+					if(!panel) {
+					
+						if(tab.running) {
+						
+							tab.addEvent('complete:once', change.pass(null, this));
+							return
+						}
+						
+						panel = tab.remove(Math.max(0, this.value - removed));
+						
+						if(panel) {
+						
+							this.store('panel', panel);
+							removed++;
+						}
+						
+						this.checked = !!panel
+					}
+					
+				} else {
+				
+					if(panel) {
+					
+						this.eliminate('panel');
+						removed--;
+						tab.add(panel.panel, panel.tab, this.value)
+					}
+				}
+			}
+			
+			$$('input.remove').addEvents({click: change, change: change})
 	})
 //]]></script>
 </head><body>
@@ -268,7 +307,8 @@ div.tabs a.selected {
   	  </div>
       <div class="tabs"><a href="#0">1</a><a href="#1">2</a><a href="#2">3</a><a href="#3">4</a><a href="#4">5</a></div>
       <form action="" method="get">
-        <div style="padding: 10px 0 0">Parameters: 
+        <div>remove panel: <label for="remove0">1</label><input id="remove0" class="remove" type="checkbox" value="0" /> <label for="remove1">2</label><input id="remove1" class="remove" type="checkbox" value="1" /> <label for="remove2">3</label><input id="remove2" class="remove" type="checkbox" value="2" /> <label for="remove3">4</label><input id="remove3" class="remove" type="checkbox" value="3" /> <label for="remove4">5</label><input id="remove4" class="remove" type="checkbox" value="4" />
+		<div style="padding: 10px 0 0">Parameters: 
           <input name="transitions[]" type="checkbox" value="wave" id="wave" /><label for="wave">Wave</label> <input name="transitions[]" type="checkbox" value="grow" id="grow" /><label for="grow">Grow</label>
           <input name="transitions[]" type="checkbox" value="floom" id="floom" /><label for="floom">Floom</label>
 		  <input name="transitions[]" type="checkbox" value="lines" id="lines" /><label for="lines">Lines</label>
@@ -322,7 +362,7 @@ div.tabs a.selected {
       <div>Tab demo, each transition have its own settings.</div>
       
   <div>Feel free to modify it.</div>      
-  <div>Inspired by <a href="http://blog.olicio.us/2009/07/25/floom/" target="_blank">Floom</a> and <a href="http://nivo.dev7studios.com/" target="_blank">Nivo Slider</a>. Follow me on twitter at <a href="http://twitter.com/tbela99" target="_blank">@tbela99</a></div>
-      <div style="text-align:center"><a href="http://twitter.com/tbela99" target="_blank">Twitter</a> | <a href="http://tbela99.blogspot.com/" target="_blank">Blog</a></div>
+  <div>Inspired by <a href="https://blog.olicio.us/2009/07/25/floom/" target="_blank">Floom</a> and <a href="https://nivo.dev7studios.com/" target="_blank">Nivo Slider</a>. Follow me on twitter at <a href="https://twitter.com/tbela99" target="_blank">@tbela99</a></div>
+      <div style="text-align:center"><a href="https://twitter.com/tbela99" target="_blank">Twitter</a> | <a href="https://tbela99.blogspot.com/" target="_blank">Blog</a></div>
 </div>
 </body></html>

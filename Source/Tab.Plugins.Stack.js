@@ -48,14 +48,15 @@ provides: [Tab.plugins.Stack]
 			height = 0,
 			r,
 			z = panels.length;
+			
+			this.panels = panels;
 
 			this.stack = panels.map(function(el, index) {
 
 				r = this.d * Number.random(0, this.options.scattering);
 				this.d = -this.d;
 
-				height = Math.max(height, el.offsetHeight);
-				el.setStyles({display: 'block'});
+				height = Math.max(height, el.setStyles({display: 'block'}).offsetHeight);
 
 				if(this.rightEdge < el.offsetWidth) this.rightEdge = el.offsetWidth
 
