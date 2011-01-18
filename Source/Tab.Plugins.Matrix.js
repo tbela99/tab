@@ -122,7 +122,7 @@ provides: [Tab.plugins.Matrix]
 						left: (this.size.x.toInt() - slice.width) / 2,
 						top: (this.size.y.toInt() - slice.height) / 2
 					})
-			}.pass(null, this));
+			}.bind(this));
 
 			els[item.index].push(div.set({opacity: 1}).inject(this.container, 'top'))
 		},
@@ -167,7 +167,7 @@ provides: [Tab.plugins.Matrix]
 						left: Number.random(-slice.width, this.size.x.toInt() + slice.width),
 						top: Number.random(-slice.height, this.size.y.toInt() + slice.height)
 					})
-			}.pass(null, this));
+			}.bind(this));
 
 			els[item.index].push(div.set({opacity: 1}).inject(this.container, 'top'))
 		},
@@ -588,7 +588,7 @@ provides: [Tab.plugins.Matrix]
 							this.setMode(this.options.mode).preloaded = true;
 							this.move(panels[this.current], '', this.current, '')
 
-						}.pass(null, this)
+						}.bind(this)
 					}
 				)
 		},
@@ -786,8 +786,8 @@ provides: [Tab.plugins.Matrix]
 
 		addTransition: function (key, fn) {
 
-			if(typeof key == 'object') Object.each(key, function (fn, key) { this.transitions[key] = fn.pass(null, this) }, this);
-			else this.transitions[key] = fn.pass(null, this);
+			if(typeof key == 'object') Object.each(key, function (fn, key) { this.transitions[key] = fn.bind(this) }, this);
+			else this.transitions[key] = fn.bind(this);
 
 			return this
 		}

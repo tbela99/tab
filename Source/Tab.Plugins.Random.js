@@ -46,7 +46,7 @@ provides: [Tab.plugins.Random]
 						break;
 			}
 			
-			newTab.morph(morph).get('morph').chain(function () { curTab.setStyle('display', 'none'); newTab.setStyle('z-index', 0); this.fireEvent('complete') }.pass(null, this))
+			newTab.morph(morph).get('morph').chain(function () { curTab.setStyle('display', 'none'); newTab.setStyle('z-index', 0); this.fireEvent('complete') }.bind(this))
 		},
 		slideOut: function (curTab, newTab, f) {
 		
@@ -92,7 +92,7 @@ provides: [Tab.plugins.Random]
 								curTab.setStyles({opacity: 0, display: 'none'});
 								newTab.setStyle('z-index', 0);
 								this.fireEvent('complete')
-							}.pass(null, this))
+							}.bind(this))
 			}
 								
 			else {
@@ -160,7 +160,7 @@ provides: [Tab.plugins.Random]
 					
 						l[0].setStyles({display: 'none', left: 0, top: 0});
 						this.fireEvent('complete')
-					}.pass(null, this))
+					}.bind(this))
 				}, this)
 				
 			} else 	{
@@ -262,8 +262,8 @@ provides: [Tab.plugins.Random]
 		
 		addTransition: function (tr, fn) {
 		
-			if(typeof tr == 'object') Object.each(tr, function (fn, key) { this.transitions[key] = fn.pass(null, this) }, this);
-			else this.transitions[tr] = fn.pass(null, this);
+			if(typeof tr == 'object') Object.each(tr, function (fn, key) { this.transitions[key] = fn.bind(this) }, this);
+			else this.transitions[tr] = fn.bind(this);
 			
 			return this
 		}

@@ -105,6 +105,47 @@ display the previous panel.
 
 * (*object*) - This Tab instance.
 
+Tab Method: add {#Tab:add}
+----------------------------
+
+add a new panel to the tab.
+
+### Arguments:
+
+- panel - (*mixed*) the new panel.
+- tab - (*mixed*, optional) tab associated to the new panel
+- index - (*int*, optional) position where the new panel is injected, if not specified, the new panel will be inserted at the end
+
+### Returns:
+
+* (*object*) - This Tab instance.
+
+Tab Method: remove {#Tab:remove}
+----------------------------
+
+remove the panel at the given index.
+
+### Arguments:
+
+- index - (*int*)
+
+### Returns:
+
+* (*object*) - an object {panel: panel, tab: tab} containing the panel and the associated tab.
+
+Tab Method: resize {#Tab:resize}
+----------------------------
+
+resize the container to fit the panel offset. this is useful if you change the panel content.
+
+### Arguments:
+
+- index - (*int*, optional) index of the panel. if not specified, the current panel is used.
+
+### Returns:
+
+* (*object*) - an object {panel: panel, tab: tab} containing the panel and the associated tab.
+
 Method: getSelectedIndex
 ------------------------
 

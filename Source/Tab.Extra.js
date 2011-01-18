@@ -38,7 +38,7 @@ provides: [Tab.Extra]
 
 						this.stop().start.delay(this.options.delay * 1000)
 
-					}.pass(null, this))
+					}.bind(this))
 				}, this);
 
 				this.timer = new PeriodicalExecuter(this.update, this.options.interval);

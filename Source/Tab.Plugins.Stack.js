@@ -27,67 +27,82 @@ provides: [Tab.plugins.Stack]
 			duration: 800,
 			link: 'chain'
 		},
+		stack: [],
 		Binds: ['reindex'],
 		Implements: [Options, Events],
 		initialize: function(panels, options, fx) {
 
 			this.setOptions(options);
 			this.fx = Object.merge({}, this.fx, fx);
-			this.current = 0;
 			this.reindexing = false;
 			this.rightEdge = 0;
 			this.d = 1;
 
 			this.fx.duration  = (this.fx.duration / 2).toInt();
 
-			var wrapper = new Element('div', {
-				styles: {
-					position: 'absolute'
-				}
-			}),
-			height = 0,
-			r,
-			z = panels.length;
-			
 			this.panels = panels;
-
-			this.stack = panels.map(function(el, index) {
+			this.current = 0;
+			this.selected = panels[0];
+			this.container = this.selected.getParent().setStyles({width: this.selected.getStyle('width'), display: 'block', height: this.selected.getStyle('height') + this.options.scattering, position: 'relative', overflow: 'visible'});
+			
+			this.reset();
+			this.rightEdge += this.options.scattering;
+			this.update()
+		},
+		
+		reset: function() {
+		
+			var wrapper = new Element('div[style=position:absolute]'),
+				z = this.panels.length,
+				i = 0,
+				height = 0,
+				stack = this.stack.concat(),
+				length = this.panels.length,
+				r;
+				
+			this.current = this.panels.indexOf(this.selected);
+			
+			this.stack = this.panels.map(function(el, index) {
 
 				r = this.d * Number.random(0, this.options.scattering);
 				this.d = -this.d;
 
 				height = Math.max(height, el.setStyles({display: 'block'}).offsetHeight);
-
-				if(this.rightEdge < el.offsetWidth) this.rightEdge = el.offsetWidth
-
+				if(this.rightEdge < el.offsetWidth) this.rightEdge = el.offsetWidth;
+				
 				return wrapper.clone()
 					.set({
 						styles: {
 
 							height: el.offsetHeight,
 							width: el.offsetWidth,
-							zIndex: z--
+							zIndex: (--z - this.current + length) % length
 						},
 						morph: this.fx
-					}).
-					store('stack:index', index)
+					})
+					.store('stack:index', index)
 					.wraps(el)
+					.inject(this.container)
 			}, this);
-
-			this.container = this.stack[0].getParent().setStyles({width: this.stack[0].getStyle('width'), position: 'relative', overflow: 'visible'});
-
-			this.container.tween('height', height + this.options.scattering);
-
+			
+			stack.invoke('destroy');
 			wrapper.destroy();
+			return this
+		},
+		
+		add: function () {
+		
+			return this.reset()
+		},
 
-			this.rightEdge += this.options.scattering;
-
-			this.update();
+		remove: function () {
+		
+			return this.reset()
 		},
 
 		move: function () {
 
-			return this.goTo(arguments[2]).fireEvent('change', arguments).fireEvent('complete')
+			return this.fireEvent('change', arguments).goTo(arguments[2]).fireEvent('complete', this.fx.duration)
 		},
 
 		goTo: function(index) {
@@ -102,13 +117,11 @@ provides: [Tab.plugins.Stack]
 		},
 
 		reindex: function() {
+		
 			var z = this.stack.length;
-			this.stack.each(function(wrapper){
+			this.stack.each(function(wrapper){ wrapper.setStyle('z-index', z--) });
 
-				wrapper.setStyle('z-index', z--)
-			});
-
-			return this;
+			return this
 		},
 
 		swap: function(direction) {
@@ -125,18 +138,18 @@ provides: [Tab.plugins.Stack]
 
 			switch(direction) {
 				case 'prev':
-					next = this.stack.getLast();
-					this.stack = [next].extend(this.stack.erase(next));
+					next = this.stack.pop();
+					this.stack = [next].concat(this.stack);
 					break;
 				case 'next':
 				default:
 					direction = 'next';
 					next = this.stack[1];
-					this.stack.erase(current).push(current);
+					this.stack.push(current);
+					this.stack.shift()
 			}
 
 			if(this.reindexing) clearTimeout(this.reindexing);
-
 			this.reindexing = this.reindex.delay(this.fx.duration);
 
 			out = [Number.random((-options.scattering * 2).toInt(), 0), Number.random(this.rightEdge, this.rightEdge + (options.scattering * 2))];
@@ -170,6 +183,7 @@ provides: [Tab.plugins.Stack]
 		update: function() {
 
 			this.current = this.stack[0].retrieve('stack:index');
+			this.selected = this.panels[this.current];
 			return this
 		}
 	});

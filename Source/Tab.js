@@ -7,7 +7,7 @@ copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires:
-  core:1.2.3:
+  core:1.3:
   - Class.Extras
   - Element.Event
   - Element.Style
@@ -52,7 +52,7 @@ provides: [Tab, Tab.plugins.None]
 
 			initialize: function(options) {
 
-				this.addEvents({
+				options = this.addEvents({
 
 					create: function(newPanel, index) {
 
@@ -63,12 +63,10 @@ provides: [Tab, Tab.plugins.None]
 
 						this.selected = newPanel;
 						this.current = index
-
 					}
 
-				}).setOptions(options);
+				}).setOptions(options).options;
 
-				options = this.options;
 				this.container = $(options.container).set('morph', {link: 'cancel'});
 
 				var events = this.events = {
@@ -84,13 +82,13 @@ provides: [Tab, Tab.plugins.None]
 
 								this.setSelectedIndex(index, Math.abs(forward) <= Math.abs(backward) ? 1 : -1)
 
-							}.pass(null, this)
+							}.bind(this)
 						};
 
 				this.tabs = $$(options.tabs).each(function (tab) { tab.addEvents(events) });
 				this.panels = this.container.getChildren(options.selector);
 
-				this.anim = new this.plugins[options.animation](this.panels, Object.merge({}, options.params, {onResize: this.resize.pass(null, this), onChange: this.change.pass(null, this), onComplete: this.complete.pass(null, this) }), options.fx);
+				this.anim = new this.plugins[options.animation](this.panels, Object.merge({}, options.params, {onResize: this.resize.bind(this), onChange: this.change.bind(this), onComplete: this.complete.bind(this) }), options.fx);
 
 				var current = options.current || 0;
 
@@ -143,9 +141,9 @@ provides: [Tab, Tab.plugins.None]
 				if(this.running || panel == undefined || panel == this.selected) return null;
 				
 				this.panels.splice(index, 1);
-				if(this.anim.remove) this.anim.remove(panel);
-
 				panel.dispose();
+
+				if(this.anim.remove) this.anim.remove(panel, index);
 
 				if(tab) {
 
@@ -194,15 +192,15 @@ provides: [Tab, Tab.plugins.None]
 				}
 			},
 
-			resize: function (panel) {
+			resize: function (index) {
 
-				panel = panel || this.selected;
+				panel = index == undefined ? this.selected : this.panels[index];
 
 				var position = panel.style.position;
 
 				panel.style.position = 'static';
 
-				this.container.get('morph').start({height: panel.offsetHeight, width: panel.offsetWidth});
+				this.container.morph({height: panel.offsetHeight, width: panel.offsetWidth});
 				panel.style.position = position
 			},
 
@@ -245,16 +243,19 @@ provides: [Tab, Tab.plugins.None]
 		None: new Class({
 
 			Implements: Events,
+			
 			initialize: function (panels, options) {
 
 				this.addEvents(options);
 				panels.each(function (el, index) { el.style.display = index == 0 ? 'block' : 'none' })
 			},
+			
 			add: function (el) { 
 			
 				el.style.display = 'none'; 
 				return this
 			},
+			
 			move: function (newPanel, oldPanel) {
 
 				newPanel.style.display = 'block';
