@@ -2,17 +2,17 @@ Tab
 ============
 
 Minimalistic but extensible tab swapper. It can be used to create a tab swapper as well as a galerie slideshow. 
-you can have effects like **Moostack**, the [barack slideshow](http://devthought.com/wp-content/moogets/BarackSlideshow/demo.html) or [jQuery nivoslider](http://nivo.dev7studios.com/) or whatever you want by providing an animation plugin. 
-![Screenshot](http://github.com/tbela99/tab/raw/master/thumbnail.jpg)
-[Demo](http://tbela99.github.com/tab/Demos/matrix.html)
+you can have effects like **Moostack**, the [barack slideshow](https://devthought.com/wp-content/moogets/BarackSlideshow/demo.html) or [jQuery nivoslider](https://nivo.dev7studios.com/) or whatever you want by providing an animation plugin. 
+![Screenshot](https://github.com/tbela99/tab/raw/master/thumbnail.jpg)
+[Demo](https://tbela99.github.com/tab/Demos/matrix.html)
 
 #### More demos
 
-- [Matrix](http://tbela99.github.com/tab/Demos/matrix.html)
-- [Random](http://tbela99.github.com/tab/Demos/random.html?transitions[]=slideOut&directions[]=left&directions[]=right&mode=horizontal&random=0&duration=800)
-- [Move](http://tbela99.github.com/tab/Demos/move.html)
-- [Stack](http://tbela99.github.com/tab/Demos/stack.html)
-- [No animation](http://tbela99.github.com/tab/Demos/none.html)
+- [Matrix](https://tbela99.github.com/tab/Demos/matrix.html)
+- [Random](https://tbela99.github.com/tab/Demos/random.html?transitions[]=slideOut&directions[]=left&directions[]=right&mode=horizontal&random=0&duration=800)
+- [Move](https://tbela99.github.com/tab/Demos/move.html)
+- [Stack](https://tbela99.github.com/tab/Demos/stack.html)
+- [No animation](https://tbela99.github.com/tab/Demos/none.html)
 
 How to use
 ---------------------
@@ -104,6 +104,47 @@ display the previous panel.
 ### Returns:
 
 * (*object*) - This Tab instance.
+
+Tab Method: add {#Tab:add}
+----------------------------
+
+add a new panel to the tab.
+
+### Arguments:
+
+- panel - (*mixed*) the new panel.
+- tab - (*mixed*, optional) tab associated to the new panel
+- index - (*int*, optional) position where the new panel is injected, if not specified, the new panel will be inserted at the end
+
+### Returns:
+
+* (*object*) - This Tab instance.
+
+Tab Method: remove {#Tab:remove}
+----------------------------
+
+remove the panel at the given index.
+
+### Arguments:
+
+- index - (*int*)
+
+### Returns:
+
+* (*object*) - an object {panel: panel, tab: tab} containing the panel and the associated tab.
+
+Tab Method: resize {#Tab:resize}
+----------------------------
+
+resize the container to fit the panel offset. this is useful if you change the panel content.
+
+### Arguments:
+
+- index - (*int*, optional) index of the panel. if not specified, the current panel is used.
+
+### Returns:
+
+* (*object*) - an object {panel: panel, tab: tab} containing the panel and the associated tab.
 
 Method: getSelectedIndex
 ------------------------

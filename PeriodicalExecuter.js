@@ -15,6 +15,7 @@ Script: PeriodicalExecuter.js
 */			
 	var PeriodicalExecuter = new Class({
 		// name: 'PeriodicalExecuter',
+		Binds: ['onTimerEvent'],
 		initialize: function(callback, frequency) {
 		
 			this.callback = callback;
@@ -27,7 +28,7 @@ Script: PeriodicalExecuter.js
 		registerCallback: function() {
 		
 			this.stop();
-			this.timer = setInterval(this.onTimerEvent.bind(this), this.frequency * 1000);
+			this.timer = setInterval(this.onTimerEvent, this.frequency * 1000);
 			return this
 		},
 

@@ -28,26 +28,52 @@ provides: [Tab.plugins.Move]
 			link: 'chain',
 			duration: 1000
 		},
+		Implements: [Options, Events],
 		initialize: function(panels, options, fx) {
 		
-			this.options = $merge(this.options, options);
+			this.setOptions(options);
 			
-			this.panels = panels.map(function (el) { return el.setStyle('display', 'block').setStyles({position: 'absolute', width: el.getStyle('width')}) });
+			this.panels = panels;
+			this.horizontal = this.options.mode == 'horizontal',
+			this.side = this.horizontal ? 'offsetLeft' : 'offsetTop';
+			this.property = this.horizontal ? 'offsetWidth' : 'offsetHeight';
+			this.selected = this.panels[0];
+			this.direction = 1;
+			this._fx = Object.append(this.fx, fx);
 			
-			this.fx = new Fx.Elements(panels, $merge(this.fx, fx));
+			panels.each(function (el) { el.setStyle('display', 'block').setStyles({position: 'absolute', width: el.getStyle('width'), height: el.getStyle('height')}) });
+			
+			this.fx = new Fx.Elements(panels, this._fx).addEvent('complete', function () { this.fireEvent('complete') }.bind(this));
 			
 			this.reorder(0, 1).container = panels[0].getParent().setStyles({overflow: 'hidden', position: 'relative', width: panels[0].offsetWidth, height: panels[0].offsetHeight})
+		},
+		
+		reset: function () {
+		
+			//
+			this.fx = new Fx.Elements(this.panels, this._fx).addEvent('complete', function () { this.fireEvent('complete') }.bind(this));			
+			this.reorder(this.panels.indexOf(this.selected), this.direction);
+			
+			return this
+		},
+		
+		add: function (el) { 
+		
+			if(el) el.setStyles({display: 'block', position: 'static'}).setStyles({position: 'absolute', width: el.getStyle('width'), height: el.getStyle('height')}); 
+			return this.reset()
+		},
+		
+		remove: function () { 
+		
+			return this.reset()
 		},
 		
 		reorder: function (offset, direction) {
 		
 			var pos = 0,
 				i,
-				options = this.options,
 				panels = this.panels,
-				length = panels.length,
-				horizontal = options.mode == 'horizontal',
-				side = horizontal ? 'offsetWidth' : 'offsetHeight';
+				length = panels.length;
 				
 			//rtl
 			if(direction == -1) {
@@ -57,9 +83,9 @@ provides: [Tab.plugins.Move]
 					index = (i + offset + length) % length;
 					panel = panels[index];
 					
-					if(horizontal) panel.setStyle('left', pos);
+					if(this.horizontal) panel.setStyle('left', pos);
 					else panel.setStyles({left: 0, top: pos});
-					pos -= panel[side];
+					pos -= panel[this.property];
 				}
 				
 				//ltr
@@ -68,43 +94,49 @@ provides: [Tab.plugins.Move]
 				index = (i + offset + length) % length;
 				panel = panels[index];				
 				
-				if(horizontal) panel.setStyle('left', pos);
+				if(this.horizontal) panel.setStyle('left', pos);
 				else panel.setStyles({left: 0, top: pos});
-				pos += panel[side];
+				pos += panel[this.property];
 			}
 			
 			return this
 		},
 		
+		cancel: function () {
+		
+			this.fx.cancel();
+			return this
+		},
+		
 		move: function (newTab, curTab, newIndex, oldIndex, direction) {
 			
-			this.fx.cancel();
+			this.cancel();
+			
 			var obj = {}, 
 				options = this.options,
 				horizontal = options.mode == 'horizontal',
-				property = horizontal ? 'offsetLeft' : 'offsetTop',  
-				offset,
-				opacity = options.opacity || .7;
-			
+				side = this.side,
+				offset = newTab[this.side],
+				opacity = options.opacity || .7,
+				offset;
+				
 			if(oldIndex != undefined && options.circular) this.reorder(oldIndex, direction);
 			
-			offset = newTab[property];
-		
-			this.panels.each(function(panel, index) {
+			offset = newTab[side];
 			
-				obj[index] = horizontal ? {opacity: opacity, left:[panel[property], panel[property] - offset]} : {opacity: opacity, top:[panel[property], panel[property] - offset]};
-		
+			
+			this.direction = direction;
+			this.selected = newTab;
+
+			this.panels.each(function(panel, index) {
+							
+				obj[index] = horizontal ? {opacity: opacity, left:[panel[side], panel[side] - offset]} : {opacity: opacity, top:[panel[side], panel[side] - offset]}
 			});
 			
-			if(!options.useOpacity) $each(obj, function (k) { delete k.opacity });
+			if(!options.useOpacity) Object.each(obj, function (k) { delete k.opacity });
 			
-			this.fx.start(obj).chain(function () {
-				
-				newTab.tween('opacity', 1)
-				
-			}.bind(this));
-			
-			this.container.morph({height: newTab.offsetHeight, width: newTab.offsetWidth})
+			this.fx.start(obj).chain(function () { newTab.tween('opacity', 1) });
+			this.fireEvent('change', arguments).fireEvent('resize', newTab)
 		}
 	});
 

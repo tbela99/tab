@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
 
 
@@ -99,7 +99,8 @@ div.tabs a.selected {
 				fragments: 3
 			},
 			tab,
-			duration = 300;
+			duration = 300,
+			removed = 0;
 		
 		if(params && params.length > 0) {
 			
@@ -116,7 +117,7 @@ div.tabs a.selected {
 				} else tb[val[0]] = val[1]
 			});
 			
-			$each(tb, function (val, key) {
+			Object.each(tb, function (val, key) {
 		
 				var el = form[key];
 				
@@ -127,7 +128,7 @@ div.tabs a.selected {
 						//select
 						if($(el)) {
 							
-							$A(el.options).each(function (option, index) {
+							Array.from(el.options).each(function (option, index) {
 							
 								if(option.value == val) el.selectedIndex = index
 							});
@@ -137,8 +138,8 @@ div.tabs a.selected {
 						//radio - checkbox
 						else {
 						
-							val = $splat(val);
-							$A(el).each(function (c) {
+							val = Array.from(val);
+							Array.from(el).each(function (c) {
 							
 								for(var i = val.length - 1; i >= 0; i--)
 									if(c.value == val[i]) {
@@ -156,12 +157,12 @@ div.tabs a.selected {
 					}
 					else {
 					
-						if($(el).get('tag') == 'select') $A(el.options).each(function (option, index) {
+						if($(el).get('tag') == 'select') Array.from(el.options).each(function (option, index) {
 						
 							if(option.value == val) el.selectedIndex = index
 						});
 						else $(el).set('value', val);
-						//if($(el).get('tag') == 'select') $A(el.options)
+						//if($(el).get('tag') == 'select') Array.from(el.options)
 						if(key == 'duration') duration = val;
 						else options[key] = val
 					}
@@ -171,7 +172,6 @@ div.tabs a.selected {
 			//needed
 			if(options.random && options.random.toInt) options.random = options.random.toInt();
 		};
-		
 		
 		tab = new Tab.Extra({
 				container: 'slide', 
@@ -183,22 +183,65 @@ div.tabs a.selected {
 				fx: {
 				
 					duration: duration
+				},
+				onComplete: function () {
+				
+					if(window.console && console.log) console.log(arguments)
 				}
-			})
+			});
+			
+			function change() {
+			
+				var panel = this.retrieve('panel');
+				
+				if(this.checked) {
+					
+					if(!panel) {
+					
+						if(tab.running) {
+						
+							tab.addEvent('complete:once', change.pass(null, this));
+							return
+						}
+						
+						panel = tab.remove(Math.max(0, this.value - removed));
+						
+						if(panel) {
+						
+							this.store('panel', panel);
+							removed++;
+						}
+						
+						this.checked = !!panel
+					}
+					
+				} else {
+				
+					if(panel) {
+					
+						this.eliminate('panel');
+						removed--;
+						tab.add(panel.panel, panel.tab, this.value)
+					}
+				}
+			}
+			
+			$$('input.remove').addEvents({click: change, change: change})
 	})
 //]]></script>
 </head><body>
 <div class="slide">
   <div id="slide">
-    <div class="ctab"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide1.jpg" width="400" height="300" /></a><span>Caption 1: put anything you want in the caption. Note that there is a link in the image</span></div>
-        <div class="ctab hidden"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide2.jpg" width="400" height="300" /></a><span>Caption 2: put anything you want in the caption. Note that there is a link in the image</span></div>
-        <div class="ctab hidden"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide3.jpg" width="400" height="300" /></a><span>Caption 3: put anything you want in the caption. Note that there is a link in the image</span></div>
-        <div class="ctab hidden"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide4.jpg" width="400" height="300" /></a><span>Caption 4: put anything you want in the caption. Note that there is a link in the image</span></div>
-        <div class="ctab hidden"><a href="http://github.com/tbela99/tab"><img src="../Assets/slides/slide5.jpg" width="400" height="300" /></a><span>Caption 5: put anything you want in the caption. Note that there is a link in the image</span></div>
+    <div class="ctab"><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide1.jpg" width="400" height="300" /></a><span>Caption 1: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div class="ctab hidden"><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide2.jpg" width="400" height="300" /></a><span>Caption 2: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div class="ctab hidden"><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide3.jpg" width="400" height="300" /></a><span>Caption 3: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div class="ctab hidden"><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide4.jpg" width="400" height="300" /></a><span>Caption 4: put anything you want in the caption. Note that there is a link in the image</span></div>
+        <div class="ctab hidden"><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide5.jpg" width="400" height="300" /></a><span>Caption 5: put anything you want in the caption. Note that there is a link in the image</span></div>
   	  </div>
       <div class="tabs"><a href="#0">1</a><a href="#1">2</a><a href="#2">3</a><a href="#3">4</a><a href="#4">5</a></div>
       <form action="" method="get">
-        <div style="padding: 10px 0 0">Parameters: 
+        <div>remove panel: <label for="remove0">1</label><input id="remove0" class="remove" type="checkbox" value="0" /> <label for="remove1">2</label><input id="remove1" class="remove" type="checkbox" value="1" /> <label for="remove2">3</label><input id="remove2" class="remove" type="checkbox" value="2" /> <label for="remove3">4</label><input id="remove3" class="remove" type="checkbox" value="3" /> <label for="remove4">5</label><input id="remove4" class="remove" type="checkbox" value="4" />
+		<div style="padding: 10px 0 0">Parameters: 
           <input name="transitions[]" type="checkbox" value="fade" id="fade" /><label for="fade">Fade</label> 
 		  <input name="transitions[]" type="checkbox" value="move" id="move" /><label for="move">Move</label>
           <input name="transitions[]" type="checkbox" value="slideIn" id="slideIn" /><label for="slideIn">slideIn</label>
@@ -234,6 +277,6 @@ div.tabs a.selected {
       <div>Tab demo, using the Random plugin.</div>
       
   <div>Feel free to use and/or modify.</div>      
-  <div style="text-align:center"><a href="http://twitter.com/tbela99" target="_blank">Twitter</a> | <a href="http://tbela99.blogspot.com/" target="_blank">Blog</a></div>
+  <div style="text-align:center"><a href="https://twitter.com/tbela99" target="_blank">Twitter</a> | <a href="https://tbela99.blogspot.com/" target="_blank">Blog</a></div>
 </div>
 </body></html>
