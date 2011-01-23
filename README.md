@@ -55,6 +55,7 @@ It is quite simple to use. what you need first is
 * tabs  - (*mixed*, optional) when a tab is clicked, the corresponding panel is shown. anything you can pass to $$ is accepted. 
 * activeClass  - (*string*, optional) style applied to the selected tab.
 * inactiveClass  - (*string*, optional) style applied to every unselected tab.
+* link - (*string*) control the way concurrent changes are handled. accepted values are *chain* (default), *ignore*, *cancel*
 
 ### Events:
 

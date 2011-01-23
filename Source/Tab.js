@@ -69,15 +69,26 @@ provides: [Tab, Tab.plugins.None]
 
 				this.container = $(options.container).set('morph', {link: 'cancel'});
 
-				var events = this.events = {
+				var current = options.current || 0,
+					events = this.events = {
 
 							click: function(e) {
 
 								e.stop();
 
+								var target = e.event.target,
+									index = this.tabs.indexOf(target);
+
+								while(target && index == -1) {
+
+									target = target.parentNode;
+									index = this.tabs.indexOf(target)
+								}
+
+								if(index == -1) return;
+
 								//detect direction. inspired by moostack
-								var index = this.tabs.indexOf(e.event.target),
-									forward = this.current < index ? index - this.current : this.panels.length - this.current + index,
+								var forward = this.current < index ? index - this.current : this.panels.length - this.current + index,
 									backward = this.current > index ? this.current - index : this.current + this.panels.length - index;
 
 								this.setSelectedIndex(index, Math.abs(forward) <= Math.abs(backward) ? 1 : -1)
@@ -85,17 +96,12 @@ provides: [Tab, Tab.plugins.None]
 							}.bind(this)
 						};
 
-				this.tabs = $$(options.tabs).each(function (tab) { tab.addEvents(events) });
+				this.tabs = $$(options.tabs).addEvents(events);
 				this.panels = this.container.getChildren(options.selector);
 
 				this.anim = new this.plugins[options.animation](this.panels, Object.merge({}, options.params, {onResize: this.resize.bind(this), onChange: this.change.bind(this), onComplete: this.complete.bind(this) }), options.fx);
 
-				var current = options.current || 0;
-
-				this.fireEvent('create', [this.panels[current], current]).
-					setSelectedIndex(current || 0);
-
-				return this
+				this.fireEvent('create', [this.panels[current], current]).setSelectedIndex(current || 0)
 			},
 
 			add: function (panel, tab, index) {
@@ -114,11 +120,11 @@ provides: [Tab, Tab.plugins.None]
 
 					case 0 :
 							if(this.panels.length > 0) {
-							
+
 								this.panels.unshift(panel.inject(this.panels[0], 'before'));
 								if(tab) this.tabs.unshift(tab.inject(this.tabs[0], 'before'));
 							}
-							
+
 							break;
 					default:
 							this.panels.splice(index, 0, panel.inject(this.panels[index - 1], 'after'));
@@ -139,7 +145,7 @@ provides: [Tab, Tab.plugins.None]
 
 				//
 				if(this.running || panel == undefined || panel == this.selected) return null;
-				
+
 				this.panels.splice(index, 1);
 				panel.dispose();
 
@@ -147,10 +153,10 @@ provides: [Tab, Tab.plugins.None]
 
 				if(tab) {
 
-					tab.removeEvents(this.events).removeClass(this.options.activeClass).dispose();
+					tab.removeEvents(this.events).dispose();
 					this.tabs.splice(index, 1);
 				}
-				
+
 				this.current = this.panels.indexOf(this.selected);
 
 				return {panel: panel, tab: tab}
@@ -192,9 +198,9 @@ provides: [Tab, Tab.plugins.None]
 				}
 			},
 
-			resize: function (index) {
+			resize: function (panel) {
 
-				panel = index == undefined ? this.selected : this.panels[index];
+				if(panel == undefined) panel = this.selected;
 
 				var position = panel.style.position;
 
@@ -243,19 +249,19 @@ provides: [Tab, Tab.plugins.None]
 		None: new Class({
 
 			Implements: Events,
-			
+
 			initialize: function (panels, options) {
 
 				this.addEvents(options);
 				panels.each(function (el, index) { el.style.display = index == 0 ? 'block' : 'none' })
 			},
-			
-			add: function (el) { 
-			
-				el.style.display = 'none'; 
+
+			add: function (el) {
+
+				el.style.display = 'none';
 				return this
 			},
-			
+
 			move: function (newPanel, oldPanel) {
 
 				newPanel.style.display = 'block';
