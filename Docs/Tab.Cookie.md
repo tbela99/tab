@@ -1,7 +1,7 @@
 Tab.Cookie {#Tab-cookie}
 ============
 
-Extends Tab by adding autoslide capabilities.
+Remember selected tab.
 
 Tab.Cookie Method: constructor {#Class:constructor}
 ---------------------
