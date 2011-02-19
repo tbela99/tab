@@ -7,7 +7,7 @@ copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires:
-  tab:0.1.4:
+  tab:0.1.5.1:
   - Tab
 provides: [Tab.Extra]
 ...
@@ -60,5 +60,10 @@ provides: [Tab.Extra]
 
 				this.timer.stop();
 				return this
+			},
+		
+			toggle: function() { 
+			
+				return this[this.active ? 'stop' : 'start']()
 			}
 		});

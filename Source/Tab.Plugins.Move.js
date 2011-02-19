@@ -39,13 +39,11 @@ provides: [Tab.plugins.Move]
 			this.property = this.horizontal ? 'offsetWidth' : 'offsetHeight';
 			this.selected = this.panels[0];
 			this.direction = 1;
-			this._fx = Object.append(this.fx, fx);
+			this._fx = Object.merge(this.fx, fx);
 			
 			panels.each(function (el) { el.setStyle('display', 'block').setStyles({position: 'absolute', width: el.getStyle('width'), height: el.getStyle('height')}) });
-			
-			this.fx = new Fx.Elements(panels, this._fx).addEvent('complete', function () { this.fireEvent('complete') }.bind(this));
-			
-			this.reorder(0, 1).container = panels[0].getParent().setStyles({overflow: 'hidden', position: 'relative', width: panels[0].offsetWidth, height: panels[0].offsetHeight})
+			this.container = panels[0].getParent().setStyles({overflow: 'hidden', position: 'relative', width: panels[0].offsetWidth, height: panels[0].offsetHeight})
+			this.reset()
 		},
 		
 		reset: function () {

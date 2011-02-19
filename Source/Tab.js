@@ -46,26 +46,12 @@ provides: [Tab, Tab.plugins.None]
 				activeClass: '', //selected tab
 				animation: 'None'
 			},
-			current: 0,
 			queue: [],
 			Implements: [Options, Events],
 
 			initialize: function(options) {
 
-				options = this.addEvents({
-
-					create: function(newPanel, index) {
-
-						this.tabs.each(function (el, val) {
-
-							el[val == index ? 'removeClass' : 'addClass'](options.inactiveClass)[val == index ? 'addClass' : 'removeClass'](options.activeClass)
-						});
-
-						this.selected = newPanel;
-						this.current = index
-					}
-
-				}).setOptions(options).options;
+				options = this.setOptions(options).options;
 
 				this.container = $(options.container).set('morph', {link: 'cancel'});
 
@@ -96,12 +82,15 @@ provides: [Tab, Tab.plugins.None]
 							}.bind(this)
 						};
 
-				this.tabs = $$(options.tabs).addEvents(events);
+				this.tabs = $$(options.tabs).map(function (tab) {
+				
+					return tab.set({styles: {cursor: 'pointer'}, events: events})
+				});
+				
 				this.panels = this.container.getChildren(options.selector);
 
 				this.anim = new this.plugins[options.animation](this.panels, Object.merge({}, options.params, {onResize: this.resize.bind(this), onChange: this.change.bind(this), onComplete: this.complete.bind(this) }), options.fx);
-
-				this.fireEvent('create', [this.panels[current], current]).setSelectedIndex(current || 0)
+				this.fireEvent('create', [this.panels[current], current]).setSelectedIndex(current)
 			},
 
 			add: function (panel, tab, index) {
@@ -109,7 +98,7 @@ provides: [Tab, Tab.plugins.None]
 				panel = $(panel);
 				tab = $(tab);
 
-				if(tab) tab.addEvents(this.events);
+				if(tab) tab.set({styles: {cursor: 'pointer'}, events: this.events});
 
 				if(this.panels.indexOf(panel) != -1) return this;
 
