@@ -1,7 +1,7 @@
 Tab.Cookie {#Tab-cookie}
 ============
 
-Remember selected tab.
+Remember selected tab using a cookie.
 
 Tab.Cookie Method: constructor {#Class:constructor}
 ---------------------
