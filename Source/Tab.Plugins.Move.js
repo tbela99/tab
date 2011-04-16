@@ -42,7 +42,8 @@ provides: [Tab.plugins.Move]
 			this._fx = Object.merge(this.fx, fx);
 			
 			panels.each(function (el) { el.setStyle('display', 'block').setStyles({position: 'absolute', width: el.getStyle('width'), height: el.getStyle('height')}) });
-			this.container = panels[0].getParent().setStyles({overflow: 'hidden', position: 'relative', width: panels[0].offsetWidth, height: panels[0].offsetHeight})
+			this.container = options.container.setStyles({overflow: 'hidden', position: 'relative'});
+			if(panels[0]) this.container.setStyles({width: panels[0].offsetWidth, height: panels[0].offsetHeight});
 			this.reset()
 		},
 		

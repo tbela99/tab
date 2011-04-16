@@ -53,12 +53,14 @@ provides: [Tab.Extra]
 			start: function () {
 
 				this.timer.registerCallback();
+				this.active = true;
 				return this
 			},
 
 			stop: function() {
 
 				this.timer.stop();
+				this.active = false;
 				return this
 			},
 		

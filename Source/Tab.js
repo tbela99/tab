@@ -28,13 +28,13 @@ provides: [Tab, Tab.plugins.None]
 				container: null,
 				selector: '',
 				tabs: [],
-				current: 0, //default selected
 
 				params: {
 
 							//animation plugin parameters
 				},
 			*/
+				current: -1, //default selected
 				link: 'chain',
 				fx: {
 
@@ -55,7 +55,7 @@ provides: [Tab, Tab.plugins.None]
 
 				this.container = $(options.container).set('morph', {link: 'cancel'});
 
-				var current = options.current || 0,
+				var current = options.current,
 					events = this.events = {
 
 							click: function(e) {
@@ -89,8 +89,8 @@ provides: [Tab, Tab.plugins.None]
 				
 				this.panels = this.container.getChildren(options.selector);
 
-				this.anim = new this.plugins[options.animation](this.panels, Object.merge({}, options.params, {onResize: this.resize.bind(this), onChange: this.change.bind(this), onComplete: this.complete.bind(this) }), options.fx);
-				this.fireEvent('create', [this.panels[current], current]).setSelectedIndex(current)
+				this.anim = new this.plugins[options.animation](this.panels, Object.merge({}, options.params, {container: options.container, onResize: this.resize.bind(this), onChange: this.change.bind(this), onComplete: this.complete.bind(this) }), options.fx);
+				if(this.panels.length > 0) this.setSelectedIndex(Math.max(0, current))
 			},
 
 			add: function (panel, tab, index) {
@@ -113,6 +113,13 @@ provides: [Tab, Tab.plugins.None]
 								this.panels.unshift(panel.inject(this.panels[0], 'before'));
 								if(tab) this.tabs.unshift(tab.inject(this.tabs[0], 'before'));
 							}
+							
+							else {
+							
+								this.panels.push(panel.inject(this.container));
+								//you must inject first tab somewhere before or it will not be in the DOM
+								if(tab) this.tabs.push(tab);
+							}
 
 							break;
 					default:
@@ -133,7 +140,7 @@ provides: [Tab, Tab.plugins.None]
 					tab = this.tabs[index];
 
 				//
-				if(this.running || panel == undefined || panel == this.selected) return null;
+				if(this.running || panel == null) return null;
 
 				this.panels.splice(index, 1);
 				panel.dispose();
@@ -145,7 +152,10 @@ provides: [Tab, Tab.plugins.None]
 					tab.removeEvents(this.events).dispose();
 					this.tabs.splice(index, 1);
 				}
-
+				
+				if(panel == this.selected) if(this.setSelectedIndex(Math.min(index, this.panels.length - 1)));
+				
+				if(this.panels.length == 1) this.setSelectedIndex(0);
 				this.current = this.panels.indexOf(this.selected);
 
 				return {panel: panel, tab: tab}
@@ -196,7 +206,8 @@ provides: [Tab, Tab.plugins.None]
 				panel.style.position = 'static';
 
 				this.container.morph({height: panel.offsetHeight, width: panel.offsetWidth});
-				panel.style.position = position
+				panel.style.position = position;
+				return this;
 			},
 
 			getSelectedIndex: function() { return this.current },
@@ -229,33 +240,33 @@ provides: [Tab, Tab.plugins.None]
 				this.anim.move.apply(this.anim, params);
 
 				return this
+			},
+			
+			plugins: {
+					
+				//default plugin
+				None: new Class({
+
+					Implements: Events,
+
+					initialize: function (panels, options) {
+
+						this.addEvents(options);
+						panels.each(function (el, index) { el.style.display = index == 0 ? 'block' : 'none' })
+					},
+
+					add: function (el) {
+
+						el.style.display = 'none';
+						return this
+					},
+
+					move: function (newPanel, oldPanel) {
+
+						newPanel.style.display = 'block';
+						if(oldPanel) oldPanel.style.display = 'none';
+						this.fireEvent('change', arguments).fireEvent('complete');
+					}
+				})
 			}
 		});
-
-	//default plugin
-	Tab.prototype.plugins = {
-
-		None: new Class({
-
-			Implements: Events,
-
-			initialize: function (panels, options) {
-
-				this.addEvents(options);
-				panels.each(function (el, index) { el.style.display = index == 0 ? 'block' : 'none' })
-			},
-
-			add: function (el) {
-
-				el.style.display = 'none';
-				return this
-			},
-
-			move: function (newPanel, oldPanel) {
-
-				newPanel.style.display = 'block';
-				if(oldPanel) oldPanel.style.display = 'none';
-				this.fireEvent('change', arguments).fireEvent('complete');
-			}
-		})
-	};

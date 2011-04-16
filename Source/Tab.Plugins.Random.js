@@ -195,7 +195,7 @@ provides: [Tab.plugins.Random]
 			options = this.setOptions(options).addTransition(transitions).options;
 			options.directions = Array.from(this.options.directions);
 			
-			var tr = Array.from(this.options.transitions || Object.keys(this.transitions));
+			var tr = Array.from(this.options.transitions || Object.keys(this.transitions)), panel = panels[0];
 			
 			this.options.transitions = [];
 			
@@ -220,9 +220,13 @@ provides: [Tab.plugins.Random]
 					})
 			});
 			
-			var panel = panels[0];
+			this.container = options.container.setStyles({position: 'relative', overflow: 'hidden'});
 			
-			this.container = panel.setStyle('display', 'block').getParent().setStyles({position: 'relative', overflow: 'hidden', height: panel.offsetHeight, width: panel.offsetWidth});
+			if(panel) {
+				
+				panel.setStyle('display', 'block');
+				this.container.setStyles({height: panel.offsetHeight, width: panel.offsetWidth});
+			}
 			
 			this.current = 0
 		},

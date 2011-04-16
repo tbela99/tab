@@ -36,6 +36,73 @@ provides: [Tab.plugins.Matrix]
 			- tmp: collection handled by the transition
 		*/
 
+		/* fade: function (item, vertical, slice, styles, els, queue, tmp) {
+		
+			var fx = this.fx,
+				div = original.clone().set({
+				
+					styles: Object.merge(styles, {
+							width: slice.width,
+							height: slice.height,
+							position: 'absolute',
+							zIndex: 0
+							
+						},
+						this.coordinates(item, vertical, true)
+					)
+				}),
+				clone = div.clone().inject(this.container).set({
+				
+					opacity: 1,
+					styles: {
+						zIndex: 1,
+						backgroundImage: 'url(' + this.slides[this.previous].image + ')'
+					}
+				});
+				
+			tmp.clones = tmp.clones || [];
+			tmp.morph = tmp.morph || {};
+			tmp.opacity = tmp.opacity || {};
+				
+			if(tmp.clones.length == 0) {
+				
+				queue.push(function () {
+					
+					var effects = new Fx.Elements(tmp.clones, Object.merge(fx, {
+					
+						link: 'chain',
+						duration: Math.max(fx.duration, 2000)
+					})).start(tmp.opacity)
+							.start(tmp.morph)
+							.chain(function () {
+									
+								(function () {
+								
+										console.log(el)
+									tmp.clones.each(function (el) { 
+									
+										el.destroy() 							
+									})
+									
+							  }).delay(50)
+							})
+						
+				})
+			}
+			
+			morph = {opacity: 0};
+				
+			if(vertical) morph.top = [-slice.height, this.size.y.toInt() + slice.height].getRandom();
+			else morph.left = [-slice.width, this.size.x.toInt() + slice.width].getRandom();
+				
+			tmp.morph[tmp.clones.length] = morph;
+			tmp.opacity[tmp.clones.length] = {opacity: Number.random(1, 100) / 100};
+						
+			tmp.clones.push(clone);
+						
+			els[item.index].push(div.set({opacity: 1}).inject(this.container, 'top'))
+		}, */
+		
 		out: function (item, vertical, slice, styles, els, queue) {
 
 			var fx = this.fx,
@@ -544,8 +611,10 @@ provides: [Tab.plugins.Matrix]
 			this.current = 0;
 			this.previous = 0;
 
-			this.container = panels[0].setStyle('display', 'block').getParent();
-			
+			this.container = options.container.setStyle('display', 'block');
+			//care about this?
+			if(panels.length == 0) this.preloaded = true;
+
 			panels.each(function (el) {
 
 				img = el.get('tag') == 'img' ? el : el.getElement('img');

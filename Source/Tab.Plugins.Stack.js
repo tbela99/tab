@@ -43,7 +43,10 @@ provides: [Tab.plugins.Stack]
 			this.panels = panels;
 			this.current = 0;
 			this.selected = panels[0];
-			this.container = this.selected.getParent().setStyles({width: this.selected.getStyle('width'), display: 'block', height: this.selected.getStyle('height') + this.options.scattering, position: 'relative', overflow: 'visible'});
+			
+			this.container = options.container.setStyles({display: 'block', position: 'relative', overflow: 'visible'});
+			
+			if(this.selected) this.container.setStyles({width: this.selected.getStyle('width'), height: this.selected.getStyle('height') + this.options.scattering});
 			
 			this.reset();
 			this.rightEdge += this.options.scattering;

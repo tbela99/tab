@@ -24,12 +24,9 @@ provides: [Tab.Cookie]
 			if(options.useCookie) {
 			
 				var current = parseInt(Cookie.read(options.cookie));
-				if(current.toString() != 'NaN') options.current = current
+				if(!isNaN(current)) options.current = current
 			}
 			
-			this.addEvent('change', function () {
-			
-				Cookie.write(options.cookie, arguments[2])
-			}).parent(options)
+			this.addEvent('change', function () { Cookie.write(options.cookie, arguments[2]) }).parent(options)
 		}
 	});
