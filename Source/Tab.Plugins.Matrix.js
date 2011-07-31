@@ -490,7 +490,9 @@ provides: [Tab.plugins.Matrix]
 
 		shuffle: function() {
 
-			for (var i = this.length; i && --i;) {
+			var i = this.length;
+			
+			while(i--) {
 
 				var temp = this[i], r = Math.floor(Math.random() * ( i + 1 ));
 				this[i] = this[r];
@@ -697,11 +699,11 @@ provides: [Tab.plugins.Matrix]
 				this.options = this._options;
 
 				var time = 0,
-					i,
-					j,
 					matrix = [],
 					method,
 					options = this.options,
+					i,
+					j,
 					slices,
 					transition,
 					vertical,
@@ -758,10 +760,13 @@ provides: [Tab.plugins.Matrix]
 
 				slices.fragments = options.fragments;
 
-				for(i = 0; i < options.amount; i++) {
+				i = options.amount;
+				
+				while(i--) {
 
 					els[i] = [];
-					for(j = 0; j < options.fragments; j++) matrix.push({index: i, fragment: j});
+					j = options.fragments;
+					while(j--) matrix.unshift({index: i, fragment: j});
 				}
 
 				//randomize order

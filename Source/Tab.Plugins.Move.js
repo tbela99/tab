@@ -74,16 +74,16 @@ provides: [Tab.plugins.Move]
 		reorder: function (offset, direction) {
 		
 			var pos = 0,
-				i,
 				index,
 				panel,
 				panels = this.panels,
-				length = panels.length;
+				length = panels.length,
+				i = length;
 				
 			//rtl
 			if(direction == -1) {
 			
-				for(i = length; i > 0; i--) {
+				while(i--) {
 			
 					index = (i + offset + length) % length;
 					panel = panels[index];
