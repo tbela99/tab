@@ -13,13 +13,16 @@ requires:
 provides: [Tab.Cookie]
 ...
 */
+!function (context) {
 
-	Tab.Cookie = new Class({ 
+"use strict";
+
+	context.Tab.Cookie = new Class({ 
 		
-		Extends: Tab.Extra,
+		Extends: context.Tab.Extra,
 		initialize: function(options) {
 
-			options = Object.merge({autostart: false, useCookie: true, cookie: 'tab'}, options);
+			options = Object.append({autostart: false, useCookie: true, cookie: 'tab'}, options);
 			
 			if(options.useCookie) {
 			
@@ -29,4 +32,6 @@ provides: [Tab.Cookie]
 			
 			this.addEvent('change', function () { Cookie.write(options.cookie, arguments[2]) }).parent(options)
 		}
-	});
+	})
+	
+}(this);

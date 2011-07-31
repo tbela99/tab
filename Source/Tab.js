@@ -17,8 +17,11 @@ requires:
 provides: [Tab, Tab.plugins.None]
 ...
 */
+!function(context, undefined) {
 
-	var Tab = new Class({
+"use strict";
+
+	context.Tab = new Class({
 
 			options: {
 
@@ -53,7 +56,7 @@ provides: [Tab, Tab.plugins.None]
 
 				options = this.setOptions(options).options;
 
-				this.container = $(options.container).set('morph', {link: 'cancel'});
+				this.container = options.container = $(options.container).set('morph', {link: 'cancel'});
 
 				var current = options.current,
 					events = this.events = {
@@ -62,7 +65,7 @@ provides: [Tab, Tab.plugins.None]
 
 								e.stop();
 
-								var target = e.event.target,
+								var target = e.target,
 									index = this.tabs.indexOf(target);
 
 								while(target && index == -1) {
@@ -181,7 +184,7 @@ provides: [Tab, Tab.plugins.None]
 				this.selected = newPanel;
 				this.current = index;
 
-				this.fireEvent('change', arguments)
+				this.fireEvent('change', Array.slice(arguments))
 			},
 
 			complete: function () {
@@ -190,11 +193,7 @@ provides: [Tab, Tab.plugins.None]
 				this.fireEvent('complete', [this.selected, this.current]);
 
 				//consider only the last parameters
-				if(this.queue.length > 0) {
-
-					var args = this.queue.pop();
-					this.setSelectedIndex.apply(this, args);
-				}
+				if(this.queue.length > 0) this.setSelectedIndex.apply(this, this.queue.pop())
 			},
 
 			resize: function (panel) {
@@ -204,6 +203,7 @@ provides: [Tab, Tab.plugins.None]
 				var position = panel.style.position;
 
 				panel.style.position = 'static';
+				panel.style.height = '';
 
 				this.container.morph({height: panel.offsetHeight, width: panel.offsetWidth});
 				panel.style.position = position;
@@ -234,7 +234,7 @@ provides: [Tab, Tab.plugins.None]
 					newPanel = this.panels[index],
 					params = [newPanel, curPanel, index, current, direction];
 
-				if(this.current == index || this.selected == newPanel || index < 0 || index >= this.panels.length) return this;
+				if(!newPanel || this.current == index || this.selected == newPanel || index < 0 || index >= this.panels.length) return this;
 
 				this.running = true;
 				this.anim.move.apply(this.anim, params);
@@ -265,8 +265,11 @@ provides: [Tab, Tab.plugins.None]
 
 						newPanel.style.display = 'block';
 						if(oldPanel) oldPanel.style.display = 'none';
-						this.fireEvent('change', arguments).fireEvent('complete');
+						this.fireEvent('change', Array.slice(arguments)).fireEvent('complete');
 					}
 				})
 			}
-		});
+		})
+		
+}(this);
+

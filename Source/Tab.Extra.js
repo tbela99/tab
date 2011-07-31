@@ -12,8 +12,11 @@ requires:
 provides: [Tab.Extra]
 ...
 */
+!function (context) {
 
-	Tab.Extra = new Class({
+"use strict";
+
+	context.Tab.Extra = new Class({
 
 		/*
 			options: {
@@ -25,7 +28,7 @@ provides: [Tab.Extra]
 				autostart: true
 			},
 		*/
-			Extends: Tab,
+			Extends: context.Tab,
 			Binds: ['update', 'start', 'stop'],
 			initialize: function(options) {
 
@@ -68,4 +71,5 @@ provides: [Tab.Extra]
 			
 				return this[this.active ? 'stop' : 'start']()
 			}
-		});
+		})
+}(this);

@@ -13,7 +13,11 @@ provides: [Tab.plugins.Move]
 ...
 */
 
-	Tab.prototype.plugins.Move = new Class({
+!function (context, undefined) {
+
+"use strict";
+
+	context.Tab.prototype.plugins.Move = new Class({
 		options: {
 			/*
 				circular: false,
@@ -71,6 +75,8 @@ provides: [Tab.plugins.Move]
 		
 			var pos = 0,
 				i,
+				index,
+				panel,
 				panels = this.panels,
 				length = panels.length;
 				
@@ -135,7 +141,8 @@ provides: [Tab.plugins.Move]
 			if(!options.useOpacity) Object.each(obj, function (k) { delete k.opacity });
 			
 			this.fx.start(obj).chain(function () { newTab.tween('opacity', 1) });
-			this.fireEvent('change', arguments).fireEvent('resize', newTab)
+			this.fireEvent('change', Array.slice(arguments)).fireEvent('resize', newTab)
 		}
-	});
+	})
+}(this);
 

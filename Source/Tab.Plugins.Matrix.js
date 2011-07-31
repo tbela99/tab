@@ -13,7 +13,9 @@ provides: [Tab.plugins.Matrix]
 ...
 */
 
-(function () {
+!function (context) {
+
+"use strict";
 
 		/*
 
@@ -329,9 +331,8 @@ provides: [Tab.plugins.Matrix]
 								(function () { clone.destroy() }).delay(50)
 							}
 						})
-				});
-
-			morph = {opacity: .2};
+				}),
+				morph = {opacity: .2};
 
 			if(vertical) morph.top = [-slice.height, this.size.y.toInt() + slice.height].getRandom();
 			else morph.left = [-slice.width, this.size.x.toInt() + slice.width].getRandom();
@@ -500,7 +501,7 @@ provides: [Tab.plugins.Matrix]
 		}
 	});
 
-	Tab.prototype.plugins.Matrix = new Class({
+	context.Tab.prototype.plugins.Matrix = new Class({
 		options: {
 
 				/* per transition settings, here you go! */
@@ -515,15 +516,6 @@ provides: [Tab.plugins.Matrix]
 							sort: ['reverse', 'none'],
 							amount: 10,
 							fragments: 5
-						}
-					},
-					fold: {
-
-						params: {
-
-							mode: 'vertical',
-							amount: 10,
-							fragments: 1
 						}
 					},
 					lines: {
@@ -549,6 +541,15 @@ provides: [Tab.plugins.Matrix]
 						}
 					},
 					*/
+					fold: {
+
+						params: {
+
+							mode: 'vertical',
+							amount: 10,
+							fragments: 1
+						}
+					},
 					out: {
 
 						params: {
@@ -709,7 +710,7 @@ provides: [Tab.plugins.Matrix]
 					tmp = {},
 					els = {},
 					settings,
-					args = arguments,
+					args = Array.slice(arguments),
 					//fixed,
 					//some transitions have big latency before they begin. set the flag to ignore delay in this case
 					delay = true;
@@ -861,4 +862,4 @@ provides: [Tab.plugins.Matrix]
 			return this
 		}
 	})
-})();
+}(this);
