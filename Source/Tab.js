@@ -160,10 +160,9 @@ provides: [Tab, Tab.plugins.None]
 			}
 			
 			if(panel == this.selected) if(this.setSelectedIndex(Math.min(index, this.panels.length - 1)));
+			this.current = this.panels.indexOf(this.selected);
 			
-			if(this.panels.length == 1) this.setSelectedIndex(0);
-			else if(this.panels.length == 0) this.current = -1;
-			else this.current = this.panels.indexOf(this.selected);
+			if(this.panels.length > 0 && this.current == -1) this.setSelectedIndex(0);
 
 			return {panel: panel, tab: tab}
 		},
