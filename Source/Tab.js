@@ -115,7 +115,7 @@ provides: [Tab, Tab.plugins.None]
 						if(this.panels.length > 0) {
 
 							this.panels.unshift(panel.inject(this.panels[0], 'before'));
-							if(tab) this.tabs.unshift(tab.inject(this.tabs[0], 'before'));
+							if(tab) this.tabs.unshift(tab);
 						}
 						
 						else {
@@ -128,7 +128,7 @@ provides: [Tab, Tab.plugins.None]
 						break;
 				default:
 						this.panels.splice(index, 0, panel.inject(this.panels[index - 1], 'after'));
-						if(tab) this.tabs.splice(index, 0, tab.inject(this.tabs[index - 1], 'after'));
+						if(tab) this.tabs.splice(index, 0, tab);
 						break;
 			}
 
@@ -155,7 +155,7 @@ provides: [Tab, Tab.plugins.None]
 
 			if(tab) {
 
-				tab.removeEvents(this.events).dispose();
+				tab.removeEvents(this.events);
 				this.tabs.splice(index, 1);
 			}
 			
