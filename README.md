@@ -8,10 +8,10 @@ you can have effects like **Moostack**, the [barack slideshow](https://devthough
 
 #### More demos
 
-- [Matrix](https://tbela99.github.com/tab/Demos/matrix.html)
-- [Random](https://tbela99.github.com/tab/Demos/random.html?transitions[]=slideOut&directions[]=left&directions[]=right&mode=horizontal&random=0&duration=800)
-- [Move](https://tbela99.github.com/tab/Demos/move.html)
-- [Stack](https://tbela99.github.com/tab/Demos/stack.html)
+- [Matrix](http://tbela99.github.com/tab/Demos/matrix.html)
+- [Random](http://tbela99.github.com/tab/Demos/random.html?transitions[]=slideOut&directions[]=left&directions[]=right&mode=horizontal&random=0&duration=800)
+- [Move](http://tbela99.github.com/tab/Demos/move.html)
+- [Stack](http://tbela99.github.com/tab/Demos/stack.html)
 - [No animation](https://tbela99.github.com/tab/Demos/none.html)
 
 How to use
