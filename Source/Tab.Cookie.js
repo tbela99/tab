@@ -9,7 +9,7 @@ authors: [Thierry Bela]
 
 requires: 
   tab:0.1.5.1: 
-  - Tab.Extra
+  - Tab
 provides: [Tab.Cookie]
 ...
 */
@@ -19,10 +19,10 @@ provides: [Tab.Cookie]
 
 	context.Tab.Cookie = new Class({ 
 		
-		Extends: context.Tab.Extra,
+		Extends: context.Tab,
 		initialize: function(options) {
 
-			options = Object.append({autostart: false, useCookie: true, cookie: 'tab'}, options);
+			options = Object.append({useCookie: true, cookie: 'tab'}, options);
 			
 			if(options.useCookie) {
 			

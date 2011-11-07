@@ -92,8 +92,9 @@ provides: [Tab, Tab.plugins.None]
 			});
 			
 			this.panels = this.container.getChildren(options.selector);
+			if(this.panels.length > 0 && !isNaN(this.options.current) && this.options.current > 0) this.current = 0;
 
-			this.anim = new this.plugins[options.animation](this.panels, Object.merge({}, options.params, {container: options.container, onResize: this.resize.bind(this), onChange: this.change.bind(this), onComplete: this.complete.bind(this) }), options.fx);
+			this.anim = new this.plugins[options.animation](this.panels, Object.append({}, options.params, {container: options.container, onResize: this.resize.bind(this), onChange: this.change.bind(this), onComplete: this.complete.bind(this) }), options.fx);
 			if(this.panels.length > 0) this.setSelectedIndex(Math.max(0, current))
 		},
 
@@ -198,6 +199,15 @@ provides: [Tab, Tab.plugins.None]
 			//consider only the last parameters
 			if(this.queue.length > 0) this.setSelectedIndex.apply(this, this.queue.pop())
 		},
+		
+		isSupported: function (animation) {
+		
+			animation = this.prototype.plugins[animation];
+			
+			if(animation) return animation.isSupported ? animation.isSupported() : true;
+			
+			return false
+		},
 
 		resize: function (panel) {
 
@@ -234,13 +244,12 @@ provides: [Tab, Tab.plugins.None]
 
 			var current = this.current,
 				curPanel = this.panels[current],
-				newPanel = this.panels[index],
-				params = [newPanel, curPanel, index, current, direction];
+				newPanel = this.panels[index];
 
 			if(!newPanel || this.current == index || this.selected == newPanel || index < 0 || index >= this.panels.length) return this;
 
 			this.running = true;
-			this.anim.move.apply(this.anim, params);
+			this.anim.move(newPanel, curPanel, index, current, direction);
 
 			return this
 		},
@@ -272,7 +281,9 @@ provides: [Tab, Tab.plugins.None]
 				}
 			})
 		}
-	})
+	});
+	
+	context.Tab.isSupported = context.Tab.prototype.isSupported;
 		
 }(this);
 
