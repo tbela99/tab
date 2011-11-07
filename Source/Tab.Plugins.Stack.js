@@ -15,8 +15,9 @@ provides: [Tab.plugins.Stack]
 */
 
 // shamelessly based on mooStack v0.1 by Martino di Filippo
+!function (context) {
 
-	Tab.prototype.plugins.Stack = new Class({
+	context.Tab.prototype.plugins.Stack = new Class({
 
 		options: {
 
@@ -43,7 +44,10 @@ provides: [Tab.plugins.Stack]
 			this.panels = panels;
 			this.current = 0;
 			this.selected = panels[0];
-			this.container = this.selected.getParent().setStyles({width: this.selected.getStyle('width'), display: 'block', height: this.selected.getStyle('height') + this.options.scattering, position: 'relative', overflow: 'visible'});
+			
+			this.container = options.container.setStyles({display: 'block', position: 'relative', overflow: 'visible'});
+			
+			if(this.selected) this.container.setStyles({width: this.selected.getStyle('width'), height: this.selected.getStyle('height') + this.options.scattering});
 			
 			this.reset();
 			this.rightEdge += this.options.scattering;
@@ -107,9 +111,10 @@ provides: [Tab.plugins.Stack]
 
 		goTo: function(index) {
 
-			if(typeOf(index) == 'element') index = index.getParent().retrieve('stack:index');
+			//isElement
+			if(Type.isElement(index)) index = index.getParent().retrieve('stack:index');
 
-			if(typeOf(index) != 'number' || this.current == index) return this;
+			if(isNaN(index) || this.current == index) return this;
 
 			var forward = this.current < index ? index - this.current : this.stack.length - this.current + index,
 				backward = this.current > index ? this.current - index : this.current + this.stack.length - index;
@@ -186,4 +191,6 @@ provides: [Tab.plugins.Stack]
 			this.selected = this.panels[this.current];
 			return this
 		}
-	});
+	})
+}(this);
+

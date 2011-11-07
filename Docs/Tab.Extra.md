@@ -19,6 +19,7 @@ Tab.Extra supports every Tab options plus specific parameters for the autoslide 
 
 ### Options: {#Tab-extra-options}
 
+* autostart - (*boolean*, optional). start automatic slide. default to true.
 * interval - (*int*, optional). interval between 2 executions in seconds. default to 10.
 * delay - (*int*, optional). when a tab is clicked, the autoslide is stopped. this defines the delay before the autoslide is restarted. default to 10.
 
@@ -36,6 +37,15 @@ Tab Method: stop {#Tab-extra-stop}
 ----------------------------
 
 stop autoslide.
+
+### Returns:
+
+* (*object*) - This Tab.Extra instance.
+
+Tab Method: toggle {#Tab-extra-toggle}
+----------------------------
+
+toggle automatic slide.
 
 ### Returns:
 

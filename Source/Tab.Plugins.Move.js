@@ -13,7 +13,11 @@ provides: [Tab.plugins.Move]
 ...
 */
 
-	Tab.prototype.plugins.Move = new Class({
+!function (context, undefined) {
+
+"use strict";
+
+	context.Tab.prototype.plugins.Move = new Class({
 		options: {
 			/*
 				circular: false,
@@ -39,13 +43,12 @@ provides: [Tab.plugins.Move]
 			this.property = this.horizontal ? 'offsetWidth' : 'offsetHeight';
 			this.selected = this.panels[0];
 			this.direction = 1;
-			this._fx = Object.append(this.fx, fx);
+			this._fx = Object.merge(this.fx, fx);
 			
 			panels.each(function (el) { el.setStyle('display', 'block').setStyles({position: 'absolute', width: el.getStyle('width'), height: el.getStyle('height')}) });
-			
-			this.fx = new Fx.Elements(panels, this._fx).addEvent('complete', function () { this.fireEvent('complete') }.bind(this));
-			
-			this.reorder(0, 1).container = panels[0].getParent().setStyles({overflow: 'hidden', position: 'relative', width: panels[0].offsetWidth, height: panels[0].offsetHeight})
+			this.container = options.container.setStyles({overflow: 'hidden', position: 'relative'});
+			if(panels[0]) this.container.setStyles({width: panels[0].offsetWidth, height: panels[0].offsetHeight});
+			this.reset()
 		},
 		
 		reset: function () {
@@ -71,14 +74,16 @@ provides: [Tab.plugins.Move]
 		reorder: function (offset, direction) {
 		
 			var pos = 0,
-				i,
+				index,
+				panel,
 				panels = this.panels,
-				length = panels.length;
+				length = panels.length,
+				i = length;
 				
 			//rtl
 			if(direction == -1) {
 			
-				for(i = length; i > 0; i--) {
+				while(i--) {
 			
 					index = (i + offset + length) % length;
 					panel = panels[index];
@@ -136,7 +141,8 @@ provides: [Tab.plugins.Move]
 			if(!options.useOpacity) Object.each(obj, function (k) { delete k.opacity });
 			
 			this.fx.start(obj).chain(function () { newTab.tween('opacity', 1) });
-			this.fireEvent('change', arguments).fireEvent('resize', newTab)
+			this.fireEvent('change', Array.slice(arguments)).fireEvent('resize', newTab)
 		}
-	});
+	})
+}(this);
 

@@ -1,9 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
-
-
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title>Stack Plugin</title>
+<title>Matrix Plugin</title>
 <style type="text/css">
 html {
 
@@ -75,34 +73,98 @@ div.tabs a.selected {
 }
 </style>
 <script type="text/javascript" src="../mootools.js"></script>
-<script type="text/javascript" src="../Source/Fx.CSS.js"></script>
 <script type="text/javascript" src="../PeriodicalExecuter.js"></script>
 
 <script type="text/javascript" src="../Source/Tab.js"></script>
 <script type="text/javascript" src="../Source/Tab.Extra.js"></script>
-<script type="text/javascript" src="../Source/Tab.Plugins.Stack.js"></script>
+<script type="text/javascript" src="../Source/Tab.Plugins.Flip.js"></script>
+<script type="text/javascript" src="../Source/Fx.Parsers.Transform.js"></script>
 
 <script type="text/javascript">
 //<![CDATA[
 
 	window.addEvent('domready', function () {
-	
-		var query = decodeURIComponent(location.search), 
+
+		var query = decodeURIComponent(location.search),  
 			params = query.substring(1).split('&'),
 			form = document.forms[0], 
 			options = {
 		
-				//random: true,
+				random: false,
 				//sort: ['reverse', 'shuffle'],
 				axis: 'both',
-				//transitions: matches,
 				amount: 8,
-				fragments: 3
+				fragments: 3,
+			
+				//transitions: ['explode', 'wave', 'implode', 'split', 'lines', 'chains', 'fold', 'grow', 'floom', 'fall', 'out'],
+			
+				//custom parameters for some transitions
+				settings: {
+				
+					fall: {
+					
+						fx: {
+						
+							duration: 800
+						}
+					},
+				
+					implode: {
+					
+						params: {
+						
+							//sort: ['reverse', 'none'],
+							amount: 10,
+							fragments: 5
+						}
+					},
+					split: {
+					
+						params: {
+						
+							random: true,
+							sort: ['reverse', 'none'],
+							amount: 10,
+							fragments: 5
+						}
+					},
+					fold: {
+					
+						params: {
+						
+							mode: 'vertical',
+							amount: 10,
+							fragments: 1
+						}
+					},
+					out: {
+					
+						params: {
+						
+							sort: ['reverse', 'none'],
+							mode: 'vertical'
+						}
+					},
+					lines: {
+					
+						fx: {
+						
+							transition: 'bounce:out'
+						}
+					},
+					explode: {
+					
+						fx: {
+						
+							transition: 'bounce:in'
+						}
+					}
+				}
 			},
 			tab,
-			duration = 800,
+			duration = 500,
 			removed = 0;
-			
+		
 		if(params && params.length > 0) {
 			
 			var tb = {};
@@ -178,18 +240,21 @@ div.tabs a.selected {
 				container: 'slide', 
 				tabs: 'div.tabs a',
 				activeClass: 'selected',
-				animation: 'Stack',
+				animation: Tab.isSupported('Flip') ? 'Flip' : 'None',
 				params: options,
+				interval: ((50 * options.amount * options.fragments) / 1000).toInt() + 5,
 				delay: 2 * duration / 1000,
 				fx: {
 				
+					//transition: 'bounce:in',
 					duration: duration
 				},
+				link: 'chain',
 				onComplete: function () {
 				
-					//if(window.console && console.log) console.log(arguments)
+					if(window.console && console.log) console.log(arguments)
 				}
-			})
+			});
 			
 			function change() {
 			
@@ -228,33 +293,36 @@ div.tabs a.selected {
 			}
 			
 			$$('input.remove').addEvents({click: change, change: change})
+	
 	})
 //]]></script>
 </head><body>
 <div class="slide">
   <div id="slide">
-    <div class="ctab"><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide1.jpg" width="400" height="300" /></a><span>Caption 1: put anything you want in the caption. Note that there is a link in the image</span></div>
-        <div class="ctab hidden"><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide2.jpg" width="400" height="300" /></a><span>Caption 2: put anything you want in the caption. Note that there is a link in the image</span></div>
+    <div class="ctab"><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide1.jpg" width="400" height="300" /></a><span>Caption 1: put a smile on your face</span></div>
+        <div class="ctab hidden"><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide2.jpg" width="400" height="300" /></a><span>Caption 2: what is this ?</span></div>
         <div class="ctab hidden"><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide3.jpg" width="400" height="300" /></a><span>Caption 3: put anything you want in the caption. Note that there is a link in the image</span></div>
         <div class="ctab hidden"><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide4.jpg" width="400" height="300" /></a><span>Caption 4: put anything you want in the caption. Note that there is a link in the image</span></div>
         <div class="ctab hidden"><a href="https://github.com/tbela99/tab"><img src="../Assets/slides/slide5.jpg" width="400" height="300" /></a><span>Caption 5: put anything you want in the caption. Note that there is a link in the image</span></div>
   	  </div>
       <div class="tabs"><a href="#0">1</a><a href="#1">2</a><a href="#2">3</a><a href="#3">4</a><a href="#4">5</a></div>
       <form action="" method="get">
-		<div>remove panel: <label for="remove0">1</label><input id="remove0" class="remove" type="checkbox" value="0" /> <label for="remove1">2</label><input id="remove1" class="remove" type="checkbox" value="1" /> <label for="remove2">3</label><input id="remove2" class="remove" type="checkbox" value="2" /> <label for="remove3">4</label><input id="remove3" class="remove" type="checkbox" value="3" /> <label for="remove4">5</label><input id="remove4" class="remove" type="checkbox" value="4" />
-      <div style="padding: 10px 0 0">Parameters: 
+        <div>remove panel: <label for="remove0">1</label><input id="remove0" class="remove" type="checkbox" value="0" /> <label for="remove1">2</label><input id="remove1" class="remove" type="checkbox" value="1" /> <label for="remove2">3</label><input id="remove2" class="remove" type="checkbox" value="2" /> <label for="remove3">4</label><input id="remove3" class="remove" type="checkbox" value="3" /> <label for="remove4">5</label><input id="remove4" class="remove" type="checkbox" value="4" />
+		<div style="padding: 10px 0 0">Parameters: 
+          <input type="submit" value="Apply" />
+        </div>
+        <div style="padding: 10px 0 0">Parameters: 
           <div style="padding: 10px 0 10px 10px">
-            <label for="duration">Duration (ms)
-            <input name="duration" type="text" value="800" size="5" id="duration" />
-            </label>
-			<input type="submit" value="Apply" />
+            <label for="mode">Axis
+            <select name="mode" id="mode"><option>both</option><option>horizontal</option><option>vertical</option></select>
           </div>
         </div>
   </form>
       
-      <div>Tab demo, using the Stack plugin.</div>
+      <div>Tab demo, each transition have its own settings.</div>
       
-  <div>Feel free to use and/or modify.</div>      
-  <div style="text-align:center"><a href="https://twitter.com/tbela99" target="_blank">Twitter</a> | <a href="https://tbela99.blogspot.com/" target="_blank">Blog</a></div>
+  <div>Feel free to modify it.</div>      
+  <div>Inspired by <a href="https://blog.olicio.us/2009/07/25/floom/" target="_blank">Floom</a> and <a href="https://nivo.dev7studios.com/" target="_blank">Nivo Slider</a>. Follow me on twitter at <a href="https://twitter.com/tbela99" target="_blank">@tbela99</a></div>
+      <div style="text-align:center"><a href="https://twitter.com/tbela99" target="_blank">Twitter</a> | <a href="https://tbela99.blogspot.com/" target="_blank">Blog</a></div>
 </div>
 </body></html>

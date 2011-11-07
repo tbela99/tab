@@ -7,13 +7,16 @@ copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires:
-  tab:0.1.4:
+  tab:0.1.5.1:
   - Tab
 provides: [Tab.Extra]
 ...
 */
+!function (context) {
 
-	Tab.Extra = new Class({
+"use strict";
+
+	context.Tab.Extra = new Class({
 
 		/*
 			options: {
@@ -25,7 +28,7 @@ provides: [Tab.Extra]
 				autostart: true
 			},
 		*/
-			Extends: Tab,
+			Extends: context.Tab,
 			Binds: ['update', 'start', 'stop'],
 			initialize: function(options) {
 
@@ -53,12 +56,20 @@ provides: [Tab.Extra]
 			start: function () {
 
 				this.timer.registerCallback();
+				this.active = true;
 				return this
 			},
 
 			stop: function() {
 
 				this.timer.stop();
+				this.active = false;
 				return this
+			},
+		
+			toggle: function() { 
+			
+				return this[this.active ? 'stop' : 'start']()
 			}
-		});
+		})
+}(this);

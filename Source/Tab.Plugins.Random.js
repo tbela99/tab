@@ -13,7 +13,9 @@ provides: [Tab.plugins.Random]
 ...
 */
 
-(function () {
+!function (context) {
+
+"use strict";
 
 	var transitions = {
 	
@@ -46,7 +48,7 @@ provides: [Tab.plugins.Random]
 						break;
 			}
 			
-			newTab.morph(morph).get('morph').chain(function () { curTab.setStyle('display', 'none'); newTab.setStyle('z-index', 0); this.fireEvent('complete') }.bind(this))
+			newTab.morph(morph).get('morph').chain(function () { if(curTab) curTab.style.display = 'none'; newTab.setStyle('z-index', 0); this.fireEvent('complete') }.bind(this))
 		},
 		slideOut: function (curTab, newTab, f) {
 		
@@ -171,7 +173,7 @@ provides: [Tab.plugins.Random]
 		}
 	};
 	
-	Tab.prototype.plugins.Random = new Class({
+	context.Tab.prototype.plugins.Random = new Class({
 		options: {
 			/*
 				useOpacity: false,
@@ -195,7 +197,7 @@ provides: [Tab.plugins.Random]
 			options = this.setOptions(options).addTransition(transitions).options;
 			options.directions = Array.from(this.options.directions);
 			
-			var tr = Array.from(this.options.transitions || Object.keys(this.transitions));
+			var tr = Array.from(this.options.transitions || Object.keys(this.transitions)), panel = panels[0];
 			
 			this.options.transitions = [];
 			
@@ -220,9 +222,13 @@ provides: [Tab.plugins.Random]
 					})
 			});
 			
-			var panel = panels[0];
+			this.container = options.container.setStyles({position: 'relative', overflow: 'hidden'});
 			
-			this.container = panel.setStyle('display', 'block').getParent().setStyles({position: 'relative', overflow: 'hidden', height: panel.offsetHeight, width: panel.offsetWidth});
+			if(panel) {
+				
+				panel.setStyle('display', 'block');
+				this.container.setStyles({height: panel.offsetHeight, width: panel.offsetWidth});
+			}
 			
 			this.current = 0
 		},
@@ -257,7 +263,7 @@ provides: [Tab.plugins.Random]
                         
 			this.current = options.random ? Number.random(0, options.transitions.length - 1) : (this.current + 1) % options.transitions.length;
 			
-			this.fireEvent('change', arguments).fireEvent('resize', newTab);
+			this.fireEvent('change', Array.slice(arguments)).fireEvent('resize', newTab);
 		},
 		
 		addTransition: function (tr, fn) {
@@ -268,4 +274,4 @@ provides: [Tab.plugins.Random]
 			return this
 		}
 	})
-})();
+}(this);

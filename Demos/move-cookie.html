@@ -3,7 +3,7 @@
 
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title>Stack Plugin</title>
+<title>Move Plugin</title>
 <style type="text/css">
 html {
 
@@ -80,29 +80,31 @@ div.tabs a.selected {
 
 <script type="text/javascript" src="../Source/Tab.js"></script>
 <script type="text/javascript" src="../Source/Tab.Extra.js"></script>
-<script type="text/javascript" src="../Source/Tab.Plugins.Stack.js"></script>
+<script type="text/javascript" src="../Source/Tab.Cookie.js"></script>
+<script type="text/javascript" src="../Source/Tab.Plugins.Move.js"></script>
 
 <script type="text/javascript">
 //<![CDATA[
 
 	window.addEvent('domready', function () {
 	
-		var query = decodeURIComponent(location.search), 
+		var query = decodeURIComponent(location.search),  
 			params = query.substring(1).split('&'),
 			form = document.forms[0], 
 			options = {
 		
 				//random: true,
 				//sort: ['reverse', 'shuffle'],
-				axis: 'both',
+				//axis: 'both',
 				//transitions: matches,
-				amount: 8,
-				fragments: 3
+				//amount: 8,
+				//fragments: 3,
+				//circular: true
 			},
 			tab,
-			duration = 800,
+			duration = 300,
 			removed = 0;
-			
+		
 		if(params && params.length > 0) {
 			
 			var tb = {};
@@ -162,6 +164,7 @@ div.tabs a.selected {
 						
 							if(option.value == val) el.selectedIndex = index
 						});
+						else if(['radio', 'checkbox'].indexOf(el.get('tag') != -1)) el.checked = true;
 						else $(el).set('value', val);
 						//if($(el).get('tag') == 'select') Array.from(el.options)
 						if(key == 'duration') duration = val;
@@ -171,14 +174,15 @@ div.tabs a.selected {
 			});
 			
 			//needed
-			if(options.random && options.random.toInt) options.random = options.random.toInt();
+			if(options.circular && options.circular.toInt) options.circular = options.circular.toInt();
 		};
 		
-		tab = new Tab.Extra({
+		
+		tab = new Tab.Cookie({
 				container: 'slide', 
 				tabs: 'div.tabs a',
 				activeClass: 'selected',
-				animation: 'Stack',
+				animation: 'Move',
 				params: options,
 				delay: 2 * duration / 1000,
 				fx: {
@@ -189,7 +193,7 @@ div.tabs a.selected {
 				
 					//if(window.console && console.log) console.log(arguments)
 				}
-			})
+			});
 			
 			function change() {
 			
@@ -241,20 +245,27 @@ div.tabs a.selected {
   	  </div>
       <div class="tabs"><a href="#0">1</a><a href="#1">2</a><a href="#2">3</a><a href="#3">4</a><a href="#4">5</a></div>
       <form action="" method="get">
-		<div>remove panel: <label for="remove0">1</label><input id="remove0" class="remove" type="checkbox" value="0" /> <label for="remove1">2</label><input id="remove1" class="remove" type="checkbox" value="1" /> <label for="remove2">3</label><input id="remove2" class="remove" type="checkbox" value="2" /> <label for="remove3">4</label><input id="remove3" class="remove" type="checkbox" value="3" /> <label for="remove4">5</label><input id="remove4" class="remove" type="checkbox" value="4" />
+        <div>remove panel: <label for="remove0">1</label><input id="remove0" class="remove" type="checkbox" value="0" /> <label for="remove1">2</label><input id="remove1" class="remove" type="checkbox" value="1" /> <label for="remove2">3</label><input id="remove2" class="remove" type="checkbox" value="2" /> <label for="remove3">4</label><input id="remove3" class="remove" type="checkbox" value="3" /> <label for="remove4">5</label><input id="remove4" class="remove" type="checkbox" value="4" />
       <div style="padding: 10px 0 0">Parameters: 
           <div style="padding: 10px 0 10px 10px">
+            <label for="mode">Axis
+            <select name="mode" id="mode"><option>horizontal</option><option>vertical</option></select>
+            </label><input type="submit" value="Apply" />
+            <br/>
+            <label for="circular">Circular
+            <input name="circular" type="checkbox" value="1" id="circular" />
+            </label>
+            <br/>
             <label for="duration">Duration (ms)
             <input name="duration" type="text" value="800" size="5" id="duration" />
             </label>
-			<input type="submit" value="Apply" />
           </div>
         </div>
   </form>
       
-      <div>Tab demo, using the Stack plugin.</div>
+      <div>Tab demo, using the Matrix plugin.</div>
       
-  <div>Feel free to use and/or modify.</div>      
+  <div>Feel free to try and/or modify.</div>      
   <div style="text-align:center"><a href="https://twitter.com/tbela99" target="_blank">Twitter</a> | <a href="https://tbela99.blogspot.com/" target="_blank">Blog</a></div>
 </div>
 </body></html>
