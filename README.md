@@ -4,15 +4,16 @@ Tab
 Minimalistic but extensible tab swapper. It can be used to create a tab swapper as well as a galerie slideshow. 
 you can have effects like **Moostack**, the [barack slideshow](https://devthought.com/wp-content/moogets/BarackSlideshow/demo.html) or [jQuery nivoslider](https://nivo.dev7studios.com/) or whatever you want by providing an animation plugin. 
 ![Screenshot](https://github.com/tbela99/tab/raw/master/thumbnail.jpg)
-[Demo](https://tbela99.github.com/tab/Demos/matrix.html)
+[Demo](http://tbela99.github.com/tab/Demos/matrix.html)
 
 #### More demos
 
-- [Matrix](https://tbela99.github.com/tab/Demos/matrix.html)
-- [Random](https://tbela99.github.com/tab/Demos/random.html?transitions[]=slideOut&directions[]=left&directions[]=right&mode=horizontal&random=0&duration=800)
-- [Move](https://tbela99.github.com/tab/Demos/move.html)
-- [Stack](https://tbela99.github.com/tab/Demos/stack.html)
-- [No animation](https://tbela99.github.com/tab/Demos/none.html)
+- [Matrix](http://tbela99.github.com/tab/Demos/matrix.html)
+- [Flip 3D](http://tbela99.github.com/tab/Demos/flip.html)
+- [Random](http://tbela99.github.com/tab/Demos/random.html?transitions[]=slideOut&directions[]=left&directions[]=right&mode=horizontal&random=0&duration=800)
+- [Move](http://tbela99.github.com/tab/Demos/move.html)
+- [Stack](http://tbela99.github.com/tab/Demos/stack.html)
+- [No animation](http://tbela99.github.com/tab/Demos/none.html)
 
 How to use
 ---------------------
@@ -170,3 +171,20 @@ set the displayed panel.
 ### Returns:
 
 * (*object*) - This Tab instance.
+
+Method: isSupported
+------------------------
+
+return true if the given transition is supported by the browser.
+
+### Syntax:
+
+	swapper.isSupported('Flip');
+
+### Arguments:
+
+- transition - (*string*) transition name.
+
+### Returns:
+
+* (*boolean*) 
