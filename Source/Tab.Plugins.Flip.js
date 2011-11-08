@@ -1,15 +1,15 @@
 /*
 ---
-script: Tabs.Plugins.Move.js
+script: Tabs.Plugins.Flip.js
 license: MIT-style license.
-description: Move - swap tab horizontally or vertically.
+description: Flip - swap tab horizontally or vertically in 3D space.
 copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires: 
   tab:0.1.4: 
   - Tab
-provides: [Tab.plugins.Move]
+provides: [Tab.plugins.Flip]
 ...
 */
 
@@ -60,8 +60,6 @@ provides: [Tab.plugins.Move]
 				setStyle(transformStyle, 'preserve-3d').
 				setStyle(perspective, this.options.perspective);
 				
-			this.tween = Object.append(this.fx, this.options.fx);
-			
 			if(this.options.mode == 'vertical') {
 			
 				front = 'rotateX(0)';
@@ -78,7 +76,7 @@ provides: [Tab.plugins.Move]
 		add: function (el) {
 
 			if(isSupported) el.setStyles({display: 'block', position: 'static'}).
-				set('tween', Object.append()).
+				set('tween', Object.append({}, this.fx, this.options.fx)).
 				setStyle(backfaceVisibility, 'hidden').
 				setStyles({position: 'absolute', width: el.getStyle('width'), height: el.getStyle('height')}).setStyle(transform, back.substitute({direction: ''})); 
 				
