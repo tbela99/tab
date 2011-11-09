@@ -19,6 +19,8 @@ provides: [Tab.plugins.Flip]
 
 	function getPrefix(prop) {  
 	
+		prop = prop.camelCase();
+		
 		//return unprefixed property if supported. prefixed properties sometimes do not work fine (MozOpacity is an empty string in FF4)
 		if(prop in original.style) return prop;
 	
@@ -77,11 +79,11 @@ provides: [Tab.plugins.Flip]
 
 			if(isSupported) el.setStyles({display: 'block', position: 'static'}).
 				set('tween', Object.append({}, this.fx, this.options.fx)).
-				setStyle(backfaceVisibility, 'hidden').
-				setStyles({position: 'absolute', width: el.getStyle('width'), height: el.getStyle('height')}).setStyle(transform, back.substitute({direction: ''})); 
+				//setStyle(backfaceVisibility, 'hidden').
+				setStyles({position: 'absolute', width: el.getStyle('width'), height: el.getStyle('height')}).setStyle(transform, back.substitute({direction: ''})).style[backfaceVisibility] = 'hidden'; 
 				
 			else el.style.display = 'none';
-			
+						
 			return this
 		},
 		
