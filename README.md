@@ -8,7 +8,7 @@ you can have effects like **Moostack**, the [barack slideshow](https://devthough
 
 #### More demos
 
-- [Matrix](http://tbela99.github.com/tab/Demos/matrix.html
+- [Matrix](http://tbela99.github.com/tab/Demos/matrix.html)
 - [Flip 3D](http://tbela99.github.com/tab/Demos/flip.html)
 - [Random](http://tbela99.github.com/tab/Demos/random.html?transitions[]=slideOut&directions[]=left&directions[]=right&mode=horizontal&random=0&duration=800)
 - [Move](http://tbela99.github.com/tab/Demos/move.html)
