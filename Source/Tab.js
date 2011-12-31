@@ -29,7 +29,7 @@ provides: [Tab, Tab.plugins.None]
 		/*
 			onCreate: $empty,
 			onChange: $empty,
-			container: null,
+			container: undefined,
 			selector: '',
 			tabs: [],
 
@@ -113,6 +113,7 @@ provides: [Tab, Tab.plugins.None]
 			switch(index) {
 
 				case 0 :
+				
 						if(this.panels.length > 0) {
 
 							this.panels.unshift(panel.inject(this.panels[0], 'before'));
@@ -128,13 +129,14 @@ provides: [Tab, Tab.plugins.None]
 
 						break;
 				default:
+				
 						this.panels.splice(index, 0, panel.inject(this.panels[index - 1], 'after'));
 						if(tab) this.tabs.splice(index, 0, tab);
 						break;
 			}
 
-			if(this.anim.add) this.anim.add(panel);
 			this.current = this.panels.indexOf(this.selected);
+			if(this.anim.add) this.anim.add(panel, this.current);
 
 			if(this.current == -1 && this.panels.length > 0) this.setSelectedIndex(0);
 			
@@ -147,7 +149,7 @@ provides: [Tab, Tab.plugins.None]
 				tab = this.tabs[index];
 
 			//
-			if(this.running || panel == null) return null;
+			if(this.running || panel == undefined) return undefined;
 
 			this.panels.splice(index, 1);
 			panel.dispose();
@@ -249,7 +251,7 @@ provides: [Tab, Tab.plugins.None]
 			if(!newPanel || this.current == index || this.selected == newPanel || index < 0 || index >= this.panels.length) return this;
 
 			this.running = true;
-			this.anim.move(newPanel, curPanel, index, current, direction);
+			this.anim.move(newPanel, curPanel, index, current, direction || 1);
 
 			return this
 		},

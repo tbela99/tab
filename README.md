@@ -10,6 +10,7 @@ you can have effects like **Moostack**, the [barack slideshow](https://devthough
 
 - [Matrix](http://tbela99.github.com/tab/Demos/matrix.html)
 - [Flip 3D](http://tbela99.github.com/tab/Demos/flip.html)
+- [Cube 3D](http://tbela99.github.com/tab/Demos/cube.html)
 - [Random](http://tbela99.github.com/tab/Demos/random.html?transitions[]=slideOut&directions[]=left&directions[]=right&mode=horizontal&random=0&duration=800)
 - [Move](http://tbela99.github.com/tab/Demos/move.html)
 - [Stack](http://tbela99.github.com/tab/Demos/stack.html)
@@ -167,6 +168,7 @@ set the displayed panel.
 ### Arguments:
 
 - index - (*int*) index of the panel to display.
+- direction - (*int*) indicate in which direction panels should be rotated. accepted values are -1 (right to left) and 1 (left to right).
 
 ### Returns:
 
