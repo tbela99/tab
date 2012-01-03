@@ -47,15 +47,17 @@ provides: [Tab.plugins.Cube]
 		width: 0,
 		current: -1,
 		panels: [],
-		// fx: {
-
-			// link: 'cancel',
-			// duration: 800
-		// },
+		options: {
+		
+			//wrapper: 'div',
+			perspective: 1200
+		},
 		Implements: [Options, Events],
 		initialize: function(panels, options, fx) {
 
 			options = this.setOptions(options).options;
+			
+			//new Element(options.wrapper).wraps(options.container).style[perspective] = options.perspective + 'px';
 			
 			this.container = options.container.setStyles({display: 'block', position: 'relative'}).
 				setStyle(transformStyle, 'preserve-3d').
@@ -95,7 +97,7 @@ provides: [Tab.plugins.Cube]
 								front: 'translateZ(-{width}px) rotateX(0) rotateY({theta}deg)',
 								back: 'translateZ(-{width}px) rotateX(0) rotateY({theta}deg)',
 								right:  'translateZ(0) rotateX(0) rotateY({theta}deg)',
-								left:  'translateZ(0) rotateX(0) rotateY({theta}deg)',
+								left:  'translateZ(0) rotateX(0) rotateY({theta}deg)'
 							};
 						break;
 			}
@@ -107,13 +109,16 @@ provides: [Tab.plugins.Cube]
 
 			if(isSupported) {
 				
+				el.setStyles({display: 'block', position: 'static'});
+				
 				if(this.width == 0) {
 				
 					this.width = this.container.getStyle(this.options.mode == 'vertical' ? 'height' : 'width').toInt() / 2;
 					this.container.style[transform] = this.style.substitute({width: 0, theta: 0});
+					//this.container.parentNode.setStyles({width: el.getStyle('width'), height: el.getStyle('height')})
 				} 
 				
-				el.setStyles({display: 'block', position: 'static'}).setStyles({position: 'absolute', width: el.getStyle('width'), height: el.getStyle('height')})
+				el.setStyles({position: 'absolute', width: el.getStyle('width'), height: el.getStyle('height')/* , left: 0, top: 0 */})
 			} 
 				
 			el.style.display = 'none';
@@ -147,9 +152,7 @@ provides: [Tab.plugins.Cube]
 						this.container.style[transform] = this.rotate[face].substitute(obj)
 					}
 					
-				}.bind(this));
-				
-				this.fireEvent('change', Array.slice(arguments)).fireEvent('resize', newTab).fireEvent('complete')
+				}.bind(this))
 			}
 			
 			else {
@@ -157,8 +160,9 @@ provides: [Tab.plugins.Cube]
 				newTab.style.display = 'block';
 				if(curTab) curTab.style.display = 'none';
 				
-				this.fireEvent('change', Array.slice(arguments)).fireEvent('resize', newTab).fireEvent('complete')
 			}				
+				
+			this.fireEvent('change', Array.slice(arguments)).fireEvent('resize', newTab).fireEvent('complete')
 		},
 		
 		isSupported: function () {

@@ -27,7 +27,7 @@ provides: [Tab, Tab.plugins.None]
 		options: {
 
 		/*
-			onCreate: $empty,
+		
 			onChange: $empty,
 			container: undefined,
 			selector: '',
@@ -248,7 +248,7 @@ provides: [Tab, Tab.plugins.None]
 				curPanel = this.panels[current],
 				newPanel = this.panels[index];
 
-			if(!newPanel || this.current == index || this.selected == newPanel || index < 0 || index >= this.panels.length) return this;
+			if(!newPanel || current == index || this.selected == newPanel || index < 0 || index >= this.panels.length) return this;
 
 			this.running = true;
 			this.anim.move(newPanel, curPanel, index, current, direction || 1);

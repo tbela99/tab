@@ -1,7 +1,7 @@
 Tab.Cookie {#Tab-cookie}
 ============
 
-Remember selected tab using a cookie.
+Adds capability to remember selected tab by using a cookie.
 
 Tab Method: constructor {#Class:constructor}
 ---------------------
@@ -18,3 +18,4 @@ Tab Method: constructor {#Class:constructor}
 ### Options: {#Tab-cookie-options}
 
 * useCookie - (*boolean*, optional). remember selected panel using a cookie. default to *true*.
+* cookie - (*string*, optional). the cookie name, default to *tab*.

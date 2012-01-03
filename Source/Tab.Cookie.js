@@ -3,13 +3,17 @@
 ---
 script: Tab.Cookie.js
 license: MIT-style license.
-description: Extends Tab with automatic slide.
+description: Remember selected tab.
 copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires: 
-  tab:0.1.5.1: 
-  - Tab
+	core:
+		- Cookie
+	more:
+		- Class.refactor
+	tab:0.1.5.1: 
+		- Tab
 provides: [Tab]
 ...
 */
