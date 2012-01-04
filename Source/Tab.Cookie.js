@@ -9,11 +9,11 @@ authors: [Thierry Bela]
 
 requires:
 core:
-  - Cookie
+- Cookie
 more:
-  - Class.refactor
+- Class.refactor
 tab:
-  - Tab
+- Tab
  
 provides: [Tab]
 ...
