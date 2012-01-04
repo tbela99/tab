@@ -7,8 +7,8 @@ copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires: 
-  tab: 
-  - Tab
+tab: 
+- Tab
 provides: [Tab.plugins.Flip]
 ...
 */
