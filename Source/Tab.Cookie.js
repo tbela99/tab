@@ -14,7 +14,7 @@ requires:
   - Class.refactor
   tab:0.1.5.1:
   - Tab
-provides: [Tab]
+provides: [Tab.Cookie]
 ...
 */
 
