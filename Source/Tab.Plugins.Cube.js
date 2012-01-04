@@ -46,12 +46,12 @@ provides: [Tab.plugins.Cube]
 	
 		width: 0,
 		current: -1,
-		panels: [],
-		options: {
+		//panels: [],
+		//options: {
 		
 			//wrapper: 'div',
-			perspective: 1200
-		},
+			//perspective: 1200
+		//},
 		Implements: [Options, Events],
 		initialize: function(panels, options, fx) {
 
@@ -64,8 +64,6 @@ provides: [Tab.plugins.Cube]
 				setStyle(backfaceVisibility, 'hidden').
 				set('tween', fx);
 				
-			//this.fx = Object.append(this.fx, fx);
-			
 			this.setMode(options.mode);
 			this.panels = panels;
 			panels.each(this.add, this)
