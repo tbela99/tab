@@ -8,7 +8,6 @@ copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires:
-
  core:
   - Cookie
  more:
