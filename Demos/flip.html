@@ -2,76 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Flip Plugin</title>
-<style type="text/css">
-html {
-
-	font-family:Arial, Helvetica, sans-serif;
-	color: #333;
-	font-size:1.2em;
-}
-body {
-
-	font-size: 75%;
-	line-height:19px;
-}
-.hidden {
-
-	display:none;
-}
-.slide {
-	
-	width: 400px;
-	margin: 10px auto;
-}		
-.help {
-	font-size: 90%;
-	color: #111;
-	margin: 10px 0;
-}	
-a {
-
-	text-decoration: none;
-	color:#069;
-}
-img {
-
-	border: 0;
-}
-div.tabs {
-
-	text-align: center;
-}
-div.tabs a {
-
-	margin: 0 3px 0 0;
-}
-div.tabs a.selected {
-
-	text-decoration: underline;
-}
-
-/*
-
-*/
-#slide {
-
-	position: relative;
-	height: 300px;
-	width: 400px;
-	overflow: hidden;
-}
-#slide span {
-
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	padding: 10px;
-	width: 380px;
-	color: #fff;
-	background: url(../Assets/images/grey.png);
-	background: rgba(0, 0, 0, .7)
-}
-</style>
+<link type="text/css" rel="stylesheet" href="style.css"/>
 <script type="text/javascript" src="../mootools.js"></script>
 <script type="text/javascript" src="../PeriodicalExecuter.js"></script>
 
@@ -80,16 +11,21 @@ div.tabs a.selected {
 <script type="text/javascript" src="../Source/Tab.Plugins.Flip.js"></script>
 <script type="text/javascript" src="../Source/Fx.Parsers.Transform.js"></script>
 
+<!-- optional, use native css transitions -->
+<script type="text/javascript" src="../Source/Fx.CSS.js"></script>
+<script type="text/javascript" src="../Source/Fx.CSS.Tween.js"></script>
+
+
+<!-- demo -->
+<script type="text/javascript" src="script.js"></script>
 <script type="text/javascript">
 //<![CDATA[
 
 	window.addEvent('domready', function () {
 
-		var query = decodeURIComponent(location.search),  
-			params = query.substring(1).split('&'),
-			form = document.forms[0], 
-			options = {
+		var options = parseQueryString({
 		
+				duration: 800,
 				random: false,
 				//sort: ['reverse', 'shuffle'],
 				axis: 'both',
@@ -160,95 +96,16 @@ div.tabs a.selected {
 						}
 					}
 				}
-			},
-			tab,
-			duration = 500,
-			removed = 0;
-		
-		if(params && params.length > 0) {
-			
-			var tb = {};
-			
-			params.each(function (val) {
-			
-				val = val.split('=');
-				
-				if(val[0].test(/\[.*]$/)) {
-				
-					tb[val[0]] = tb[val[0]] || [];
-					tb[val[0]].push(val[1])
-				} else tb[val[0]] = val[1]
 			});
-			
-			Object.each(tb, function (val, key) {
-		
-				var el = form[key];
 				
-				if(el) {
-				
-					if(el.length) {
-					
-						//select
-						if($(el)) {
-							
-							Array.from(el.options).each(function (option, index) {
-							
-								if(option.value == val) el.selectedIndex = index
-							});
-								
-							options[key] = val
-						}
-						//radio - checkbox
-						else {
-						
-							val = Array.from(val);
-							Array.from(el).each(function (c) {
-							
-								for(var i = val.length - 1; i >= 0; i--)
-									if(c.value == val[i]) {
-									
-										if(el.length > 1 && el[0].type == 'checkbox') {
-											
-											options[key.replace('[]', '')] = val
-										}
-										else options[key.replace('[]', '')] = val[i];
-										c.checked = true
-									}
-							})
-						}
-						
-					}
-					else {
-					
-						if($(el).get('tag') == 'select') Array.from(el.options).each(function (option, index) {
-						
-							if(option.value == val) el.selectedIndex = index
-						});
-						else $(el).set('value', val);
-						//if($(el).get('tag') == 'select') Array.from(el.options)
-						if(key == 'duration') duration = val;
-						else options[key] = val
-					}
-				}
-			});
-			
-			//needed
-			if(options.random && options.random.toInt) options.random = options.random.toInt();
-		};
-		
-		tab = new Tab.Extra({
+		window.tab = new Tab.Extra({
 				container: 'slide', 
 				tabs: 'div.tabs a',
 				activeClass: 'selected',
 				animation: Tab.isSupported('Flip') ? 'Flip' : 'None',
 				params: options,
 				interval: ((50 * options.amount * options.fragments) / 1000).toInt() + 5,
-				delay: 2 * duration / 1000,
-				fx: {
-				
-					//transition: 'bounce:in',
-					duration: duration
-				},
+				delay: 2 * options.duration / 1000,
 				link: 'chain',
 				onComplete: function () {
 				
@@ -256,44 +113,6 @@ div.tabs a.selected {
 				}
 			});
 			
-			function change() {
-			
-				var panel = this.retrieve('panel');
-				
-				if(this.checked) {
-					
-					if(!panel) {
-					
-						if(tab.running) {
-						
-							tab.addEvent('complete:once', change.pass(null, this));
-							return
-						}
-						
-						panel = tab.remove(Math.max(0, this.value - removed));
-						
-						if(panel) {
-						
-							this.store('panel', panel);
-							removed++;
-						}
-						
-						this.checked = !!panel
-					}
-					
-				} else {
-				
-					if(panel) {
-					
-						this.eliminate('panel');
-						removed--;
-						tab.add(panel.panel, panel.tab, this.value)
-					}
-				}
-			}
-			
-			$$('input.remove').addEvents({click: change, change: change})
-	
 	})
 //]]></script>
 </head><body>

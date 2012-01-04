@@ -1,24 +1,21 @@
 Tab.Cookie {#Tab-cookie}
 ============
 
-Remember selected tab using a cookie.
+Adds capability to remember selected tab by using a cookie.
 
-Tab.Cookie Method: constructor {#Class:constructor}
+Tab Method: constructor {#Class:constructor}
 ---------------------
 
 ### Syntax:
 
-	var swapper = new Tab.Cookie(options);
+	var swapper = new Tab(options);
 
 
 ### Arguments:
 
 1. options - (*object*) See below.
 
-Tab.Cookie supports every Tab.Extra options plus specific parameters:
-
 ### Options: {#Tab-cookie-options}
 
-* autostart - (*boolean*, optional). start automatic slide. default to *false*.
 * useCookie - (*boolean*, optional). remember selected panel using a cookie. default to *true*.
-* cookie - (*string*). the cookie name. default to *'tab'*.
+* cookie - (*string*, optional). the cookie name, default to *tab*.

@@ -56,7 +56,7 @@ provides: [Fx.CSS.Parsers.Transform]
 
 			var parser, parsed;
 
-			if(property == 'transform') {
+			if(property.test(/^((Moz|Webkit|Ms|O|Khtml)T|t)ransform/)) {
 
 				parser = Fx.CSS.Parsers.Transform;
 				parsed = values.map(function (value) { return {value: parser.parse(value), parser: parser} })
@@ -206,7 +206,6 @@ var deg = ['skew', 'rotate'],
 				if(transform.translate3d) style += ' translate3d(' + transform.translate3d[0]+ 'px,' + transform.translate3d[1]+ 'px,' + transform.translate3d[2]+ 'px)';
 				if(transform.rotate3d) style += ' rotate3d(' + transform.rotate3d[0]+ ',' + transform.rotate3d[1]+ ',' + transform.rotate3d[2]+ ', ' + transform.rotate3d[3] + 'deg)';
 				
-				//console.log(style)
 				return style
 			}
 		}

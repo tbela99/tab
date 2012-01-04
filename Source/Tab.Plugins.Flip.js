@@ -33,12 +33,12 @@ provides: [Tab.plugins.Flip]
 	
 		//div to clone
 	var original = new Element('div'),
-		prefixes = ['Khtml','Moz','Webkit','O','ms'],
+		prefixes = ['Khtml','O','Moz','Webkit','Ms'],
 		transform = getPrefix('transform'),
 			perspective = getPrefix('perspective'),
 			transformStyle = getPrefix('transform-style'),
 			backfaceVisibility = getPrefix('backface-visibility'),
-			front = 'rotateX(0) rotateY(0)',
+			front /* = 'rotateX(0) rotateY(0)' */,
 			back,
 			isSupported = perspective in original.style;
 	
@@ -64,12 +64,12 @@ provides: [Tab.plugins.Flip]
 				
 			if(this.options.mode == 'vertical') {
 			
-				front = 'rotateX(0)';
-				back = 'rotateX({direction}180deg)'
+				this.front = 'rotateX(0)';
+				this.back = 'rotateX({direction}180deg)'
 			} else {
 				
-				front = 'rotateY(0)';
-				back = 'rotateY({direction}180deg)'
+				this.front = 'rotateY(0)';
+				this.back = 'rotateY({direction}180deg)'
 			}
 			
 			panels.each(function (el) { this.add(el) }, this)
@@ -80,7 +80,7 @@ provides: [Tab.plugins.Flip]
 			if(isSupported) el.setStyles({display: 'block', position: 'static'}).
 				set('tween', Object.append({}, this.fx, this.options.fx)).
 				//setStyle(backfaceVisibility, 'hidden').
-				setStyles({position: 'absolute', width: el.getStyle('width'), height: el.getStyle('height')}).setStyle(transform, back.substitute({direction: ''})).style[backfaceVisibility] = 'hidden'; 
+				setStyles({position: 'absolute', width: el.getStyle('width'), height: el.getStyle('height')}).setStyle(transform, this.back.substitute({direction: ''})).style[backfaceVisibility] = 'hidden'; 
 				
 			else el.style.display = 'none';
 						
@@ -91,8 +91,8 @@ provides: [Tab.plugins.Flip]
 
 			if(isSupported) {
 				
-				if(curTab) curTab.tween(transform, back.substitute({direction: arguments[4] == -1 ? '-' : ''}));
-				newTab.tween(transform, front).get('tween').chain(function () { this.fireEvent('complete') }.bind(this));
+				if(curTab) curTab.tween(transform, this.back.substitute({direction: arguments[4] == -1 ? '-' : ''}));
+				newTab.tween(transform, this.front).get('tween').chain(function () { this.fireEvent('complete') }.bind(this));
 				this.fireEvent('change', Array.slice(arguments)).fireEvent('resize', newTab)
 			}
 			
