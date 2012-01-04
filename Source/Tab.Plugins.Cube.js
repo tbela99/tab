@@ -8,39 +8,24 @@ copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires: 
-  tab:0.1.4: 
-  - Tab
+tab: 
+- Tab
+- Fx.CSS
 provides: [Tab.plugins.Cube]
 ...
 */
 
-!function (context, undefined) {
+!function (context) {
 
 "use strict";
 
-	function getPrefix(prop) {  
-	
-		prop = prop.camelCase();
-	
-		//return unprefixed property if supported. prefixed properties sometimes do not work fine (MozOpacity is an empty string in FF4)
-		if(prop in original.style) return prop;
-	
-		var upper = prop.charAt(0).toUpperCase() + prop.slice(1); 
-		
-		for(var i = prefixes.length; i--;) if(prefixes[i] + upper in original.style) return prefixes[i] + upper; 
-				
-		return prop;  
-	}  
-	
 		//div to clone
 	var original = new Element('div'),
-		prefixes = ['Khtml','Moz','Webkit','O','Ms'],
-		transform = getPrefix('transform'),
-		perspective = getPrefix('perspective'),
-		transformStyle = getPrefix('transform-style'),
-		backfaceVisibility = getPrefix('backface-visibility'),
-		isSupported = perspective in original.style;
-
+		transform = original.getPrefixed('transform'),
+		//perspective = original.getPrefixed('perspective'),
+		transformStyle = original.getPrefixed('transform-style'),
+		backfaceVisibility = original.getPrefixed('backface-visibility'),
+		isSupported = backfaceVisibility in original.style;
 
 	context.Tab.prototype.plugins.Cube = new Class({
 	
@@ -65,7 +50,6 @@ provides: [Tab.plugins.Cube]
 				set('tween', fx);
 				
 			this.setMode(options.mode);
-			this.panels = panels;
 			panels.each(this.add, this)
 		},
 		
@@ -103,7 +87,7 @@ provides: [Tab.plugins.Cube]
 			return this
 		},
 
-		add: function (el, index) {
+		add: function (el) {
 
 			if(isSupported) {
 				

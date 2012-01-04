@@ -8,12 +8,13 @@ copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires:
- core:
-  - Cookie
- more:
-  - Class.refactor
-  tab:0.1.5.1:
-  - Tab
+core:
+- Cookie
+more:
+- Class.refactor
+tab:
+- Tab
+ 
 provides: [Tab]
 ...
 */
