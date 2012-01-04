@@ -12,9 +12,10 @@ requires:
   - Cookie
  more:
   - Class.refactor
-  tab:0.1.5.1:
+  tab:
   - Tab
-provides: [Tab.Cookie]
+  
+provides: [Tab]
 ...
 */
 
