@@ -7,7 +7,7 @@ copyright: Copyright (c) 2008 Thierry Bela
 authors: [Thierry Bela]
 
 requires:
-  tab:0.1.5.1:
+  tab:
   - Tab
 provides: [Tab.Extra]
 ...
