@@ -9,37 +9,21 @@ authors: [Thierry Bela]
 requires: 
 tab: 
 - Tab
+- Fx.CSS
 provides: [Tab.plugins.Flip]
 ...
 */
 
-!function (context, undefined) {
+!function (context) {
 
 "use strict";
 
-	function getPrefix(prop) {  
-	
-		prop = prop.camelCase();
-		
-		//return unprefixed property if supported. prefixed properties sometimes do not work fine (MozOpacity is an empty string in FF4)
-		if(prop in original.style) return prop;
-	
-		var upper = prop.charAt(0).toUpperCase() + prop.slice(1); 
-		
-		for(var i = prefixes.length; i--;) if(prefixes[i] + upper in original.style) return prefixes[i] + upper; 
-				
-		return prop;  
-	}  
-	
 		//div to clone
 	var original = new Element('div'),
-		prefixes = ['Khtml','O','Moz','Webkit','Ms'],
-		transform = getPrefix('transform'),
-			perspective = getPrefix('perspective'),
-			transformStyle = getPrefix('transform-style'),
-			backfaceVisibility = getPrefix('backface-visibility'),
-			front /* = 'rotateX(0) rotateY(0)' */,
-			back,
+		transform = original.getPrefixed('transform'),
+			perspective = original.getPrefixed('perspective'),
+			transformStyle = original.getPrefixed('transform-style'),
+			backfaceVisibility = original.getPrefixed('backface-visibility'),
 			isSupported = perspective in original.style;
 	
 	context.Tab.prototype.plugins.Flip = new Class({
